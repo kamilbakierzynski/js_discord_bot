@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 require('dotenv').config()
+const express = require('express')
 const client = new Discord.Client();
 const { Client, MessageEmbed } = require('discord.js');
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
@@ -49,7 +50,7 @@ client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
 
     client.user.setPresence({
-        activity: { name: 'under development...', type: 'PLAYING' },
+        activity: { name: 'League of Legends', type: 'PLAYING' },
         status: 'idle'
     })
         .catch(console.error);
@@ -70,7 +71,7 @@ client.on('message', message => {
             let data = JSON.parse(Http.responseText)
             msg.delete()
             if (data.ok) {
-                message.reply("Here is your short link" + data.result.full_short_link)
+                message.reply("Here is your short link " + data.result.full_short_link)
             } else {
                 message.reply('there was an error.')
             }
@@ -104,6 +105,7 @@ client.on('message', message => {
                     let dataRank = JSON.parse(HttpRank.responseText)
                     for (let i = 0; i < dataRank.length; i++) {
                         let rankedData = dataRank[i]
+                        const winRatio = rankedData.win / (rankedData.win + rankedData.losses)
                         let exampleEmbed = new Discord.MessageEmbed()
                         .setColor('#0099ff')
                         .setTitle(data.name)
@@ -114,6 +116,7 @@ client.on('message', message => {
                             { name: 'Leaugue points', value: rankedData.leaguePoints, inline: true},
                             { name: 'Wins', value: rankedData.wins, inline: true},
                             { name: 'Losses', value: rankedData.losses, inline: true},
+                            { name: 'Win ratio', value: winRatio + "%", inline: true},
                         )
                         .attachFiles([`./ranked-emblems/${rankedData.tier}.png`])
                         .setImage(`attachment://${rankedData.tier}.png`)
@@ -214,20 +217,18 @@ client.on('message', message => {
                         }
                         console.log(participantData)
                         let championName = champs.readChampion(participantData.championId)
+                        const stats = `${participantData.stats.kills}/${participantData.stats.deaths}/${participantData.stats.assists}`;
                         const exampleEmbed = new Discord.MessageEmbed()
                         .setColor('#0099ff')
-                        .setTitle(`Last ${summonerName}'s game`)
-                        .setAuthor('Game Data')
+                        .setTitle(`as **${championName}**`)
+                        .setAuthor(`Last ${summonerName}'s game`)
                         .setDescription(convertGameStatus(participantData.stats.win))
                         .addFields(
                             { name: 'Duration', value: convertSecondsToTime(gameInfo.gameDuration), inline: false},
-                            { name: 'Kills', value: participantData.stats.kills, inline: true},
-                            { name: 'Deaths', value: participantData.stats.deaths, inline: true},
-                            { name: 'Assists', value: participantData.stats.assists, inline: true},
+                            { name: 'Stats', value: stats, inline: true},
                             { name: 'Creeps', value: participantData.stats.totalMinionsKilled, inline: true},
                             { name: 'Role', value: participantData.timeline.role.replace('_', ' '), inline: true},
                             { name: 'Lane', value: participantData.timeline.lane, inline: true},
-                            { name: 'Champion', value: championName, inline: true},
                             { name: 'Longest time spent living', value: convertSecondsToTime(participantData.stats.longestTimeSpentLiving), inline: true},
                             { name: 'Largest killing spree', value: participantData.stats.largestKillingSpree, inline: true},
                             { name: 'Stats link', value: `https://app.mobalytics.gg/post-game/eune/${summonerName.replace(' ', '%20')}/${gameId}`}
@@ -246,7 +247,10 @@ client.on('message', message => {
 
 });
 
-
+const app = new express();
+app.get('/', function(request, response){
+    response.sendFile('index.html');
+});
 
 // 2ApDM6cMhZ-WwybonYzLj-iEcwbvEZUzJ1NVcq3QmkqMyQ
 
