@@ -247,11 +247,10 @@ client.on('message', message => {
 
 });
 
-
-express.get('/', async (req, res) => {
-    console.log('PINGED!')
-    res.render('pages/index')
-  })
+const app = new express();
+app.get('/', function(request, response){
+    response.sendFile('index.html');
+});
 
 // 2ApDM6cMhZ-WwybonYzLj-iEcwbvEZUzJ1NVcq3QmkqMyQ
 
