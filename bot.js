@@ -49,7 +49,7 @@ client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
 
     client.user.setPresence({
-        activity: { name: 'under development...', type: 'PLAYING' },
+        activity: { name: 'League of Legends', type: 'PLAYING' },
         status: 'idle'
     })
         .catch(console.error);
@@ -70,7 +70,7 @@ client.on('message', message => {
             let data = JSON.parse(Http.responseText)
             msg.delete()
             if (data.ok) {
-                message.reply("Here is your short link" + data.result.full_short_link)
+                message.reply("Here is your short link " + data.result.full_short_link)
             } else {
                 message.reply('there was an error.')
             }
