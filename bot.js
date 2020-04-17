@@ -67,6 +67,11 @@ client.on('ready', () => {
 
 client.on('message', message => {
     console.log(message.content)
+
+    if (checkPrefix(message, 'help')) {
+        message.reply('shorten, summoner, lastgame.')
+    }
+
     if (checkPrefix(message, 'shorten')) {
         const Http = new XMLHttpRequest();
         Http.responseType = 'json';
@@ -168,11 +173,10 @@ client.on('message', message => {
                     .setTitle(data.name)
                     .setAuthor('SERVER STATUS INFO')
                     .addFields(
-                        { name: services[0].name, value: capitalize(services[0].status + checkStatus(services[0].status)), inline: true},
-                        { name: services[1].name, value: capitalize(services[1].status + checkStatus(services[1].status)), inline: true},
-                        { name: '\u200B', value: '\u200B' },
-                        { name: services[2].name, value: capitalize(services[2].status + checkStatus(services[2].status)), inline: true},
-                        { name: services[3].name, value: capitalize(services[3].status + checkStatus(services[3].status)), inline: true},
+                        { name: services[0].name, value: capitalize(services[0].status + checkStatus(services[0].status))},
+                        { name: services[1].name, value: capitalize(services[1].status + checkStatus(services[1].status))},
+                        { name: services[2].name, value: capitalize(services[2].status + checkStatus(services[2].status))},
+                        { name: services[3].name, value: capitalize(services[3].status + checkStatus(services[3].status))},
                     )
                     .addField('Last incident', lastIncidentFormat)
                     .setTimestamp()
