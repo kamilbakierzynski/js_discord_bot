@@ -1,0 +1,25 @@
+{
+
+    "name": "Discord Bot Ziewamy Blacha",
+  
+    "description": "League of Legends Bot",
+  
+    "version": "0.0.1",
+  
+    "main": "bot.js",
+  
+    "scripts": {
+  
+      "start": "node bot.js"
+  
+    },
+  
+    "dependencies": {
+  
+      "discord.js": "12.2.0",
+  
+      "request": "2.81.0"
+  
+    }
+  
+  }
