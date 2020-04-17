@@ -51,6 +51,9 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Our app is running on port ${ PORT }`);
 });
+app.get('/', function(req, res) {
+    res.send('SERVER UP!');
+});
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
@@ -229,17 +232,23 @@ client.on('message', message => {
                         const stats = `${participantData.stats.kills}/${participantData.stats.deaths}/${participantData.stats.assists}`;
                         const exampleEmbed = new Discord.MessageEmbed()
                         .setColor('#0099ff')
-                        .setTitle(`as **${championName}**`)
+                        .setTitle(`as **${championName}** (${participantData.stats.champLevel}lvl)`)
                         .setAuthor(`Last ${summonerName}'s game`)
                         .setDescription(convertGameStatus(participantData.stats.win))
                         .addFields(
                             { name: 'Duration', value: convertSecondsToTime(gameInfo.gameDuration), inline: false},
                             { name: 'Stats', value: stats, inline: true},
-                            { name: 'Creeps', value: participantData.stats.totalMinionsKilled, inline: true},
+                            { name: 'Creeps', value: participantData.stats.totalMinionsKilled + participantData.stats.neutralMinionsKilled, inline: true},
                             { name: 'Role', value: participantData.timeline.role.replace('_', ' '), inline: true},
                             { name: 'Lane', value: participantData.timeline.lane, inline: true},
                             { name: 'Longest time spent living', value: convertSecondsToTime(participantData.stats.longestTimeSpentLiving), inline: true},
                             { name: 'Largest killing spree', value: participantData.stats.largestKillingSpree, inline: true},
+                            { name: 'Largest multi kill', value: participantData.stats.largestMultiKill, inline: true},
+                            { name: 'Total damage dealt', value: participantData.stats.totalDamageDealt, inline: true},
+                            { name: 'Gold earned', value: participantData.stats.goldEarned, inline: true},
+                            { name: 'Wards (placed/destroyed)', value: participantData.stats.wardsPlaced + "/" + participantData.stats.wardsKilled, inline: true},
+                            { name: 'Vision score', value: participantData.stats.visionScore, inline: true},
+                            { name: 'First blood', value: participantData.stats.firstBloodKill, inline: true},
                             { name: 'Stats link', value: `https://app.mobalytics.gg/post-game/eune/${summonerName.replace(' ', '%20')}/${gameId}`}
                         )
                         .setTimestamp(gameInfo.gameCreation)
