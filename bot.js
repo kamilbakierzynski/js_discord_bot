@@ -106,6 +106,7 @@ client.on('message', message => {
                     for (let i = 0; i < dataRank.length; i++) {
                         let rankedData = dataRank[i]
                         let exampleEmbed = new Discord.MessageEmbed()
+                        const winRatio = rankedData.win / (rankedData.win + rankedData.losses)
                         .setColor('#0099ff')
                         .setTitle(data.name)
                         .setAuthor(rankedData.queueType.replace('_', ' '))
@@ -115,6 +116,7 @@ client.on('message', message => {
                             { name: 'Leaugue points', value: rankedData.leaguePoints, inline: true},
                             { name: 'Wins', value: rankedData.wins, inline: true},
                             { name: 'Losses', value: rankedData.losses, inline: true},
+                            { name: 'Win ratio', value: winRatio + "%", inline: true},
                         )
                         .attachFiles([`./ranked-emblems/${rankedData.tier}.png`])
                         .setImage(`attachment://${rankedData.tier}.png`)
