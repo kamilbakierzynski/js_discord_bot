@@ -105,8 +105,8 @@ client.on('message', message => {
                     let dataRank = JSON.parse(HttpRank.responseText)
                     for (let i = 0; i < dataRank.length; i++) {
                         let rankedData = dataRank[i]
-                        let exampleEmbed = new Discord.MessageEmbed()
                         const winRatio = rankedData.win / (rankedData.win + rankedData.losses)
+                        let exampleEmbed = new Discord.MessageEmbed()
                         .setColor('#0099ff')
                         .setTitle(data.name)
                         .setAuthor(rankedData.queueType.replace('_', ' '))
