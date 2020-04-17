@@ -199,7 +199,6 @@ client.on('message', message => {
                     HttpInfo.send();
                     HttpInfo.onload = function (e) {
                         let gameInfo = JSON.parse(HttpInfo.responseText)
-                        // console.log(gameInfo)
                         let participantsIdentities = gameInfo.participantIdentities
                         let summonerParticipantId = 0
                         for (let i = 0; i < participantsIdentities.length; i++) {
