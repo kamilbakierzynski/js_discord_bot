@@ -45,6 +45,12 @@ function convertSecondsToTime(time) {
     return `${mins}:${secs}`
 }
 
+var app = express();
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Our app is running on port ${ PORT }`);
+});
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
@@ -124,6 +130,9 @@ client.on('message', message => {
                         .setFooter('League of Legends');
         
                         message.channel.send(exampleEmbed);
+                    }
+                    if (dataRank.length == 0) {
+                        message.channel.send(data.name + "level " + data.summonerLevel)
                     }
                 }
             }
@@ -245,11 +254,6 @@ client.on('message', message => {
         }
     }
 
-});
-
-const app = new express();
-app.get('/', function(request, response){
-    response.sendFile('index.html');
 });
 
 // 2ApDM6cMhZ-WwybonYzLj-iEcwbvEZUzJ1NVcq3QmkqMyQ
