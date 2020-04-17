@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "main": "bot.js",
   "scripts": {
-    "start": "npm start -Dserver.port=$PORT"
+    "start": "node bot.js"
   },
   "engines": {
     "node": "12.x",
