@@ -217,20 +217,18 @@ client.on('message', message => {
                         }
                         console.log(participantData)
                         let championName = champs.readChampion(participantData.championId)
+                        const stats = `${participantData.stats.kills}/${participantData.stats.deaths}/${participantData.stats.assists}`;
                         const exampleEmbed = new Discord.MessageEmbed()
                         .setColor('#0099ff')
-                        .setTitle(`Last ${summonerName}'s game`)
-                        .setAuthor('Game Data')
+                        .setTitle(`as **${championName}**`)
+                        .setAuthor(`Last ${summonerName}'s game`)
                         .setDescription(convertGameStatus(participantData.stats.win))
                         .addFields(
                             { name: 'Duration', value: convertSecondsToTime(gameInfo.gameDuration), inline: false},
-                            { name: 'Kills', value: participantData.stats.kills, inline: true},
-                            { name: 'Deaths', value: participantData.stats.deaths, inline: true},
-                            { name: 'Assists', value: participantData.stats.assists, inline: true},
+                            { name: 'Stats', value: stats, inline: true},
                             { name: 'Creeps', value: participantData.stats.totalMinionsKilled, inline: true},
                             { name: 'Role', value: participantData.timeline.role.replace('_', ' '), inline: true},
                             { name: 'Lane', value: participantData.timeline.lane, inline: true},
-                            { name: 'Champion', value: championName, inline: true},
                             { name: 'Longest time spent living', value: convertSecondsToTime(participantData.stats.longestTimeSpentLiving), inline: true},
                             { name: 'Largest killing spree', value: participantData.stats.largestKillingSpree, inline: true},
                             { name: 'Stats link', value: `https://app.mobalytics.gg/post-game/eune/${summonerName.replace(' ', '%20')}/${gameId}`}
