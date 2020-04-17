@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 require('dotenv').config()
+const express = require('express')
 const client = new Discord.Client();
 const { Client, MessageEmbed } = require('discord.js');
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
@@ -247,6 +248,10 @@ client.on('message', message => {
 });
 
 
+express.get('/', async (req, res) => {
+    console.log('PINGED!')
+    res.render('pages/index')
+  })
 
 // 2ApDM6cMhZ-WwybonYzLj-iEcwbvEZUzJ1NVcq3QmkqMyQ
 
