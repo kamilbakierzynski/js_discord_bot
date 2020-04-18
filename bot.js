@@ -179,7 +179,7 @@ client.on('message', message => {
                             .setFooter('League of Legends');
 
                         if (rankedData.hasOwnProperty('miniSeries')) {
-                            exampleEmbed.addField('Series', )
+                            exampleEmbed.addField('Series', formatSeries(data.miniSeries))
                         }
 
                         message.channel.send(exampleEmbed);
@@ -350,7 +350,7 @@ client.on('message', message => {
                         }
                         const exampleEmbed = new Discord.MessageEmbed()
                             .setColor('#0099ff')
-                            .setTitle(`${summonerName} in game as ${champion}`)
+                            .setTitle(`${summonerName} in game as ${champs.readChampion(champion)}`)
                             .addFields(
                                 { name: "For", value: convertSecondsToTime(liveGameData.gameLength) },
                                 { name: 'Stats link', value: `https://porofessor.gg/pl/live/eune/${summonerName.replace(' ', '%20')}`}
