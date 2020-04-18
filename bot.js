@@ -37,7 +37,7 @@ function convertGameStatus(string) {
 }
 
 function convertSecondsToTime(time) {
-    let mins = Math.floor(time/60)
+    let mins = Math.floor(time / 60)
     let secs = time - mins * 60
     if (secs < 10) {
         secs = `0${secs}`
@@ -57,9 +57,9 @@ var app = express();
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Our app is running on port ${ PORT }`);
+    console.log(`Our app is running on port ${PORT}`);
 });
-app.get('/', function(req, res) {
+app.get('/', function (req, res) {
     res.send('SERVER UP!');
 });
 
@@ -77,7 +77,7 @@ client.on('message', message => {
     console.log(message.content)
 
     if (checkPrefix(message, 'help')) {
-        message.reply('shorten, summoner, lastgame.')
+        message.reply('shorten, summoner, lastgame, rotation, livegame.')
     }
 
     if (checkPrefix(message, 'shorten')) {
@@ -86,19 +86,20 @@ client.on('message', message => {
         message.delete()
         const urlLink = message.content.split(' ')[1]
         message.channel.send(`Preparing short link for ${urlLink}`).then(msg => {
-        const url = `https://api.shrtco.de/v2/shorten?url=${urlLink}`;
-        Http.open("GET", url);
-        Http.send();
-        Http.onload = function (e) {
-            let data = JSON.parse(Http.responseText)
-            msg.delete()
-            if (data.ok) {
-                message.reply("Here is your short link " + data.result.full_short_link)
-            } else {
-                message.reply('there was an error.')
+            const url = `https://api.shrtco.de/v2/shorten?url=${urlLink}`;
+            Http.open("GET", url);
+            Http.send();
+            Http.onload = function (e) {
+                let data = JSON.parse(Http.responseText)
+                msg.delete()
+                if (data.ok) {
+                    message.reply("Here is your short link " + data.result.full_short_link)
+                } else {
+                    message.reply('there was an error.')
+                }
             }
-        }})
-        
+        })
+
     }
     if (checkPrefix(message, 'summoner')) {
         const Http = new XMLHttpRequest();
@@ -129,23 +130,23 @@ client.on('message', message => {
                         let rankedData = dataRank[i]
                         const winRatio = (rankedData.wins / (rankedData.wins + rankedData.losses));
                         let exampleEmbed = new Discord.MessageEmbed()
-                        .setColor('#0099ff')
-                        .setTitle(data.name)
-                        .setAuthor(rankedData.queueType.replace('_', ' '))
-                        .setThumbnail(`http://ddragon.leagueoflegends.com/cdn/10.8.1/img/profileicon/${data.profileIconId}.png`)
-                        .addFields(
-                            { name: 'Tier', value: rankedData.tier, inline: true},
-                            { name: 'Rank', value: rankedData.rank, inline: true},
-                            { name: 'Leaugue points', value: rankedData.leaguePoints, inline: true},
-                            { name: 'Wins', value: rankedData.wins, inline: true},
-                            { name: 'Losses', value: rankedData.losses, inline: true},
-                            { name: 'Win ratio', value: winRatio + "%", inline: true},
-                        )
-                        .attachFiles([`./ranked-emblems/${rankedData.tier}.png`])
-                        .setImage(`attachment://${rankedData.tier}.png`)
-                        .setTimestamp()
-                        .setFooter('League of Legends');
-        
+                            .setColor('#0099ff')
+                            .setTitle(data.name)
+                            .setAuthor(rankedData.queueType.replace('_', ' '))
+                            .setThumbnail(`http://ddragon.leagueoflegends.com/cdn/10.8.1/img/profileicon/${data.profileIconId}.png`)
+                            .addFields(
+                                { name: 'Tier', value: rankedData.tier, inline: true },
+                                { name: 'Rank', value: rankedData.rank, inline: true },
+                                { name: 'Leaugue points', value: rankedData.leaguePoints, inline: true },
+                                { name: 'Wins', value: rankedData.wins, inline: true },
+                                { name: 'Losses', value: rankedData.losses, inline: true },
+                                { name: 'Win ratio', value: winRatio + "%", inline: true },
+                            )
+                            .attachFiles([`./ranked-emblems/${rankedData.tier}.png`])
+                            .setImage(`attachment://${rankedData.tier}.png`)
+                            .setTimestamp()
+                            .setFooter('League of Legends');
+
                         message.channel.send(exampleEmbed);
                     }
                     if (dataRank.length == 0) {
@@ -178,20 +179,20 @@ client.on('message', message => {
                 lastIncidentFormat = 'No incidents'
             }
             const exampleEmbed = new Discord.MessageEmbed()
-                    .setColor('#0099ff')
-                    .setTitle(data.name)
-                    .setAuthor('SERVER STATUS INFO')
-                    .addFields(
-                        { name: services[0].name, value: capitalize(services[0].status + checkStatus(services[0].status))},
-                        { name: services[1].name, value: capitalize(services[1].status + checkStatus(services[1].status))},
-                        { name: services[2].name, value: capitalize(services[2].status + checkStatus(services[2].status))},
-                        { name: services[3].name, value: capitalize(services[3].status + checkStatus(services[3].status))},
-                    )
-                    .addField('Last incident', lastIncidentFormat)
-                    .setTimestamp()
-                    .setFooter('League of Legends');
-    
-                message.channel.send(exampleEmbed);
+                .setColor('#0099ff')
+                .setTitle(data.name)
+                .setAuthor('SERVER STATUS INFO')
+                .addFields(
+                    { name: services[0].name, value: capitalize(services[0].status + checkStatus(services[0].status)) },
+                    { name: services[1].name, value: capitalize(services[1].status + checkStatus(services[1].status)) },
+                    { name: services[2].name, value: capitalize(services[2].status + checkStatus(services[2].status)) },
+                    { name: services[3].name, value: capitalize(services[3].status + checkStatus(services[3].status)) },
+                )
+                .addField('Last incident', lastIncidentFormat)
+                .setTimestamp()
+                .setFooter('League of Legends');
+
+            message.channel.send(exampleEmbed);
         }
     }
 
@@ -244,34 +245,83 @@ client.on('message', message => {
                         let championName = champs.readChampion(participantData.championId)
                         const stats = `${participantData.stats.kills}/${participantData.stats.deaths}/${participantData.stats.assists}`;
                         const exampleEmbed = new Discord.MessageEmbed()
-                        .setColor('#0099ff')
-                        .setTitle(`as **${championName}** (${participantData.stats.champLevel}lvl)`)
-                        .setAuthor(`Last ${summonerName}'s game`)
-                        .setThumbnail(`http://ddragon.leagueoflegends.com/cdn/10.8.1/img/profileicon/${data.profileIconId}.png`)
-                        .setDescription(convertGameStatus(participantData.stats.win))
-                        .addFields(
-                            { name: 'Duration', value: convertSecondsToTime(gameInfo.gameDuration), inline: false},
-                            { name: 'Stats', value: stats, inline: true},
-                            { name: 'Creeps', value: participantData.stats.totalMinionsKilled + participantData.stats.neutralMinionsKilled, inline: true},
-                            { name: 'Role', value: participantData.timeline.role.replace('_', ' '), inline: true},
-                            { name: 'Lane', value: participantData.timeline.lane, inline: true},
-                            { name: 'Longest time spent living', value: convertSecondsToTime(participantData.stats.longestTimeSpentLiving), inline: true},
-                            { name: 'Largest killing spree', value: participantData.stats.largestKillingSpree, inline: true},
-                            { name: 'Largest multi kill', value: participantData.stats.largestMultiKill, inline: true},
-                            { name: 'Total damage dealt', value: participantData.stats.totalDamageDealt, inline: true},
-                            { name: 'Gold earned', value: participantData.stats.goldEarned, inline: true},
-                            { name: 'Wards (placed/destroyed)', value: participantData.stats.wardsPlaced + "/" + participantData.stats.wardsKilled, inline: true},
-                            { name: 'Vision score', value: participantData.stats.visionScore, inline: true},
-                            { name: 'First blood', value: participantData.stats.firstBloodKill, inline: true},
-                            { name: 'Stats link', value: `https://app.mobalytics.gg/post-game/eune/${summonerName.replace(' ', '%20')}/${gameId}`}
-                        )
-                        .setTimestamp(gameInfo.gameCreation)
-                        .setImage(`http://ddragon.leagueoflegends.com/cdn/10.8.1/img/champion/${championName.replace(' ', '')}.png`)
-                        .setFooter('League of Legends');
-    
+                            .setColor('#0099ff')
+                            .setTitle(`as **${championName}** (${participantData.stats.champLevel}lvl)`)
+                            .setAuthor(`Last ${summonerName}'s game`)
+                            .setThumbnail(`http://ddragon.leagueoflegends.com/cdn/10.8.1/img/profileicon/${data.profileIconId}.png`)
+                            .setDescription(convertGameStatus(participantData.stats.win))
+                            .addFields(
+                                { name: 'Duration', value: convertSecondsToTime(gameInfo.gameDuration), inline: false },
+                                { name: 'Stats', value: stats, inline: true },
+                                { name: 'Creeps', value: participantData.stats.totalMinionsKilled + participantData.stats.neutralMinionsKilled, inline: true },
+                                { name: 'Role', value: participantData.timeline.role.replace('_', ' '), inline: true },
+                                { name: 'Lane', value: participantData.timeline.lane, inline: true },
+                                { name: 'Longest time spent living', value: convertSecondsToTime(participantData.stats.longestTimeSpentLiving), inline: true },
+                                { name: 'Largest killing spree', value: participantData.stats.largestKillingSpree, inline: true },
+                                { name: 'Largest multi kill', value: participantData.stats.largestMultiKill, inline: true },
+                                { name: 'Total damage dealt', value: participantData.stats.totalDamageDealt, inline: true },
+                                { name: 'Gold earned', value: participantData.stats.goldEarned, inline: true },
+                                { name: 'Wards (placed/destroyed)', value: participantData.stats.wardsPlaced + "/" + participantData.stats.wardsKilled, inline: true },
+                                { name: 'Vision score', value: participantData.stats.visionScore, inline: true },
+                                { name: 'First blood', value: participantData.stats.firstBloodKill, inline: true },
+                                { name: 'Stats link', value: `https://app.mobalytics.gg/post-game/eune/${summonerName.replace(' ', '%20')}/${gameId}` }
+                            )
+                            .setTimestamp(gameInfo.gameCreation)
+                            .setImage(`http://ddragon.leagueoflegends.com/cdn/10.8.1/img/champion/${championName.replace(' ', '')}.png`)
+                            .setFooter('League of Legends');
+
                         message.channel.send(exampleEmbed);
-                    
+
+                    }
                 }
+            }
+        }
+    }
+
+    if (checkPrefix(message, 'livegame')) {
+        const Http = new XMLHttpRequest();
+        Http.responseType = 'json';
+        let name = message.content.slice('!livegame '.length).toLowerCase()
+        name = name.replace(' ', '%20')
+        console.log(name)
+        const url = `https://eun1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${name}?api_key=${riotApiKey}`
+        Http.open("GET", url);
+        Http.send();
+        Http.onload = function (e) {
+            let data = JSON.parse(Http.responseText)
+            if (data.hasOwnProperty('status')) {
+                message.reply(data.status.message.toLowerCase())
+                console.log('error')
+            } else {
+                const HttpGame = new XMLHttpRequest();
+                HttpGame.responseType = 'json';
+                const summonerId = data.accountId
+                const summonerName = data.name
+                const gameUrl = `https://eun1.api.riotgames.com/lol/spectator/v4/active-games/by-summoner/${summonerId}?api_key=${riotApiKey}`
+                HttpGame.open("GET", gameUrl);
+                HttpGame.send();
+                HttpGame.onload = function (e) {
+                    if (data.hasOwnProperty('status')) {
+                        message.channel.send(`${summonerName} not in game.`)
+                    } else {
+                        let liveGameData = JSON.parse(HttpGame.responseText);
+                        let champion = 0;
+                        for (let i = 0; i < liveGameData.participants.length; i++) {
+                            if (liveGameData.participants[i].summonerId == summonerId) {
+                                championId = liveGameData.participants[i].championId
+                            }
+                        }
+                        const exampleEmbed = new Discord.MessageEmbed()
+                            .setColor('#0099ff')
+                            .setTitle(`${summonerName} in game as ${champion}`)
+                            .addFields(
+                                { name: "For", value: convertSecondsToTime(liveGameData.gameLength) },
+                            )
+                            .setTimestamp(liveGameData.gameStartTime)
+                            .setFooter('League of Legends');
+
+                        message.channel.send(exampleEmbed);
+                    }
                 }
             }
         }
@@ -286,13 +336,13 @@ client.on('message', message => {
         HttpRotation.onload = function (e) {
             let rotationInfo = JSON.parse(HttpRotation.responseText)
             const exampleEmbed = new Discord.MessageEmbed()
-                    .setColor('#0099ff')
-                    .setTitle('Free champions')
-                    .setAuthor('Ziewamy Blacha')
-                    .addField('Free champions this week', formatRotation(rotationInfo.freeChampionIds))
-                    .setTimestamp()
-                    .setFooter('League of Legends');
-    
+                .setColor('#0099ff')
+                .setTitle('Free champions')
+                .setAuthor('Ziewamy Blacha')
+                .addField('Free champions this week', formatRotation(rotationInfo.freeChampionIds))
+                .setTimestamp()
+                .setFooter('League of Legends');
+
             message.channel.send(exampleEmbed);
         }
     }
