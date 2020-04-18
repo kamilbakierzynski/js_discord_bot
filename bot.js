@@ -314,7 +314,7 @@ client.on('message', message => {
                         let champion = 0;
                         for (let i = 0; i < liveGameData.participants.length; i++) {
                             if (liveGameData.participants[i].summonerId == summonerId) {
-                                championId = liveGameData.participants[i].championId
+                                champion = liveGameData.participants[i].championId
                             }
                         }
                         const exampleEmbed = new Discord.MessageEmbed()
@@ -322,6 +322,7 @@ client.on('message', message => {
                             .setTitle(`${summonerName} in game as ${champion}`)
                             .addFields(
                                 { name: "For", value: convertSecondsToTime(liveGameData.gameLength) },
+                                { name: 'Stats link', value: `https://porofessor.gg/pl/live/eune/${summonerName.replace(' ', '%20')}`}
                             )
                             .setTimestamp(liveGameData.gameStartTime)
                             .setFooter('League of Legends');
