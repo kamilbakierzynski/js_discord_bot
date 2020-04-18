@@ -64,22 +64,16 @@ function formatSeries(data) {
     const progress = data.progress
     console.log(progress)
 
-    if (target == 2) {
-        target = 3
-    } else if (target == 3) {
-        target = 5
+    for (let i = 0; i < progress.length; i++) {
+        if (progress[i] == 'W') {
+            output += "✅ "
+        } else if (progress[i] == 'L') {
+            output += "❌ "
+        } else if (progress[i] == 'N') {
+            output += "- "
+        }
     }
 
-    let output = '';
-    for (let i = 0; i < wins; i++) {
-        output += "✔️ "
-    }
-    for (let i = 0; i < losses; i++) {
-        output += '❌ '
-    }
-    for (let i = 0; i < (target - (wins + losses)); i++) {
-        output += "- "
-    }
     return output
 }
 
