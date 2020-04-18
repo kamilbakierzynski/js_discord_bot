@@ -50,6 +50,7 @@ function formatRotation(arr) {
     for (let i = 0; i < arr.length; i++) {
         output += `${champs.readChampion(arr[i])}\n`
     }
+    return output
 }
 
 var app = express();
