@@ -29,10 +29,10 @@ function checkStatus(string) {
 }
 
 function convertGameStatus(string) {
-    if (string == 'false') {
-        return 'LOSE ❌'
-    } else {
+    if (string) {
         return 'WIN ✅'
+    } else {
+        return 'LOSE ❌'
     }
 }
 
@@ -260,6 +260,7 @@ client.on('message', message => {
                                 { name: 'Largest killing spree', value: participantData.stats.largestKillingSpree, inline: true },
                                 { name: 'Largest multi kill', value: participantData.stats.largestMultiKill, inline: true },
                                 { name: 'Total damage dealt', value: participantData.stats.totalDamageDealt, inline: true },
+                                { name: 'Total damage taken', value: participantData.stats.totalDamageTaken, inline: true },
                                 { name: 'Gold earned', value: participantData.stats.goldEarned, inline: true },
                                 { name: 'Wards (placed/destroyed)', value: participantData.stats.wardsPlaced + "/" + participantData.stats.wardsKilled, inline: true },
                                 { name: 'Vision score', value: participantData.stats.visionScore, inline: true },
@@ -302,7 +303,7 @@ client.on('message', message => {
                 HttpGame.send();
                 HttpGame.onload = function (e) {
                     let liveGameData = JSON.parse(HttpGame.responseText);
-                    if (liveGameData.hasOwnProperty('status')) {
+                    if (!liveGameData.hasOwnProperty('gameId')) {
                         message.channel.send(`${summonerName} not in game.`)
                     } else {
                         let champion = 0;
