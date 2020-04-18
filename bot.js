@@ -179,7 +179,7 @@ client.on('message', message => {
                             .setFooter('League of Legends');
 
                         if (rankedData.hasOwnProperty('miniSeries')) {
-                            exampleEmbed.addField('Series', formatSeries(data.miniSeries))
+                            exampleEmbed.addField('Series', formatSeries(rankedData.miniSeries))
                         }
 
                         message.channel.send(exampleEmbed);
@@ -355,6 +355,7 @@ client.on('message', message => {
                                 { name: "For", value: convertSecondsToTime(liveGameData.gameLength) },
                                 { name: 'Stats link', value: `https://porofessor.gg/pl/live/eune/${summonerName.replace(' ', '%20')}`}
                             )
+                            .setImage(`http://ddragon.leagueoflegends.com/cdn/10.8.1/img/champion/${champs.readChampion(champion).replace(' ', '')}.png`)
                             .setTimestamp(liveGameData.gameStartTime)
                             .setFooter('League of Legends');
 
