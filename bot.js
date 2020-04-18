@@ -59,7 +59,7 @@ function formatRotation(arr) {
 
 function formatSeries(data) {
     const wins = data.wins
-    const target = data.target
+    let target = data.target
     const losses = data.losses
     const progress = data.progress
     console.log(progress)
