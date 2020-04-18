@@ -57,6 +57,32 @@ function formatRotation(arr) {
     }
 }
 
+function formatSeries(data) {
+    const wins = data.wins
+    const target = data.target
+    const losses = data.losses
+    const progress = data.progress
+    console.log(progress)
+
+    if (target == 2) {
+        target = 3
+    } else if (target == 3) {
+        target = 5
+    }
+
+    let output = '';
+    for (let i = 0; i < wins; i++) {
+        output += "✔️ "
+    }
+    for (let i = 0; i < losses; i++) {
+        output += '❌ '
+    }
+    for (let i = 0; i < (target - (wins + losses)); i++) {
+        output += "- "
+    }
+    return output
+}
+
 var app = express();
 
 const PORT = process.env.PORT || 3000;
@@ -135,7 +161,7 @@ client.on('message', message => {
                         const winRatio = (rankedData.wins / (rankedData.wins + rankedData.losses));
                         let exampleEmbed = new Discord.MessageEmbed()
                             .setColor('#0099ff')
-                            .setTitle(data.name)
+                            .setTitle(data.name + " | " + `${data.summonerLevel} lvl`)
                             .setAuthor(rankedData.queueType.replace('_', ' '))
                             .setThumbnail(`http://ddragon.leagueoflegends.com/cdn/10.8.1/img/profileicon/${data.profileIconId}.png`)
                             .addFields(
@@ -145,11 +171,16 @@ client.on('message', message => {
                                 { name: 'Wins', value: rankedData.wins, inline: true },
                                 { name: 'Losses', value: rankedData.losses, inline: true },
                                 { name: 'Win ratio', value: (winRatio * 100).toFixed(2) + "%", inline: true },
+                                { name: 'Stats link', value: `https://www.leagueofgraphs.com/pl/summoner/eune/${data.name.replace(' ', '%20')}`, inline: true }
                             )
                             .attachFiles([`./ranked-emblems/${rankedData.tier}.png`])
                             .setImage(`attachment://${rankedData.tier}.png`)
                             .setTimestamp()
                             .setFooter('League of Legends');
+
+                        if (rankedData.hasOwnProperty('miniSeries')) {
+                            exampleEmbed.addField('Series', )
+                        }
 
                         message.channel.send(exampleEmbed);
                     }
