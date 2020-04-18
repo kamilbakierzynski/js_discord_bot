@@ -140,7 +140,7 @@ client.on('message', message => {
                                 { name: 'Leaugue points', value: rankedData.leaguePoints, inline: true },
                                 { name: 'Wins', value: rankedData.wins, inline: true },
                                 { name: 'Losses', value: rankedData.losses, inline: true },
-                                { name: 'Win ratio', value: winRatio + "%", inline: true },
+                                { name: 'Win ratio', value: (winRatio * 100).toFixed(2) + "%", inline: true },
                             )
                             .attachFiles([`./ranked-emblems/${rankedData.tier}.png`])
                             .setImage(`attachment://${rankedData.tier}.png`)
@@ -301,10 +301,10 @@ client.on('message', message => {
                 HttpGame.open("GET", gameUrl);
                 HttpGame.send();
                 HttpGame.onload = function (e) {
-                    if (data.hasOwnProperty('status')) {
+                    let liveGameData = JSON.parse(HttpGame.responseText);
+                    if (liveGameData.hasOwnProperty('status')) {
                         message.channel.send(`${summonerName} not in game.`)
                     } else {
-                        let liveGameData = JSON.parse(HttpGame.responseText);
                         let champion = 0;
                         for (let i = 0; i < liveGameData.participants.length; i++) {
                             if (liveGameData.participants[i].summonerId == summonerId) {
