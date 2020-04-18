@@ -47,10 +47,14 @@ function convertSecondsToTime(time) {
 
 function formatRotation(arr) {
     let output = ''
-    for (let i = 0; i < arr.length; i++) {
-        output += `${champs.readChampion(arr[i])}\n`
+    if (isNaN(arr)) {
+        return 'Error passing data'
+    } else {
+        for (let i = 0; i < arr.length; i++) {
+            output += `${champs.readChampion(arr[i])}\n`
+        }
+        return output
     }
-    return output
 }
 
 var app = express();
@@ -150,7 +154,7 @@ client.on('message', message => {
                         message.channel.send(exampleEmbed);
                     }
                     if (dataRank.length == 0) {
-                        message.channel.send(data.name + "level " + data.summonerLevel)
+                        message.channel.send(data.name + " | level " + data.summonerLevel)
                     }
                 }
             }
@@ -296,14 +300,15 @@ client.on('message', message => {
             } else {
                 const HttpGame = new XMLHttpRequest();
                 HttpGame.responseType = 'json';
-                const summonerId = data.accountId
+                const summonerId = data.id
                 const summonerName = data.name
                 const gameUrl = `https://eun1.api.riotgames.com/lol/spectator/v4/active-games/by-summoner/${summonerId}?api_key=${riotApiKey}`
                 HttpGame.open("GET", gameUrl);
                 HttpGame.send();
                 HttpGame.onload = function (e) {
                     let liveGameData = JSON.parse(HttpGame.responseText);
-                    if (!liveGameData.hasOwnProperty('gameId')) {
+                    console.log(liveGameData)
+                    if (liveGameData.hasOwnProperty('status')) {
                         message.channel.send(`${summonerName} not in game.`)
                     } else {
                         let champion = 0;
