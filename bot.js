@@ -64,6 +64,8 @@ function formatSeries(data) {
     const progress = data.progress
     console.log(progress)
 
+    let output = '';
+    
     for (let i = 0; i < progress.length; i++) {
         if (progress[i] == 'W') {
             output += "✅ "
