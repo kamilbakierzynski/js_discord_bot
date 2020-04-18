@@ -283,12 +283,12 @@ client.on('message', message => {
         HttpRotation.open("GET", rotationUrl);
         HttpRotation.send();
         HttpRotation.onload = function (e) {
-            let rotationInfo = JSON.parse(HttpRotation.responseText).freeChampionsIds
+            let rotationInfo = JSON.parse(HttpRotation.responseText)
             const exampleEmbed = new Discord.MessageEmbed()
                     .setColor('#0099ff')
                     .setTitle('Free champions')
                     .setAuthor('Ziewamy Blacha')
-                    .addField('Free champions this week', formatRotation(rotationInfo))
+                    .addField('Free champions this week', formatRotation(rotationInfo.freeChampionIds))
                     .setTimestamp()
                     .setFooter('League of Legends');
     
