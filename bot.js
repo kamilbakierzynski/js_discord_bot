@@ -172,7 +172,7 @@ client.on('message', message => {
             const exampleEmbed = new Discord.MessageEmbed()
                     .setColor('#0099ff')
                     .setTitle(data.name)
-                    .setAuthor('**SERVER STATUS INFO**')
+                    .setAuthor(' **SERVER STATUS INFO** ')
                     .addFields(
                         { name: services[0].name, value: capitalize(services[0].status + checkStatus(services[0].status))},
                         { name: services[1].name, value: capitalize(services[1].status + checkStatus(services[1].status))},
@@ -238,7 +238,7 @@ client.on('message', message => {
                         const exampleEmbed = new Discord.MessageEmbed()
                         .setColor('#0099ff')
                         .setTitle(`as **${championName}** (${participantData.stats.champLevel}lvl)`)
-                        .setAuthor(`Last **${summonerName}**'s game`)
+                        .setAuthor(`Last **${summonerName}** 's game`)
                         .setThumbnail(`http://ddragon.leagueoflegends.com/cdn/10.8.1/img/profileicon/${data.profileIconId}.png`)
                         .setDescription(convertGameStatus(participantData.stats.win))
                         .addFields(
