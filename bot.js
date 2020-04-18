@@ -6,7 +6,7 @@ const { Client, MessageEmbed } = require('discord.js');
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 const champs = require('./champions_read.js')
 
-const prefix = "!";
+const prefix = process.env.PREFIX;
 const riotApiKey = process.env.RIOT_API_KEY
 
 function checkPrefix(msg, command) {
@@ -47,6 +47,7 @@ function convertSecondsToTime(time) {
 
 function formatRotation(arr) {
     let output = ''
+    console.log(arr)
     if (isNaN(arr)) {
         return 'Error passing data'
     } else {
@@ -65,7 +66,7 @@ function formatSeries(data) {
     console.log(progress)
 
     let output = '';
-    
+
     for (let i = 0; i < progress.length; i++) {
         if (progress[i] == 'W') {
             output += "✅ "
