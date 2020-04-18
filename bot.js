@@ -45,6 +45,13 @@ function convertSecondsToTime(time) {
     return `${mins}:${secs}`
 }
 
+function formatRotation(arr) {
+    let output = ''
+    for (let i = 0; i < arr.length; i++) {
+        output += `${champs.readChampion(arr[i])}\n`
+    }
+}
+
 var app = express();
 
 const PORT = process.env.PORT || 3000;
@@ -96,7 +103,7 @@ client.on('message', message => {
         const Http = new XMLHttpRequest();
         Http.responseType = 'json';
         let name = message.content.slice('!summoner '.length).toLowerCase()
-        message.channel.send('Getting data for ' + name)
+        // message.channel.send('Getting data for ' + name)
         name = name.replace(' ', '%20')
         console.log(name)
         const url = `https://eun1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${name}?api_key=${riotApiKey}`
@@ -119,7 +126,7 @@ client.on('message', message => {
                     let dataRank = JSON.parse(HttpRank.responseText)
                     for (let i = 0; i < dataRank.length; i++) {
                         let rankedData = dataRank[i]
-                        const winRatio = (rankedData.win / (rankedData.win + rankedData.losses));
+                        const winRatio = (rankedData.wins / (rankedData.wins + rankedData.losses));
                         let exampleEmbed = new Discord.MessageEmbed()
                         .setColor('#0099ff')
                         .setTitle(data.name)
@@ -172,7 +179,7 @@ client.on('message', message => {
             const exampleEmbed = new Discord.MessageEmbed()
                     .setColor('#0099ff')
                     .setTitle(data.name)
-                    .setAuthor(' **SERVER STATUS INFO** ')
+                    .setAuthor('SERVER STATUS INFO')
                     .addFields(
                         { name: services[0].name, value: capitalize(services[0].status + checkStatus(services[0].status))},
                         { name: services[1].name, value: capitalize(services[1].status + checkStatus(services[1].status))},
@@ -238,7 +245,7 @@ client.on('message', message => {
                         const exampleEmbed = new Discord.MessageEmbed()
                         .setColor('#0099ff')
                         .setTitle(`as **${championName}** (${participantData.stats.champLevel}lvl)`)
-                        .setAuthor(`Last **${summonerName}** 's game`)
+                        .setAuthor(`Last ${summonerName}'s game`)
                         .setThumbnail(`http://ddragon.leagueoflegends.com/cdn/10.8.1/img/profileicon/${data.profileIconId}.png`)
                         .setDescription(convertGameStatus(participantData.stats.win))
                         .addFields(
@@ -266,6 +273,26 @@ client.on('message', message => {
                 }
                 }
             }
+        }
+    }
+
+    if (checkPrefix(message, 'rotation')) {
+        const HttpRotation = new XMLHttpRequest();
+        HttpRotation.responseType = 'json';
+        const rotationUrl = `https://eun1.api.riotgames.com/lol/platform/v3/champion-rotations?api_key=${riotApiKey}`
+        HttpRotation.open("GET", rotationUrl);
+        HttpRotation.send();
+        HttpRotation.onload = function (e) {
+            let rotationInfo = JSON.parse(HttpRotation.responseText).freeChampionsIds
+            const exampleEmbed = new Discord.MessageEmbed()
+                    .setColor('#0099ff')
+                    .setTitle('Free champions')
+                    .setAuthor('Ziewamy Blacha')
+                    .addField('Free champions this week', formatRotation(rotationInfo))
+                    .setTimestamp()
+                    .setFooter('League of Legends');
+    
+            message.channel.send(exampleEmbed);
         }
     }
 
