@@ -254,6 +254,7 @@ client.on('message', message => {
                     let gameData = JSON.parse(HttpGame.responseText)
                     if (gameData.hasOwnProperty("matches")) {
                         let gameId = gameData.matches[0].gameId
+                        console.log("Getting data about game: " + gameId)
                         const HttpInfo = new XMLHttpRequest();
                         HttpInfo.responseType = 'json';
                         const gameInfoUrl = `https://eun1.api.riotgames.com/lol/match/v4/matches/${gameId}?api_key=${riotApiKey}`
@@ -284,23 +285,23 @@ client.on('message', message => {
                                 .setThumbnail(`http://ddragon.leagueoflegends.com/cdn/10.8.1/img/profileicon/${data.profileIconId}.png`)
                                 .setDescription(convertGameStatus(participantData.stats.win))
                                 .addFields(
-                                    { name: 'Duration', value: convertSecondsToTime(gameInfo.gameDuration), inline: false },
+                                    { name: 'Duration', value: convertSecondsToTime(gameInfo.gameDuration) || "❔", inline: false },
                                     { name: 'Stats', value: stats, inline: true },
-                                    { name: 'Creeps', value: participantData.stats.totalMinionsKilled + participantData.stats.neutralMinionsKilled, inline: true },
-                                    { name: 'Role', value: participantData.timeline.role.replace('_', ' '), inline: true },
-                                    { name: 'Lane', value: participantData.timeline.lane, inline: true },
-                                    { name: 'Longest time spent living', value: convertSecondsToTime(participantData.stats.longestTimeSpentLiving), inline: true },
-                                    { name: 'Largest killing spree', value: participantData.stats.largestKillingSpree, inline: true },
-                                    { name: 'Largest multi kill', value: participantData.stats.largestMultiKill, inline: true },
-                                    { name: 'Total damage dealt', value: participantData.stats.totalDamageDealt, inline: true },
-                                    { name: 'Total damage taken', value: participantData.stats.totalDamageTaken, inline: true },
-                                    { name: 'Gold earned', value: participantData.stats.goldEarned, inline: true },
-                                    { name: 'Wards (placed/destroyed)', value: participantData.stats.wardsPlaced + "/" + participantData.stats.wardsKilled, inline: true },
-                                    { name: 'Vision score', value: participantData.stats.visionScore, inline: true },
-                                    { name: 'First blood', value: participantData.stats.firstBloodKill, inline: true },
+                                    { name: 'Creeps', value: participantData.stats.totalMinionsKilled + participantData.stats.neutralMinionsKilled || "❔", inline: true },
+                                    { name: 'Role', value: participantData.timeline.role.replace('_', ' ') || "❔", inline: true },
+                                    { name: 'Lane', value: participantData.timeline.lane || "❔", inline: true },
+                                    { name: 'Longest time spent living', value: convertSecondsToTime(participantData.stats.longestTimeSpentLiving) || "❔", inline: true },
+                                    { name: 'Largest killing spree', value: participantData.stats.largestKillingSpree || "❔", inline: true },
+                                    { name: 'Largest multi kill', value: participantData.stats.largestMultiKill || "❔", inline: true },
+                                    { name: 'Total damage dealt', value: participantData.stats.totalDamageDealt || "❔", inline: true },
+                                    { name: 'Total damage taken', value: participantData.stats.totalDamageTaken || "❔", inline: true },
+                                    { name: 'Gold earned', value: participantData.stats.goldEarned || "❔", inline: true },
+                                    { name: 'Wards (placed/destroyed)', value: participantData.stats.wardsPlaced + "/" + participantData.stats.wardsKilled || "❔", inline: true },
+                                    { name: 'Vision score', value: participantData.stats.visionScore || "❔", inline: true },
+                                    { name: 'First blood', value: participantData.stats.firstBloodKill || "❔", inline: true },
                                     { name: 'Stats link', value: `https://app.mobalytics.gg/post-game/eune/${summonerName.replace(' ', '%20')}/${gameId}` }
                                 )
-                                .setTimestamp(gameInfo.gameCreation)
+                                .setTimestamp(gameInfo.gameCreation || "❔")
                                 .setImage(`http://ddragon.leagueoflegends.com/cdn/10.8.1/img/champion/${championName.replace(' ', '')}.png`)
                                 .setFooter('League of Legends');
 
@@ -312,7 +313,7 @@ client.on('message', message => {
                                     if (key.includes('Diff')) {
                                         messageEmbed.addField(key, "->", false)
                                         for (const innerKey of Object.keys(timeline[key])) {
-                                            messageEmbed.addField(capitalize(innerKey.replace(/([a-z])([A-Z])/g, '$1 $2').slice(0, -7).toLowerCase()), timeline[key][innerKey].toFixed(2), true)
+                                            messageEmbed.addField(capitalize(innerKey.replace(/([a-z])([A-Z])/g, '$1 $2').slice(0, -7).toLowerCase()), timeline[key][innerKey].toFixed(2) || "❔", true)
                                         }
                                     }
                                 }
