@@ -309,7 +309,7 @@ client.on('message', message => {
                             for (const key of Object.keys(timeline)) {
                                 console.log(key)
                                 if (key.includes('Diff')) {
-                                    messageEmbed.addField(key, "", false)
+                                    messageEmbed.addField(key, "->", false)
                                     for (const innerKey of Object.keys(timeline[key])) {
                                         messageEmbed.addField(innerKey, timeline[key][innerKey].toFixed(2), true)
                                     }
