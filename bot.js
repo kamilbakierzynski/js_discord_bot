@@ -311,7 +311,7 @@ client.on('message', message => {
                                 if (key.includes('Diff')) {
                                     messageEmbed.addField(key, "->", false)
                                     for (const innerKey of Object.keys(timeline[key])) {
-                                        messageEmbed.addField(innerKey, timeline[key][innerKey].toFixed(2), true)
+                                        messageEmbed.addField(capitalize(innerKey.replace(/([a-z])([A-Z])/g, '$1 $2').slice(0, -7).toLowerCase()), timeline[key][innerKey].toFixed(2), true)
                                     }
                                 }
                             }
