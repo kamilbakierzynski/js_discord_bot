@@ -311,10 +311,10 @@ client.on('message', message => {
                                 for (const key of Object.keys(timeline)) {
                                     console.log(key)
                                     if (key.includes('Diff')) {
-                                        messageEmbed.addField(key || "❔", "->", false)
+                                        const formatKey = key.toString().replace(/([a-z])([A-Z])/g, '$1 $2').slice(0, -7).toLowerCase()
+                                        messageEmbed.addField(capitalize(formatKey) || "❔", "->", false)
                                         for (const innerKey of Object.keys(timeline[key])) {
-                                            const formatInnerKey = innerKey.toString().replace(/([a-z])([A-Z])/g, '$1 $2').slice(0, -7).toLowerCase()
-                                            messageEmbed.addField(capitalize(formatInnerKey) || "❔", timeline[key][innerKey].toFixed(2) || "❔", true)
+                                            messageEmbed.addField(innerKey || "❔", timeline[key][innerKey].toFixed(2) || "❔", true)
                                         }
                                     }
                                 }
