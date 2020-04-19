@@ -47,7 +47,7 @@ function convertSecondsToTime(time) {
 
 function formatRotation(arr) {
     let output = ''
-    if (arr.hasOwnProperty('freeChampionIds')) {
+    if (!arr.hasOwnProperty('freeChampionIds')) {
         return 'Error getting data'
     } else {
         const championList = arr.freeChampionIds
