@@ -47,12 +47,12 @@ function convertSecondsToTime(time) {
 
 function formatRotation(arr) {
     let output = ''
-    console.log(arr)
-    if (isNaN(arr)) {
-        return 'Error passing data'
+    if (arr.hasOwnProperty('freeChampionIds')) {
+        return 'Error getting data'
     } else {
-        for (let i = 0; i < arr.length; i++) {
-            output += `${champs.readChampion(arr[i])}\n`
+        const championList = arr.freeChampionIds
+        for (let i = 0; i < championList.length; i++) {
+            output += `${champs.readChampion(championList[i])}\n`
         }
         return output
     }
@@ -375,7 +375,7 @@ client.on('message', message => {
                 .setColor('#0099ff')
                 .setTitle('Free champions')
                 .setAuthor('Ziewamy Blacha')
-                .addField('Free champions this week', formatRotation(rotationInfo.freeChampionIds))
+                .addField('Free champions this week', formatRotation(rotationInfo))
                 .setTimestamp()
                 .setFooter('League of Legends');
 
