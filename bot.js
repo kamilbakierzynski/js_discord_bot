@@ -274,9 +274,9 @@ client.on('message', message => {
                             }
                         }
                         console.log(participantData)
-                        let championName = champs.readChampion(participantData.championId)
+                        const championName = champs.readChampion(participantData.championId)
                         const stats = `${participantData.stats.kills}/${participantData.stats.deaths}/${participantData.stats.assists}`;
-                        const exampleEmbed = new Discord.MessageEmbed()
+                        const messageEmbed = new Discord.MessageEmbed()
                             .setColor('#0099ff')
                             .setTitle(`as **${championName}** (${participantData.stats.champLevel}lvl)`)
                             .setAuthor(`Last ${summonerName}'s game`)
@@ -303,7 +303,21 @@ client.on('message', message => {
                             .setImage(`http://ddragon.leagueoflegends.com/cdn/10.8.1/img/champion/${championName.replace(' ', '')}.png`)
                             .setFooter('League of Legends');
 
-                        message.channel.send(exampleEmbed);
+                        if (participantData.hasOwnProperty('timeline')) {
+                            const timeline = participantData.timeline
+
+                            for (const key of Object.keys(timeline)) {
+                                console.log(key)
+                                if (key.includes('Diff')) {
+                                    messageEmbed.addField(key, "", false)
+                                    for (const innerKey of Object.keys(timeline[key])) {
+                                        messageEmbed.addField(innerKey, timeline[key][innerKey].toFixed(2), true)
+                                    }
+                                }
+                            }
+                        }
+
+                        message.channel.send(messageEmbed);
 
                     }
                 }
