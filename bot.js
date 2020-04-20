@@ -456,36 +456,16 @@ client.on('message', message => {
                     if (name == 'E-Zigarette') {
                         exampleEmbed.setFooter("Persona non grata", 'https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/237/reversed-hand-with-middle-finger-extended_emoji-modifier-fitzpatrick-type-3_1f595-1f3fc_1f3fc.png')
                     }
-                    const lastMessageID = message.mentions.users.first().lastMessageID
-                    if (lastMessageID != null) {
-                        message.channel.messages.fetch(lastMessageID).then(msg => {
-                            const lastMessageTime = msg.createdTimestamp;
-                            exampleEmbed.addField('Ostatnia wiadomość: ', calculateTimeDiff(lastMessageTime))
-                            message.channel.send(exampleEmbed);
-                        })
-                    } else {
-                        message.channel.send(exampleEmbed);
-                    }
+                    message.channel.send(exampleEmbed);
                 } else {
                     if (message.mentions.users.first().bot) {
                         message.channel.send('Brak danych. Użytkownik ' + `${message.mentions.users.first()}` + ' jest botem. 😕');
                         return;
+                    } else if (name == 'E-Zigarette') {
+                        message.channel.send('🖕🏼⛔')
+                    } else {
+                        message.channel.send('Brak danych o ' + `${message.mentions.users.first()}` + ' 😕');
                     }
-                    // message.channel.send('Sorry no data about ' + `${message.mentions.users.first()}` + ' 😕');
-                    const lastMessageID = message.mentions.users.first().lastMessageID
-                    message.channel.messages.fetch(lastMessageID).then(msg => {
-                        const lastMessageTime = msg.createdTimestamp;
-                        const exampleEmbed = new Discord.MessageEmbed()
-                            .setColor('#0099ff')
-                            .setTitle(name + ' ostatnia wiadomość:')
-                            .setDescription(calculateTimeDiff(lastMessageTime))
-                            .setAuthor('Ziewamy Blacha')
-                            .setTimestamp(lastMessageTime);
-                    if (name == 'E-Zigarette') {
-                        exampleEmbed.setFooter("Persona non grata", 'https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/237/reversed-hand-with-middle-finger-extended_emoji-modifier-fitzpatrick-type-3_1f595-1f3fc_1f3fc.png')
-                    }
-                    message.channel.send(exampleEmbed);
-                    })
                 }
             }
         });
