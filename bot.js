@@ -309,9 +309,8 @@ client.on('message', message => {
                                 .setTitle(`as **${championName}** (${participantData.stats.champLevel}lvl)`)
                                 .setAuthor(`Last ${summonerName}'s game`)
                                 .setThumbnail(`http://ddragon.leagueoflegends.com/cdn/10.8.1/img/profileicon/${data.profileIconId}.png`)
-                                .setDescription(convertGameStatus(participantData.stats.win))
+                                .setDescription(convertGameStatus(participantData.stats.win) + " || " + convertSecondsToTime(gameInfo.gameDuration) || "❔")
                                 .addFields(
-                                    { name: 'Duration', value: convertSecondsToTime(gameInfo.gameDuration) || "❔", inline: false },
                                     { name: 'Stats', value: stats, inline: true },
                                     { name: 'Creeps', value: participantData.stats.totalMinionsKilled + participantData.stats.neutralMinionsKilled || "❔", inline: true },
                                     { name: 'Role/Lane', value: participantData.timeline.role.replace('_', ' ') + "/" + participantData.timeline.lane || "❔", inline: true },
