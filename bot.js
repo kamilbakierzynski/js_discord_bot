@@ -4,10 +4,11 @@ const express = require('express')
 const client = new Discord.Client();
 const { Client, MessageEmbed } = require('discord.js');
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
-const champs = require('./champions_read.js')
+const champs = require('./data/champions_read.js')
 
 const prefix = process.env.PREFIX;
 const riotApiKey = process.env.RIOT_API_KEY
+const rapidApiKey = process.env.RAPID_API_KEY
 
 function checkPrefix(msg, command) {
     if (msg.content.startsWith(prefix + command)) {
@@ -26,6 +27,10 @@ function checkStatus(string) {
     } else {
         return " ❌"
     }
+}
+
+function formatBoolean(string) {
+    return string ? "✅" : "❌"
 }
 
 function convertGameStatus(string) {
@@ -80,6 +85,24 @@ function formatSeries(data) {
     return output
 }
 
+function calculateTimeDiff(timeOld) {
+    var newDate = Date.now();
+    const old = new Date(timeOld);
+    const diffMs = (newDate - old);
+    const diffDays = Math.floor(diffMs / 86400000); // days
+    const diffHrs = Math.floor((diffMs % 86400000) / 3600000); // hours
+    const diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
+    return diffDays + " days, " + diffHrs + " hours, " + diffMins + " minutes"
+}
+
+function overOneDay(timeOld) {
+    var newDate = Date.now();
+    const old = new Date(timeOld);
+    const diffMs = (newDate - old);
+    const diffDays = Math.floor(diffMs / 86400000);
+    return (diffDays > 0) ? true : false
+}
+
 var app = express();
 
 const PORT = process.env.PORT || 3000;
@@ -102,9 +125,12 @@ client.on('ready', () => {
 
 client.on('message', message => {
     console.log(message.content)
+    // console.log(message.mentions.users[0])
+
+    if (message.author.bot) return;
 
     if (checkPrefix(message, 'help')) {
-        message.reply('shorten, summoner, lastgame, rotation, livegame.')
+        message.reply('shorten, summoner, lastgame, rotation, livegame, seen.')
     }
 
     if (checkPrefix(message, 'shorten')) {
@@ -231,7 +257,7 @@ client.on('message', message => {
     if (checkPrefix(message, 'lastgame')) {
         const Http = new XMLHttpRequest();
         Http.responseType = 'json';
-        let name = message.content.slice('!lastgame '.length).toLowerCase()
+        let name = message.content.slice('$lastgame '.length).toLowerCase()
         name = name.replace(' ', '%20')
         console.log(name)
         const url = `https://eun1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${name}?api_key=${riotApiKey}`
@@ -295,7 +321,7 @@ client.on('message', message => {
                                     { name: 'Gold earned', value: participantData.stats.goldEarned || "❔", inline: true },
                                     { name: 'Wards (placed/destroyed)', value: participantData.stats.wardsPlaced + "/" + participantData.stats.wardsKilled || "❔", inline: true },
                                     { name: 'Vision score', value: participantData.stats.visionScore || "❔", inline: true },
-                                    { name: 'First blood', value: participantData.stats.firstBloodKill || "❔", inline: true },
+                                    { name: 'First blood', value: formatBoolean(participantData.stats.firstBloodKill) || "❔", inline: true },
                                     { name: 'Stats link', value: `https://app.mobalytics.gg/post-game/eune/${summonerName.replace(' ', '%20')}/${gameId}` }
                                 )
                                 .setTimestamp(gameInfo.gameCreation || "❔")
@@ -332,7 +358,7 @@ client.on('message', message => {
     if (checkPrefix(message, 'livegame')) {
         const Http = new XMLHttpRequest();
         Http.responseType = 'json';
-        let name = message.content.slice('!livegame '.length).toLowerCase()
+        let name = message.content.slice('$livegame '.length).toLowerCase()
         name = name.replace(' ', '%20')
         console.log(name)
         const url = `https://eun1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${name}?api_key=${riotApiKey}`
@@ -401,8 +427,66 @@ client.on('message', message => {
         }
     }
 
+    if (checkPrefix(message, 'seen')) {
+        if (message.mentions.users.first() == undefined) {
+            message.reply('please mention a user.')
+            return
+        }
+        let data = null;
+        let dbRequest = new XMLHttpRequest();
+        dbRequest.withCredentials = true;
+        let id = message.mentions.users.first().id
+        let name = message.mentions.users.first().username
+        dbRequest.open("GET", `https://kvstore.p.rapidapi.com/collections/discord_data/items/${id}_ostatnia_wizyta`);
+        dbRequest.setRequestHeader("x-rapidapi-host", "kvstore.p.rapidapi.com");
+        dbRequest.setRequestHeader("x-rapidapi-key", rapidApiKey);
+        dbRequest.send(data);
+        dbRequest.addEventListener("readystatechange", function () {
+            if (this.readyState === this.DONE) {
+                console.log(this.responseText);
+                const dataPawel = JSON.parse(this.responseText)
+                if (!dataPawel.hasOwnProperty('status')) {
+                    const timeData = parseInt(dataPawel['value'])
+                    const exampleEmbed = new Discord.MessageEmbed()
+                        .setColor('#0099ff')
+                        .setTitle(name + ' ostatnio:')
+                        .setDescription(calculateTimeDiff(timeData))
+                        .setAuthor('Ziewamy Blacha')
+                        .setTimestamp(timeData);
+                    if (name == 'E-Zigarette') {
+                        exampleEmbed.setFooter("Persona non grata", 'https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/237/reversed-hand-with-middle-finger-extended_emoji-modifier-fitzpatrick-type-3_1f595-1f3fc_1f3fc.png')
+                    }
+                    message.channel.send(exampleEmbed);
+                } else {
+                    message.channel.send('Sorry no data about ' + `${message.mentions.users.first()}` + ' 😕');
+                }
+            }
+        });
+    }
 });
 
-// 2ApDM6cMhZ-WwybonYzLj-iEcwbvEZUzJ1NVcq3QmkqMyQ
+client.on('voiceStateUpdate', (oldMember, newMember) => {
+    let newUserChannel = newMember.voiceChannel
+    let oldUserChannel = oldMember.voiceChannel
+    if (oldUserChannel === undefined && newUserChannel !== undefined) {
+        console.log('ciekawe')
+    } else if (newUserChannel === undefined) {
+        try {
+            if (newMember.channel.hasOwnProperty('name') && newMember.channel.name == 'Ziewamy Blacha') {
+                console.log(newMember.channel.name + " " + newMember.member.displayName);
+                const channel = client.channels.cache.get('654415996702162987');
+                var data = Date.now().toString();
+                var dbRequest = new XMLHttpRequest();
+                dbRequest.withCredentials = true;
+                dbRequest.open("PUT", `https://kvstore.p.rapidapi.com/collections/discord_data/items/${newMember.member.id}_ostatnia_wizyta`);
+                dbRequest.setRequestHeader("x-rapidapi-host", "kvstore.p.rapidapi.com");
+                dbRequest.setRequestHeader("x-rapidapi-key", rapidApiKey);
+                dbRequest.send(data);
+            }
+        } catch (e) {
+            console.log('voice error')
+        }
+    }
+});
 
 client.login(process.env.BOT_TOKEN);
