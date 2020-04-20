@@ -5,10 +5,10 @@ const client = new Discord.Client();
 const { Client, MessageEmbed } = require('discord.js');
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 const champs = require('./data/champions_read.js')
-const db = require('./data/encryption.js')
 
 const prefix = process.env.PREFIX;
 const riotApiKey = process.env.RIOT_API_KEY
+const rapidApiKey = process.env.RAPID_API_KEY
 
 function checkPrefix(msg, command) {
     if (msg.content.startsWith(prefix + command)) {
@@ -92,7 +92,7 @@ function calculateTimeDiff(timeOld) {
     const diffDays = Math.floor(diffMs / 86400000); // days
     const diffHrs = Math.floor((diffMs % 86400000) / 3600000); // hours
     const diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
-    return diffDays + " days, " + diffHrs + " hours, " + diffMins + " minutes" 
+    return diffDays + " days, " + diffHrs + " hours, " + diffMins + " minutes"
 }
 
 function overOneDay(timeOld) {
@@ -125,11 +125,12 @@ client.on('ready', () => {
 
 client.on('message', message => {
     console.log(message.content)
+    // console.log(message.mentions.users[0])
 
     if (message.author.bot) return;
 
     if (checkPrefix(message, 'help')) {
-        message.reply('shorten, summoner, lastgame, rotation, livegame.')
+        message.reply('shorten, summoner, lastgame, rotation, livegame, seen.')
     }
 
     if (checkPrefix(message, 'shorten')) {
@@ -256,7 +257,7 @@ client.on('message', message => {
     if (checkPrefix(message, 'lastgame')) {
         const Http = new XMLHttpRequest();
         Http.responseType = 'json';
-        let name = message.content.slice('!lastgame '.length).toLowerCase()
+        let name = message.content.slice('$lastgame '.length).toLowerCase()
         name = name.replace(' ', '%20')
         console.log(name)
         const url = `https://eun1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${name}?api_key=${riotApiKey}`
@@ -357,7 +358,7 @@ client.on('message', message => {
     if (checkPrefix(message, 'livegame')) {
         const Http = new XMLHttpRequest();
         Http.responseType = 'json';
-        let name = message.content.slice('!livegame '.length).toLowerCase()
+        let name = message.content.slice('$livegame '.length).toLowerCase()
         name = name.replace(' ', '%20')
         console.log(name)
         const url = `https://eun1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${name}?api_key=${riotApiKey}`
@@ -426,68 +427,66 @@ client.on('message', message => {
         }
     }
 
-    if (checkPrefix(message, 'pawel')) {
-        try {
-            data = db.readData()
-        } catch (e) {
-            console.log(e)
+    if (checkPrefix(message, 'seen')) {
+        if (message.mentions.users.first() == undefined) {
+            message.reply('please mention a user.')
+            return
         }
-        if (data.hasOwnProperty('ostatnia_wizyta')) {
-            const exampleEmbed = new Discord.MessageEmbed()
-                .setColor('#0099ff')
-                .setTitle('Paweł ostatnio')
-                .setDescription(calculateTimeDiff(data['ostatnia_wizyta']))
-                .setAuthor('Ziewamy Blacha')
-                .setTimestamp(data['ostatnia_wizyta'])
-                .setFooter('Persona non grata');
-            message.channel.send(exampleEmbed);
-        }
-
+        let data = null;
+        let dbRequest = new XMLHttpRequest();
+        dbRequest.withCredentials = true;
+        let id = message.mentions.users.first().id
+        let name = message.mentions.users.first().username
+        dbRequest.open("GET", `https://kvstore.p.rapidapi.com/collections/discord_data/items/${id}_ostatnia_wizyta`);
+        dbRequest.setRequestHeader("x-rapidapi-host", "kvstore.p.rapidapi.com");
+        dbRequest.setRequestHeader("x-rapidapi-key", rapidApiKey);
+        dbRequest.send(data);
+        dbRequest.addEventListener("readystatechange", function () {
+            if (this.readyState === this.DONE) {
+                console.log(this.responseText);
+                const dataPawel = JSON.parse(this.responseText)
+                if (!dataPawel.hasOwnProperty('status')) {
+                    const timeData = parseInt(dataPawel['value'])
+                    const exampleEmbed = new Discord.MessageEmbed()
+                        .setColor('#0099ff')
+                        .setTitle(name + ' ostatnio:')
+                        .setDescription(calculateTimeDiff(timeData))
+                        .setAuthor('Ziewamy Blacha')
+                        .setTimestamp(timeData);
+                    if (name == 'E-Zigarette') {
+                        exampleEmbed.setFooter("Persona non grata", 'https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/237/reversed-hand-with-middle-finger-extended_emoji-modifier-fitzpatrick-type-3_1f595-1f3fc_1f3fc.png')
+                    }
+                    message.channel.send(exampleEmbed);
+                } else {
+                    message.channel.send('Sorry no data about ' + `${message.mentions.users.first()}` + ' 😕');
+                }
+            }
+        });
     }
 });
 
 client.on('voiceStateUpdate', (oldMember, newMember) => {
     let newUserChannel = newMember.voiceChannel
     let oldUserChannel = oldMember.voiceChannel
-    if(oldUserChannel === undefined && newUserChannel !== undefined) {
+    if (oldUserChannel === undefined && newUserChannel !== undefined) {
         console.log('ciekawe')
-     } else if(newUserChannel === undefined){
-         try {
-            if (newMember.channel.hasOwnProperty('name')) {
-                if (newMember.member.displayName == 'ksieciunio') {
-                    console.log(newMember.channel.name + " " + newMember.member.displayName);
-                    const channel = client.channels.cache.get('699936586456104960');                
-                    // let data = {'status': 'error'}
-                    try {
-                        data = db.readData()
-                    } catch (e) {
-                        console.log(e)
-                    }
-                    if (data.hasOwnProperty('ostatnia_wizyta') && newMember.channel.name == 'Ziewamy Blacha') {
-                        channel.send('Persona non grata', {tts: overOneDay() ? true : false}).then(msg => msg.delete({timeout: 100}))
-                        if (overOneDay()) {
-                            const exampleEmbed = new Discord.MessageEmbed()
-                                .setColor('#0099ff')
-                                .setTitle('Witaj Paweł')
-                                .setDescription(calculateTimeDiff(data['ostatnia_wizyta']))
-                                .setAuthor('Ziewamy Blacha')
-                                .setTimestamp(data['ostatnia_wizyta'])
-                                .setFooter('Persona non grata');
-                            channel.send(exampleEmbed);
-                            channel.send('!play https://www.youtube.com/watch?v=8KFQg7n3cYw')
-                        }
-                        data['ostatnia_wizyta'] = Date.now();
-                    }
-                    db.saveData(data);
-                    console.log(data);
-                }
+    } else if (newUserChannel === undefined) {
+        try {
+            if (newMember.channel.hasOwnProperty('name') && newMember.channel.name == 'Ziewamy Blacha') {
+                console.log(newMember.channel.name + " " + newMember.member.displayName);
+                const channel = client.channels.cache.get('654415996702162987');
+                var data = Date.now().toString();
+                var dbRequest = new XMLHttpRequest();
+                dbRequest.withCredentials = true;
+                dbRequest.open("PUT", `https://kvstore.p.rapidapi.com/collections/discord_data/items/${newMember.member.id}_ostatnia_wizyta`);
+                dbRequest.setRequestHeader("x-rapidapi-host", "kvstore.p.rapidapi.com");
+                dbRequest.setRequestHeader("x-rapidapi-key", rapidApiKey);
+                dbRequest.send(data);
             }
-         } catch (e) {
+        } catch (e) {
             console.log('voice error')
-         }
-     }
+        }
+    }
 });
 
-// 2ApDM6cMhZ-WwybonYzLj-iEcwbvEZUzJ1NVcq3QmkqMyQ
-
-client.login(process.env.TEST_BOT_TOKEN);
+client.login(process.env.BOT_TOKEN);
