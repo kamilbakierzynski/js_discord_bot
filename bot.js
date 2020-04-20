@@ -4,7 +4,8 @@ const express = require('express')
 const client = new Discord.Client();
 const { Client, MessageEmbed } = require('discord.js');
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
-const champs = require('./champions_read.js')
+const champs = require('./data/champions_read.js')
+const db = require('./data/encryption.js')
 
 const prefix = process.env.PREFIX;
 const riotApiKey = process.env.RIOT_API_KEY
@@ -26,6 +27,10 @@ function checkStatus(string) {
     } else {
         return " ❌"
     }
+}
+
+function formatBoolean(string) {
+    return string ? "✅" : "❌"
 }
 
 function convertGameStatus(string) {
@@ -80,6 +85,24 @@ function formatSeries(data) {
     return output
 }
 
+function calculateTimeDiff(timeOld) {
+    var newDate = Date.now();
+    const old = new Date(timeOld);
+    const diffMs = (newDate - old);
+    const diffDays = Math.floor(diffMs / 86400000); // days
+    const diffHrs = Math.floor((diffMs % 86400000) / 3600000); // hours
+    const diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
+    return diffDays + " days, " + diffHrs + " hours, " + diffMins + " minutes" 
+}
+
+function overOneDay(timeOld) {
+    var newDate = Date.now();
+    const old = new Date(timeOld);
+    const diffMs = (newDate - old);
+    const diffDays = Math.floor(diffMs / 86400000);
+    return (diffDays > 0) ? true : false
+}
+
 var app = express();
 
 const PORT = process.env.PORT || 3000;
@@ -102,6 +125,8 @@ client.on('ready', () => {
 
 client.on('message', message => {
     console.log(message.content)
+
+    if (message.author.bot) return;
 
     if (checkPrefix(message, 'help')) {
         message.reply('shorten, summoner, lastgame, rotation, livegame.')
@@ -295,7 +320,7 @@ client.on('message', message => {
                                     { name: 'Gold earned', value: participantData.stats.goldEarned || "❔", inline: true },
                                     { name: 'Wards (placed/destroyed)', value: participantData.stats.wardsPlaced + "/" + participantData.stats.wardsKilled || "❔", inline: true },
                                     { name: 'Vision score', value: participantData.stats.visionScore || "❔", inline: true },
-                                    { name: 'First blood', value: participantData.stats.firstBloodKill || "❔", inline: true },
+                                    { name: 'First blood', value: formatBoolean(participantData.stats.firstBloodKill) || "❔", inline: true },
                                     { name: 'Stats link', value: `https://app.mobalytics.gg/post-game/eune/${summonerName.replace(' ', '%20')}/${gameId}` }
                                 )
                                 .setTimestamp(gameInfo.gameCreation || "❔")
@@ -401,8 +426,68 @@ client.on('message', message => {
         }
     }
 
+    if (checkPrefix(message, 'pawel')) {
+        try {
+            data = db.readData()
+        } catch (e) {
+            console.log(e)
+        }
+        if (data.hasOwnProperty('ostatnia_wizyta')) {
+            const exampleEmbed = new Discord.MessageEmbed()
+                .setColor('#0099ff')
+                .setTitle('Paweł ostatnio')
+                .setDescription(calculateTimeDiff(data['ostatnia_wizyta']))
+                .setAuthor('Ziewamy Blacha')
+                .setTimestamp(data['ostatnia_wizyta'])
+                .setFooter('Persona non grata');
+            message.channel.send(exampleEmbed);
+        }
+
+    }
+});
+
+client.on('voiceStateUpdate', (oldMember, newMember) => {
+    let newUserChannel = newMember.voiceChannel
+    let oldUserChannel = oldMember.voiceChannel
+    if(oldUserChannel === undefined && newUserChannel !== undefined) {
+        console.log('ciekawe')
+     } else if(newUserChannel === undefined){
+         try {
+            if (newMember.channel.hasOwnProperty('name')) {
+                if (newMember.member.displayName == 'ksieciunio') {
+                    console.log(newMember.channel.name + " " + newMember.member.displayName);
+                    const channel = client.channels.cache.get('699936586456104960');                
+                    // let data = {'status': 'error'}
+                    try {
+                        data = db.readData()
+                    } catch (e) {
+                        console.log(e)
+                    }
+                    if (data.hasOwnProperty('ostatnia_wizyta') && newMember.channel.name == 'Ziewamy Blacha') {
+                        channel.send('Persona non grata', {tts: overOneDay() ? true : false}).then(msg => msg.delete({timeout: 100}))
+                        if (overOneDay()) {
+                            const exampleEmbed = new Discord.MessageEmbed()
+                                .setColor('#0099ff')
+                                .setTitle('Witaj Paweł')
+                                .setDescription(calculateTimeDiff(data['ostatnia_wizyta']))
+                                .setAuthor('Ziewamy Blacha')
+                                .setTimestamp(data['ostatnia_wizyta'])
+                                .setFooter('Persona non grata');
+                            channel.send(exampleEmbed);
+                            channel.send('!play https://www.youtube.com/watch?v=8KFQg7n3cYw')
+                        }
+                        data['ostatnia_wizyta'] = Date.now();
+                    }
+                    db.saveData(data);
+                    console.log(data);
+                }
+            }
+         } catch (e) {
+            console.log('voice error')
+         }
+     }
 });
 
 // 2ApDM6cMhZ-WwybonYzLj-iEcwbvEZUzJ1NVcq3QmkqMyQ
 
-client.login(process.env.BOT_TOKEN);
+client.login(process.env.TEST_BOT_TOKEN);
