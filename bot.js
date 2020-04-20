@@ -460,7 +460,7 @@ client.on('message', message => {
                     if (message.mentions.users.first().bot) {
                         message.channel.send('Brak danych. Użytkownik ' + `${message.mentions.users.first()}` + ' jest botem. 😕');
                         return;
-                    } else if (name == 'E-Zigarette') {
+                    } else if (name == 'E-Zigarette' && false) {
                         message.channel.send('🖕🏼⛔')
                     } else {
                         message.channel.send('Brak danych o ' + `${message.mentions.users.first()}` + ' 😕');
