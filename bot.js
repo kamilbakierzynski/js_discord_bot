@@ -476,8 +476,8 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
   } else if (newUserChannel === undefined) {
     try {
       if (newMember.channel.hasOwnProperty('name') && newMember.channel.name === 'Ziewamy Blacha') {
-        console.log(`>> User ${newMember.member.displayName} on channel ${newMember.channel.name}`);
-        console.log(`>> Saving data for ${newMember.member.id}`);
+        console.log(`>🎤> User ${newMember.member.displayName} on channel ${newMember.channel.name}`);
+        console.log(`>✅> Saving data for ${newMember.member.id}`);
         // const channel = client.channels.cache.get('654415996702162987');
         const data = Date.now().toString();
         const dbRequest = new XMLHttpRequest();
