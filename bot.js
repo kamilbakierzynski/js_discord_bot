@@ -114,6 +114,8 @@ client.on('message', (message) => {
 
   if (message.author.bot) return;
 
+  if (checkPrefix(message, 'test')) message.channel.send('!play hymn prawo i sprawiedliwosc');
+
   if (message.content.startsWith(prefix)) console.log(`>❤️> Message to me: ${message}`);
 
   if (checkPrefix(message, 'help')) {
