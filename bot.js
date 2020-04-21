@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 require('dotenv').config();
 const express = require('express');
+const cron = require('cron');
 
 const client = new Discord.Client();
 const { XMLHttpRequest } = require('xmlhttprequest');
@@ -105,6 +106,16 @@ client.on('ready', () => {
     status: 'idle',
   })
     .catch(console.error);
+
+  console.log('<🕛> JOB AT 22:00:01 change channel title.')
+  let changeChannelTitle = new cron.CronJob('01 00 22 * * *', () => {
+    client.channels.fetch('654415996702162987').then(channel => {
+      const { name } = channel;
+      const day = parseInt(name.split('-')[1], 10);
+      channel.setName(`dzień-${day + 1}}`);
+    });
+  });
+  changeChannelTitle.start();
 });
 
 client.on('message', (message) => {
@@ -145,7 +156,7 @@ client.on('message', (message) => {
     Http.responseType = 'json';
     let name = message.content.slice('!summoner '.length).toLowerCase();
     // message.channel.send('Getting data for ' + name)
-    console.log(`>❔> Getting summoner data about ${name} for ${message.author.username}`);
+    console.log(`<❔> Getting summoner data about ${name} for ${message.author.username}`);
     name = name.replace(' ', '%20');
     // console.log(name);
     const url = `https://eun1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${name}?api_key=${riotApiKey}`;
@@ -158,7 +169,7 @@ client.on('message', (message) => {
         message.reply(data.status.message.toLowerCase());
       } else {
         const summonerId = data.id;
-        console.log(`>✅> Got summoner id: ${summonerId}`);
+        console.log(`<✅> Got summoner id: ${summonerId}`);
         const HttpRank = new XMLHttpRequest();
         HttpRank.responseType = 'json';
         const url = `https://eun1.api.riotgames.com/lol/league/v4/entries/by-summoner/${summonerId}?api_key=${riotApiKey}`;
@@ -203,14 +214,14 @@ client.on('message', (message) => {
     };
   }
   if (checkPrefix(message, 'status')) {
-    console.log('>❔> Getting data about LoL server status.');
+    console.log('<❔> Getting data about LoL server status.');
     const Http = new XMLHttpRequest();
     Http.responseType = 'json';
     const url = `https://eun1.api.riotgames.com/lol/status/v3/shard-data?api_key=${riotApiKey}`;
     Http.open('GET', url);
     Http.send();
     Http.onload = function (e) {
-      console.log('>✅> Got data.');
+      console.log('<✅> Got data.');
       const data = JSON.parse(Http.responseText);
       const { services } = data;
       const incidentsArr = services[0].incidents;
@@ -248,7 +259,7 @@ client.on('message', (message) => {
     const Http = new XMLHttpRequest();
     Http.responseType = 'json';
     let name = message.content.slice('$lastgame '.length).toLowerCase();
-    console.log(`>❔> Getting last ${name} game for ${message.author.username}`);
+    console.log(`<❔> Getting last ${name} game for ${message.author.username}`);
     name = name.replace(' ', '%20');
     const url = `https://eun1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${name}?api_key=${riotApiKey}`;
     Http.open('GET', url);
@@ -271,14 +282,14 @@ client.on('message', (message) => {
           const gameData = JSON.parse(HttpGame.responseText);
           if (gameData.hasOwnProperty('matches')) {
             const { gameId } = gameData.matches[0];
-            console.log(`>❔> Getting data about game: ${gameId}`);
+            console.log(`<❔> Getting data about game: ${gameId}`);
             const HttpInfo = new XMLHttpRequest();
             HttpInfo.responseType = 'json';
             const gameInfoUrl = `https://eun1.api.riotgames.com/lol/match/v4/matches/${gameId}?api_key=${riotApiKey}`;
             HttpInfo.open('GET', gameInfoUrl);
             HttpInfo.send();
             HttpInfo.onload = function (e) {
-              console.log('>✅> Got data abut game.');
+              console.log('<✅> Got data abut game.');
               const gameInfo = JSON.parse(HttpInfo.responseText);
               const participantsIdentities = gameInfo.participantIdentities;
               let summonerParticipantId = 0;
@@ -350,7 +361,7 @@ client.on('message', (message) => {
     const Http = new XMLHttpRequest();
     Http.responseType = 'json';
     let name = message.content.slice('$livegame '.length).toLowerCase();
-    console.log(`>❔> Getting ${name} live game for ${message.author.username}`);
+    console.log(`<❔> Getting ${name} live game for ${message.author.username}`);
     name = name.replace(' ', '%20');
     const url = `https://eun1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${name}?api_key=${riotApiKey}`;
     Http.open('GET', url);
@@ -366,13 +377,13 @@ client.on('message', (message) => {
         HttpGame.responseType = 'json';
         const summonerId = data.id;
         const summonerName = data.name;
-        console.log(`>✅> Got ${summonerId} as ${summonerName} id. Getting game data.`);
+        console.log(`<✅> Got ${summonerId} as ${summonerName} id. Getting game data.`);
         const gameUrl = `https://eun1.api.riotgames.com/lol/spectator/v4/active-games/by-summoner/${summonerId}?api_key=${riotApiKey}`;
         HttpGame.open('GET', gameUrl);
         HttpGame.send();
         HttpGame.onload = function (error) {
           const liveGameData = JSON.parse(HttpGame.responseText);
-          console.log(`>✅> Got data about ${summonerName}.`);
+          console.log(`<✅> Got data about ${summonerName}.`);
           // console.log(liveGameData);
           if (liveGameData.hasOwnProperty('status')) {
             message.channel.send(`${summonerName} not in game.`);
@@ -402,14 +413,14 @@ client.on('message', (message) => {
   }
 
   if (checkPrefix(message, 'rotation')) {
-    console.log(`>❔> Geting data about rotation for ${message.author.username}`);
+    console.log(`<❔> Geting data about rotation for ${message.author.username}`);
     const HttpRotation = new XMLHttpRequest();
     HttpRotation.responseType = 'json';
     const rotationUrl = `https://eun1.api.riotgames.com/lol/platform/v3/champion-rotations?api_key=${riotApiKey}`;
     HttpRotation.open('GET', rotationUrl);
     HttpRotation.send();
     HttpRotation.onload = function (e) {
-      console.log('>✅> Got rotation data.');
+      console.log('<✅> Got rotation data.');
       const rotationInfo = JSON.parse(HttpRotation.responseText);
       const exampleEmbed = new Discord.MessageEmbed()
         .setColor('#0099ff')
@@ -434,7 +445,7 @@ client.on('message', (message) => {
     dbRequest.withCredentials = true;
     const { id } = message.mentions.users.first();
     const name = message.mentions.users.first().username;
-    console.log(`>❔> Geting seen data about ${name} for ${message.author.username}`);
+    console.log(`<❔> Geting seen data about ${name} for ${message.author.username}`);
     dbRequest.open('GET', `https://kvstore.p.rapidapi.com/collections/discord_data/items/${id}_ostatnia_wizyta`);
     dbRequest.setRequestHeader('x-rapidapi-host', 'kvstore.p.rapidapi.com');
     dbRequest.setRequestHeader('x-rapidapi-key', rapidApiKey);
@@ -442,7 +453,7 @@ client.on('message', (message) => {
     dbRequest.addEventListener('readystatechange', function () {
       if (this.readyState === this.DONE) {
         // console.log(this.responseText);
-        console.log(`>✅> Got data about ${name}.`);
+        console.log(`<✅> Got data about ${name}.`);
         const dataPawel = JSON.parse(this.responseText);
         if (!dataPawel.hasOwnProperty('status')) {
           const timeData = parseInt(dataPawel.value, 10);
@@ -470,11 +481,11 @@ client.on('message', (message) => {
   if (checkPrefix(message, 'corona')) {
     let country = message.content.slice('$corona '.length).toLowerCase();
     if (country === '') {
-      console.log('>❔> Country empty, getting default country');
+      console.log('<❔> Country empty, getting default country');
       message.reply(' country was not specified. Getting default - Poland.')
       country = 'Poland'
     }
-    console.log(`>❔> Getting data about ${country} | Corona`)
+    console.log(`<❔> Getting data about ${country} | Corona`)
     var data = null;
     var coronaHttp = new XMLHttpRequest();
     coronaHttp.withCredentials = true;
@@ -485,7 +496,7 @@ client.on('message', (message) => {
 
     coronaHttp.addEventListener("readystatechange", function () {
       if (this.readyState === this.DONE) {
-        console.log(`>✅> Got data about country.`);
+        console.log(`<✅> Got data about country.`);
         if (true) {
           const coronaData = JSON.parse(this.responseText);
           // console.log(coronaData);
@@ -493,7 +504,7 @@ client.on('message', (message) => {
           // console.log(response);
           if (response === undefined) {
             message.reply(` error getting data about ${country}.`);
-            console.log('>✅> Got data but country was wrong.')
+            console.log('<✅> Got data but country was wrong.')
             return;
           }
           const exampleEmbed = new Discord.MessageEmbed()
@@ -515,7 +526,6 @@ client.on('message', (message) => {
       }
     });
   }
-
 });
 
 client.on('voiceStateUpdate', (oldMember, newMember) => {
@@ -526,8 +536,8 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
   } else if (newUserChannel === undefined) {
     try {
       if (newMember.channel.hasOwnProperty('name') && newMember.channel.name === 'Ziewamy Blacha') {
-        console.log(`>🎤> User ${newMember.member.displayName} on channel ${newMember.channel.name}`);
-        console.log(`>✅> Saving data for ${newMember.member.id}`);
+        console.log(`<🎤> User ${newMember.member.displayName} on channel ${newMember.channel.name}`);
+        console.log(`<✅> Saving data for ${newMember.member.id}`);
         // const channel = client.channels.cache.get('654415996702162987');
         const data = Date.now().toString();
         const dbRequest = new XMLHttpRequest();
