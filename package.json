@@ -17,5 +17,10 @@
     "express": "^4.17.1",
     "request": "2.81.0",
     "xmlhttprequest": "1.8.0"
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-import": "^2.20.2"
   }
 }
