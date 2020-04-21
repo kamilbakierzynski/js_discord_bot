@@ -544,4 +544,4 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
   }
 });
 
-client.login(process.env.TEST_BOT_TOKEN);
+client.login(process.env.BOT_TOKEN);
