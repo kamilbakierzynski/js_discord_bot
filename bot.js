@@ -92,14 +92,14 @@ const app = express();
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`App is running on port ${PORT}`);
+  console.log(`<🔔> App is running on port ${PORT}!`);
 });
 app.get('/', (req, res) => {
   res.send('SERVER UP!');
 });
 
 client.on('ready', () => {
-  console.log(`Logged in as ${client.user.tag}!`);
+  console.log(`<🔔> Logged in as ${client.user.tag}!`);
 
   client.user.setPresence({
     activity: { name: 'League of Legends', type: 'PLAYING' },
@@ -107,12 +107,19 @@ client.on('ready', () => {
   })
     .catch(console.error);
 
-  console.log('<🕛> JOB AT 22:00:01 change channel title.')
+  console.log('<🕛> JOB AT 22:00:01 (00:00:01 UTC +2) change channel title.')
   let changeChannelTitle = new cron.CronJob('01 00 22 * * *', () => {
     client.channels.fetch('654415996702162987').then(channel => {
       const { name } = channel;
       const day = parseInt(name.split('-')[1], 10);
-      channel.setName(`dzień-${day + 1}}`);
+      console.log(`<🕛> Changing channel name from ${name} to dzień-${day + 1}.`);
+      try {
+        channel.setName(`dzień-${day + 1}}`);
+        console.log('<✅> Channel name changed.');
+      } catch (e) {
+        console.log('<❌> Error while changing channel name.');
+        console.log(e);
+      }
     });
   });
   changeChannelTitle.start();
@@ -121,11 +128,11 @@ client.on('ready', () => {
 client.on('message', (message) => {
   // console.log(message.mentions.users[0])
 
-  console.log(`🆕 Channel message: ${message.content}`);
+  console.log(`<🆕> Channel message: ${message.content}`);
 
   if (message.author.bot) return;
 
-  if (message.content.startsWith(prefix)) console.log(`>❤️> Message to me: ${message}`);
+  if (message.content.startsWith(prefix)) console.log(`<❤️> Message to me: ${message}`);
 
   if (checkPrefix(message, 'help')) {
     message.reply('shorten, summoner, lastgame, rotation, livegame, seen, corona.');
@@ -141,12 +148,14 @@ client.on('message', (message) => {
       Http.open('GET', url);
       Http.send();
       Http.onload = function (e) {
+        console.log('<✅> Got data.')
         const data = JSON.parse(Http.responseText);
         msg.delete();
         if (data.ok) {
           message.reply(`Here is your short link ${data.result.full_short_link}`);
         } else {
-          message.reply('there was an error.');
+          message.reply(' there was an error.');
+          console.log('<❌> Error getting short link.')
         }
       };
     });
@@ -167,6 +176,7 @@ client.on('message', (message) => {
       // console.log(data);
       if (data.hasOwnProperty('status')) {
         message.reply(data.status.message.toLowerCase());
+        console.log('<❌> Data about summoner not found.')
       } else {
         const summonerId = data.id;
         console.log(`<✅> Got summoner id: ${summonerId}`);
@@ -176,7 +186,7 @@ client.on('message', (message) => {
         HttpRank.open('GET', url);
         HttpRank.send();
         HttpRank.onload = function (e) {
-          console.log('>✅> Got summoner data.');
+          console.log('<✅> Got summoner data.');
           const dataRank = JSON.parse(HttpRank.responseText);
           for (let i = 0; i < dataRank.length; i += 1) {
             const rankedData = dataRank[i];
@@ -268,7 +278,7 @@ client.on('message', (message) => {
       const data = JSON.parse(Http.responseText);
       if (data.hasOwnProperty('status')) {
         message.reply(data.status.message.toLowerCase());
-        console.log('=== 🔥 GOT ERROR 🔥 ===');
+        console.log('<❌> === 🔥 GOT ERROR 🔥 ===');
         console.log(data.status.message);
       } else {
         const HttpGame = new XMLHttpRequest();
@@ -349,7 +359,7 @@ client.on('message', (message) => {
             };
           } else {
             // console.log(gameData);
-            message.channel.send('=== 🔥 ERROR GETTING GAME DATA 🔥 ===');
+            message.channel.send('<❌> === 🔥 ERROR GETTING GAME DATA 🔥 ===');
             console.log(gameData);
           }
         };
@@ -370,7 +380,7 @@ client.on('message', (message) => {
       const data = JSON.parse(Http.responseText);
       if (data.hasOwnProperty('status')) {
         message.reply(data.status.message.toLowerCase());
-        console.log('=== 🔥 ERROR GETTING SUMMONER ID 🔥 ===');
+        console.log('<❌> === 🔥 ERROR GETTING SUMMONER ID 🔥 ===');
         console.log(data.status.message);
       } else {
         const HttpGame = new XMLHttpRequest();
@@ -437,7 +447,7 @@ client.on('message', (message) => {
   if (checkPrefix(message, 'seen')) {
     if (message.mentions.users.first() === undefined) {
       message.reply('please mention a user.');
-      console.log(`‼️ User was not mentioned. ${message.author.username}`);
+      console.log(`<❌> User was not mentioned. ${message.author.username}`);
       return;
     }
     const data = null;
@@ -482,7 +492,7 @@ client.on('message', (message) => {
     let country = message.content.slice('$corona '.length).toLowerCase();
     if (country === '') {
       console.log('<❔> Country empty, getting default country');
-      message.reply(' country was not specified. Getting default - Poland.')
+      message.reply('<❌> country was not specified. Getting default - Poland.')
       country = 'Poland'
     }
     console.log(`<❔> Getting data about ${country} | Corona`)
@@ -504,7 +514,7 @@ client.on('message', (message) => {
           // console.log(response);
           if (response === undefined) {
             message.reply(` error getting data about ${country}.`);
-            console.log('<✅> Got data but country was wrong.')
+            console.log('<❌> Got connection but country was wrong.')
             return;
           }
           const exampleEmbed = new Discord.MessageEmbed()
@@ -537,7 +547,7 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
     try {
       if (newMember.channel.hasOwnProperty('name') && newMember.channel.name === 'Ziewamy Blacha') {
         console.log(`<🎤> User ${newMember.member.displayName} on channel ${newMember.channel.name}`);
-        console.log(`<✅> Saving data for ${newMember.member.id}`);
+        console.log(`<✅> Saving data for ${newMember.member.displayName} || id: ${newMember.member.id}`);
         // const channel = client.channels.cache.get('654415996702162987');
         const data = Date.now().toString();
         const dbRequest = new XMLHttpRequest();
@@ -548,7 +558,7 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
         dbRequest.send(data);
       }
     } catch (e) {
-      console.log('=== 🔥 VOICE CHANNEL ERROR 🔥 ===');
+      console.log('<❌> === 🔥 VOICE CHANNEL ERROR 🔥 ===');
       // console.log(e);
     }
   }
