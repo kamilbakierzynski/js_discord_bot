@@ -117,7 +117,7 @@ client.on('message', (message) => {
   if (message.content.startsWith(prefix)) console.log(`>❤️> Message to me: ${message}`);
 
   if (checkPrefix(message, 'help')) {
-    message.reply('shorten, summoner, lastgame, rotation, livegame, seen.');
+    message.reply('shorten, summoner, lastgame, rotation, livegame, seen, corona.');
   }
 
   if (checkPrefix(message, 'shorten')) {
@@ -466,6 +466,56 @@ client.on('message', (message) => {
       }
     });
   }
+
+  if (checkPrefix(message, 'corona')) {
+    let country = message.content.slice('$corona '.length).toLowerCase();
+    if (country === '') {
+      console.log('>❔> Country empty, getting default country');
+      message.reply(' country was not specified. Getting default - Poland.')
+      country = 'Poland'
+    }
+    console.log(`>❔> Getting data about ${country} | Corona`)
+    var data = null;
+    var coronaHttp = new XMLHttpRequest();
+    coronaHttp.withCredentials = true;
+    coronaHttp.open("GET", `https://covid-193.p.rapidapi.com/statistics?country=${country}`);
+    coronaHttp.setRequestHeader("x-rapidapi-host", "covid-193.p.rapidapi.com");
+    coronaHttp.setRequestHeader("x-rapidapi-key", rapidApiKey);
+    coronaHttp.send(data);
+
+    coronaHttp.addEventListener("readystatechange", function () {
+      if (this.readyState === this.DONE) {
+        console.log(`>✅> Got data about country.`);
+        if (true) {
+          const coronaData = JSON.parse(this.responseText);
+          // console.log(coronaData);
+          const response = coronaData.response[0];
+          // console.log(response);
+          if (response === undefined) {
+            message.reply(` error getting data about ${country}.`);
+            console.log('>✅> Got data but country was wrong.')
+            return;
+          }
+          const exampleEmbed = new Discord.MessageEmbed()
+            .setColor('#0099ff')
+            .setTitle(`Information about Coronavirus in ${response.country}:`)
+            .setDescription(`Total cases: ${response.cases.total}`)
+            .addFields(
+              { name: 'New cases', value: response.cases.new, inline: true},
+              { name: 'Active cases', value: response.cases.active, inline: true},
+              { name: 'Critical cases', value: response.cases.critical, inline: true},
+              { name: 'Recovered cases', value: response.cases.recovered, inline: true},
+              { name: 'New deaths', value: response.deaths.new, inline: true},
+              { name: 'Deaths', value: response.deaths.total, inline: true},
+              { name: 'Tests count', value: response.tests.total, inline: true},)
+            .setAuthor('COVID-19')
+            .setTimestamp(response.time);
+          message.channel.send(exampleEmbed);
+        }
+      }
+    });
+  }
+
 });
 
 client.on('voiceStateUpdate', (oldMember, newMember) => {
@@ -494,4 +544,4 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
   }
 });
 
-client.login(process.env.BOT_TOKEN);
+client.login(process.env.TEST_BOT_TOKEN);
