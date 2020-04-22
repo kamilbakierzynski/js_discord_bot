@@ -120,9 +120,11 @@ client.on('ready', () => {
       console.log(`<🕛> Changing channel name from ${name} to dzień-${day + 1}.`);
       try {
         channel.setName(`dzień-${day + 1}}`);
+        channel.message.send(`<✅> Channel name changed to dzień-${day + 1}.`);
         console.log('<✅> Channel name changed.');
       } catch (e) {
         console.log('<❌> Error while changing channel name.');
+        channel.message.send(`<❌> Channel name changed failed.`);
         console.log(e);
       }
     });
