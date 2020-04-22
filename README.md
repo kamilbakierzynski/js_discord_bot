@@ -14,16 +14,9 @@ Made as a side project for me and my friends during my first steps in JavaScript
     type `$lastgame <summoner name>` to get data about summoner's last game.
 - **Last seen**:
     type `$seen @<mention user>` to check when was the last time he performed action on the voice channel. (needs to be configured in the code).
-- **Coronavirus statistics**:
-    type `$corona <country name>` to check recent stats about Coronavirus in this country.
-
 - **More still in development...**
 
 ## Install:
-It was made for personal use but if you would like to use it go on. Some of the functionality is hard coded so it needs to be changed.
-
-Apart from that you also:
 - You have to get your own API key from RIOT GAMES. Get one [here](https://developer.riotgames.com/).
 - For the `save last time active` functionality you have to get API key from [kvstore.io](https://www.kvstore.io/).
-- For the `corona` functionality you need [this API key](https://rapidapi.com/api-sports/api/covid-193/endpoints).
 - [Heroku](https://www.heroku.com) is a good option to deploy this. Provide api keys and prefix as a config var in Heroku dashboard.
