@@ -689,7 +689,7 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
         // const channel = client.channels.cache.get('654415996702162987');
         const dataTime = Date.now();
         googleDB.dbRead().then(data => {
-          console.log('read db');
+          console.log('<✅> Reading database.');
           let properData = undefined;
           let index = 0;
           for (let i = 0; i < data.length; i += 1) {
@@ -729,7 +729,7 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
       if (oldMember.channel.name !== 'AFK' && !newMember.hasOwnProperty('channel')) {
         const dataTime = Date.now();
         googleDB.dbRead().then(data => {
-          console.log('read db');
+          console.log('<✅> Reading database.');
           let properData = undefined;
           let index = 0;
           for (let i = 0; i < data.length; i += 1) {
