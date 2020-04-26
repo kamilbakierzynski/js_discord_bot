@@ -42,11 +42,12 @@ function convertSecondsToTime(time) {
 }
 
 function preetifyMinutes(mins) {
-  if (mins < 60) {
-    return `${mins} min`;
+  const roundMin = Math.round(mins);
+  if (roundMin < 60) {
+    return `${roundMin} min`;
   }
-  const hours = Math.floor(mins / 60);
-  const newMins = mins - hours * 60;
+  const hours = Math.floor(roundMin / 60);
+  const newMins = roundMin - hours * 60;
   return `${hours} hours ${newMins} min`;
 }
 
@@ -146,15 +147,15 @@ client.on('ready', () => {
       const { name } = channel;
       console.log(`<🕛> Running DB job.`);
       googleDB.dbRead().then(data => {
-        data.sort((a, b) => a.minutes_connected - b.minutes_connected);
+        data.sort((a, b) => (a.minutes_connected - a.minutes_on_mute) - (b.minutes_connected - b.minutes_on_mute));
         const exampleEmbed = new Discord.MessageEmbed()
               .setColor('#0099ff')
               .setTitle(`Server Activity`)
               .setDescription(calculateTimeDiff(timeData))
               .addFields(
-                {name: 'First place', value: data[0].username + " " + data[0].minutes_connected, inline: false },
-                {name: 'Second place', value: data[1].username + " " + data[1].minutes_connected, inline: false },
-                {name: 'Third place', value: data[2].username + " " + data[2].minutes_connected, inline: false },
+                {name: 'First place', value: data[0].username + ` (ONLINE: ${data[0].minutes_connected} / AFK: ${data[0].minutes_on_mute}`, inline: false },
+                {name: 'Second place', value: data[1].username + ` (ONLINE: ${data[1].minutes_connected} / AFK: ${data[1].minutes_on_mute}`, inline: false },
+                {name: 'Third place', value: data[2].username + ` (ONLINE: ${data[2].minutes_connected} / AFK: ${data[2].minutes_on_mute}`, inline: false },
                 )
               .setAuthor('Ziewamy Blacha')
               .setTimestamp(timeData);
@@ -708,7 +709,7 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
             properData.username = newMember.member.displayName;
 
             //timediff since last update
-            const timeDiff = Math.round((dataTime - parseInt(properData.last_seen, 10))/60000);
+            const timeDiff = (dataTime - parseInt(properData.last_seen, 10))/60000;
             //check if muting or deafening
             if ((oldMember.mute && !newMember.mute) || (oldMember.deaf && !newMember.mute)) {
               properData.minutes_on_mute = parseInt(properData.minutes_on_mute, 10) + timeDiff;
@@ -747,7 +748,7 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
             properData.username = newMember.member.displayName;
 
             //timediff since last update
-            const timeDiff = Math.round((dataTime - parseInt(properData.last_seen, 10))/60000);
+            const timeDiff = (dataTime - parseInt(properData.last_seen, 10))/60000;
             //check if muting or deafening
             if (oldMember.mute || oldMember.deaf) {
               properData.minutes_on_mute = parseInt(properData.minutes_on_mute, 10) + timeDiff;
@@ -784,7 +785,7 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
             properData.username = newMember.member.displayName;
 
             //timediff since last update
-            const timeDiff = Math.round((dataTime - parseInt(properData.last_seen, 10))/60000);
+            const timeDiff = (dataTime - parseInt(properData.last_seen, 10))/60000;
 
             //check if was muted or deafeaned
             if (oldMember.mute || oldMember.deaf) {
@@ -794,8 +795,6 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
             properData.minutes_connected = parseInt(properData.minutes_connected, 10) + timeDiff;
             properData.all_time_minutes = parseInt(properData.all_time_minutes, 10) + timeDiff;
 
-            properData.channel_level = Math.round((properData.all_time_minutes - properData.all_time_on_mute)/60*24);
-            properData.channel_xp = Math.round((properData.all_time_minutes - properData.all_time_on_mute)/60);
             properData.last_seen = dataTime;
 
           
