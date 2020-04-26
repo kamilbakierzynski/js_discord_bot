@@ -140,12 +140,27 @@ client.on('ready', () => {
     });
   });
 
-  console.log('<🕛> JOB EVERY SUN 22:00:01 clear database.');
-  let clearDatabase = new cron.CronJob('01 00 22 * * SUN', () => {
+  console.log('<🕛> JOB EVERY MON 03:00:01 clear database and show winners.');
+  let clearDatabase = new cron.CronJob('01 00 03 * * MON', () => {
     client.channels.fetch('654415996702162987').then(channel => {
       const { name } = channel;
       console.log(`<🕛> Running DB job.`);
-      channel.send();
+      googleDB.dbRead().then(data => {
+        data.sort((a, b) => a.minutes_connected - b.minutes_connected);
+        const exampleEmbed = new Discord.MessageEmbed()
+              .setColor('#0099ff')
+              .setTitle(`Server Activity`)
+              .setDescription(calculateTimeDiff(timeData))
+              .addFields(
+                {name: 'First place', value: data[0].username + " " + data[0].minutes_connected, inline: false },
+                {name: 'Second place', value: data[1].username + " " + data[1].minutes_connected, inline: false },
+                {name: 'Third place', value: data[2].username + " " + data[2].minutes_connected, inline: false },
+                )
+              .setAuthor('Ziewamy Blacha')
+              .setTimestamp(timeData);
+        message.channel.send(exampleEmbed);
+        googleDB.clearMinutesWeekly();
+      });
     });
   });
 
@@ -622,7 +637,7 @@ client.on('message', (message) => {
     });
   }
 
-  if (checkPrefix(message, 'db')) {
+  if (checkPrefix(message, 'seen')) {
     if (message.mentions.users.first() === undefined) {
       message.reply('please mention a user.');
       console.log(`<❌> User was not mentioned. ${message.author.username}`);
@@ -742,6 +757,9 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
             }
             properData.minutes_connected = parseInt(properData.minutes_connected, 10) + timeDiff;
             properData.all_time_minutes = parseInt(properData.all_time_minutes, 10) + timeDiff;
+
+            properData.channel_level = Math.round((properData.all_time_minutes - properData.all_time_on_mute)/60*24);
+            properData.channel_xp = Math.round((properData.all_time_minutes - properData.all_time_on_mute)/60);
             properData.last_seen = dataTime;
 
           
