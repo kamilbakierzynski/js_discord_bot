@@ -107,7 +107,7 @@ exports.dbUpdate = async function dbUpdate(objectArr) {
 
 }
 
-expots.clearMinutesWeekly = async function clearMinutesWeekly() {
+exports.clearMinutesWeekly = async function clearMinutesWeekly() {
     client.authorize(function (error, tokens) {
         if (error) {
             console.log(error);
