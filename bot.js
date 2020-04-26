@@ -724,6 +724,42 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
           }
         });
       }
+
+      if (oldMember.channel.name !== 'AFK' && newMember.channel.name === 'AFK') {
+        const dataTime = Date.now();
+        googleDB.dbRead().then(data => {
+          console.log('<✅> Reading database.');
+          let properData = undefined;
+          let index = 0;
+          for (let i = 0; i < data.length; i += 1) {
+            if (data[i].discord_id === newMember.member.id) {
+              properData = data[i]
+              index = i;
+            }
+          }
+          if (properData === undefined) {
+            console.log('<✅> Creating new user in db.');
+            googleDB.dbAddNewUser(newMember.member.id, newMember.member.displayName, dataTime);
+            return;
+          } else {
+            console.log('<✅> Found user. Updating data.');
+            //update username
+            properData.username = newMember.member.displayName;
+
+            //timediff since last update
+            const timeDiff = Math.round((dataTime - parseInt(properData.last_seen, 10))/60000);
+            //check if muting or deafening
+            if (oldMember.mute || oldMember.deaf) {
+              properData.minutes_on_mute = parseInt(properData.minutes_on_mute, 10) + timeDiff;
+              properData.all_time_on_mute = parseInt(properData.all_time_on_mute, 10) + timeDiff;
+            }
+            properData.minutes_connected = parseInt(properData.minutes_connected, 10) + timeDiff;
+            properData.all_time_minutes = parseInt(properData.all_time_minutes, 10) + timeDiff;
+            properData.last_seen = dataTime;
+            googleDB.dbUpdateUser(properData, index)
+          }
+        });
+      }
     } catch (e) {
       console.log('<🔥> User has left the server.');
       if (oldMember.channel.name !== 'AFK' && !newMember.hasOwnProperty('channel')) {
