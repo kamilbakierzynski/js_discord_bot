@@ -709,19 +709,19 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
             properData.username = newMember.member.displayName;
 
             //timediff since last update
-            const timeDiff = (dataTime - parseInt(properData.last_seen, 10))/60000;
+            const timeDiff = parseFloat(((dataTime - parseInt(properData.last_seen, 10))/60000).toFixed(2));
             //check if muting or deafening
             if ((oldMember.mute && !newMember.mute) || (oldMember.deaf && !newMember.mute)) {
-              properData.minutes_on_mute = parseInt(properData.minutes_on_mute, 10) + timeDiff;
-              properData.all_time_on_mute = parseInt(properData.all_time_on_mute, 10) + timeDiff;
+              properData.minutes_on_mute = parseFloat(properData.minutes_on_mute, 10) + timeDiff;
+              properData.all_time_on_mute = parseFloat(properData.all_time_on_mute, 10) + timeDiff;
             }
             //check if last time was connected
             if (oldMember.channel != null) {
-              properData.minutes_connected = parseInt(properData.minutes_connected, 10) + timeDiff;
-              properData.all_time_minutes = parseInt(properData.all_time_minutes, 10) + timeDiff;
+              properData.minutes_connected = parseFloat(properData.minutes_connected, 10) + timeDiff;
+              properData.all_time_minutes = parseFloat(properData.all_time_minutes, 10) + timeDiff;
             }
             properData.last_seen = dataTime;
-            googleDB.dbUpdateUser(properData, index)
+            googleDB.dbUpdateUser(properData, index);
           }
         });
       }
@@ -748,16 +748,16 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
             properData.username = newMember.member.displayName;
 
             //timediff since last update
-            const timeDiff = (dataTime - parseInt(properData.last_seen, 10))/60000;
+            const timeDiff = parseFloat(((dataTime - parseInt(properData.last_seen, 10))/60000).toFixed(2));
             //check if muting or deafening
             if (oldMember.mute || oldMember.deaf) {
-              properData.minutes_on_mute = parseInt(properData.minutes_on_mute, 10) + timeDiff;
-              properData.all_time_on_mute = parseInt(properData.all_time_on_mute, 10) + timeDiff;
+              properData.minutes_on_mute = parseFloat(properData.minutes_on_mute, 10) + timeDiff;
+              properData.all_time_on_mute = parseFloat(properData.all_time_on_mute, 10) + timeDiff;
             }
-            properData.minutes_connected = parseInt(properData.minutes_connected, 10) + timeDiff;
-            properData.all_time_minutes = parseInt(properData.all_time_minutes, 10) + timeDiff;
+            properData.minutes_connected = parseFloat(properData.minutes_connected, 10) + timeDiff;
+            properData.all_time_minutes = parseFloat(properData.all_time_minutes, 10) + timeDiff;
             properData.last_seen = dataTime;
-            googleDB.dbUpdateUser(properData, index)
+            googleDB.dbUpdateUser(properData, index);
           }
         });
       }
@@ -785,20 +785,20 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
             properData.username = newMember.member.displayName;
 
             //timediff since last update
-            const timeDiff = (dataTime - parseInt(properData.last_seen, 10))/60000;
+            const timeDiff = parseFloat(((dataTime - parseInt(properData.last_seen, 10))/60000).toFixed(2));
 
             //check if was muted or deafeaned
             if (oldMember.mute || oldMember.deaf) {
-              properData.minutes_on_mute = parseInt(properData.minutes_on_mute, 10) + timeDiff;
-              properData.all_time_on_mute = parseInt(properData.all_time_on_mute, 10) + timeDiff;
+              properData.minutes_on_mute = parseFloat(properData.minutes_on_mute, 10) + timeDiff;
+              properData.all_time_on_mute = parseFloat(properData.all_time_on_mute, 10) + timeDiff;
             }
-            properData.minutes_connected = parseInt(properData.minutes_connected, 10) + timeDiff;
-            properData.all_time_minutes = parseInt(properData.all_time_minutes, 10) + timeDiff;
+            properData.minutes_connected = parseFloat(properData.minutes_connected, 10) + timeDiff;
+            properData.all_time_minutes = parseFloat(properData.all_time_minutes, 10) + timeDiff;
 
             properData.last_seen = dataTime;
 
           
-            googleDB.dbUpdateUser(properData, index)
+            googleDB.dbUpdateUser(properData, index);
           }
         });
       }
