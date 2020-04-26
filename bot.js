@@ -42,7 +42,7 @@ function convertSecondsToTime(time) {
 }
 
 function preetifyMinutes(mins) {
-  const roundMin = Math.round(mins);
+  const roundMin = Math.round(parseFloat(mins));
   if (roundMin < 60) {
     return `${roundMin} min`;
   }
