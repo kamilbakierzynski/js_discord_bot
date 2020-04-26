@@ -6,6 +6,7 @@ const cron = require('cron');
 const client = new Discord.Client();
 const { XMLHttpRequest } = require('xmlhttprequest');
 const champs = require('./data/champions_read.js');
+const googleDB = require('./data/googledb.js');
 
 const prefix = process.env.PREFIX;
 const riotApiKey = process.env.RIOT_API_KEY;
@@ -38,6 +39,15 @@ function convertSecondsToTime(time) {
     secs = `0${secs}`;
   }
   return `${mins}:${secs}`;
+}
+
+function preetifyMinutes(mins) {
+  if (mins < 60) {
+    return `${mins} min`;
+  }
+  const hours = Math.floor(mins / 60);
+  const newMins = mins - hours * 60;
+  return `${hours} hours ${newMins} min`;
 }
 
 function formatRotation(arr) {
@@ -112,7 +122,7 @@ client.on('ready', () => {
   })
     .catch(console.error);
 
-  console.log('<🕛> JOB AT 22:00:01 (00:00:01 UTC +2) change channel title.')
+  console.log('<🕛> JOB AT 22:00:01 (00:00:01 UTC +2) change channel title.');
   let changeChannelTitle = new cron.CronJob('01 00 22 * * *', () => {
     client.channels.fetch('654415996702162987').then(channel => {
       const { name } = channel;
@@ -129,6 +139,16 @@ client.on('ready', () => {
       }
     });
   });
+
+  console.log('<🕛> JOB EVERY SUN 22:00:01 clear database.');
+  let clearDatabase = new cron.CronJob('01 00 22 * * SUN', () => {
+    client.channels.fetch('654415996702162987').then(channel => {
+      const { name } = channel;
+      console.log(`<🕛> Running DB job.`);
+      channel.send();
+    });
+  });
+
   changeChannelTitle.start();
 });
 
@@ -493,56 +513,56 @@ client.on('message', (message) => {
     }
   }
 
-  if (checkPrefix(message, 'seen')) {
-    try {
-      if (message.mentions.users.first() === undefined) {
-        message.reply('please mention a user.');
-        console.log(`<❌> User was not mentioned. ${message.author.username}`);
-        return;
-      }
-      const data = null;
-      const dbRequest = new XMLHttpRequest();
-      dbRequest.withCredentials = true;
-      const { id } = message.mentions.users.first();
-      const name = message.mentions.users.first().username;
-      console.log(`<❔> Geting seen data about ${name} for ${message.author.username}`);
-      dbRequest.open('GET', `https://kvstore.p.rapidapi.com/collections/discord_data/items/${id}_ostatnia_wizyta`);
-      dbRequest.setRequestHeader('x-rapidapi-host', 'kvstore.p.rapidapi.com');
-      dbRequest.setRequestHeader('x-rapidapi-key', rapidApiKey);
-      dbRequest.send(data);
-      dbRequest.addEventListener('readystatechange', function () {
-        if (this.readyState === this.DONE) {
-          // console.log(this.responseText);
-          console.log(`<✅> Got data about ${name}.`);
-          const dataPawel = JSON.parse(this.responseText);
-          if (!dataPawel.hasOwnProperty('status')) {
-            const timeData = parseInt(dataPawel.value, 10);
-            const exampleEmbed = new Discord.MessageEmbed()
-              .setColor('#0099ff')
-              .setTitle(`${name} ostatnio na kanale:`)
-              .setDescription(calculateTimeDiff(timeData))
-              .setAuthor('Ziewamy Blacha')
-              .setTimestamp(timeData);
-            if (name === 'E-Zigarette') {
-              exampleEmbed.setFooter('Persona non grata', 'https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/237/reversed-hand-with-middle-finger-extended_emoji-modifier-fitzpatrick-type-3_1f595-1f3fc_1f3fc.png');
-            }
-            message.channel.send(exampleEmbed);
-          } else if (message.mentions.users.first().bot) {
-            message.channel.send('Brak danych. Użytkownik ' + `${message.mentions.users.first()}` + ' jest botem. 😕');
-          } else if (name === 'E-Zigarette' && false) {
-            message.channel.send('🖕🏼⛔');
-          } else {
-            message.channel.send('Brak danych o ' + `${message.mentions.users.first()}` + ' 😕');
-          }
-        }
-      });
-    } catch (e) {
-      message.reply(' error with the command `seen`.');
-      console.log('<❌> Error with the command seen.');
-      console.log('<❌>' + e);
-      return;
-    }
-  }
+  // if (checkPrefix(message, 'seen')) {
+  //   try {
+  //     if (message.mentions.users.first() === undefined) {
+  //       message.reply('please mention a user.');
+  //       console.log(`<❌> User was not mentioned. ${message.author.username}`);
+  //       return;
+  //     }
+  //     const data = null;
+  //     const dbRequest = new XMLHttpRequest();
+  //     dbRequest.withCredentials = true;
+  //     const { id } = message.mentions.users.first();
+  //     const name = message.mentions.users.first().username;
+  //     console.log(`<❔> Geting seen data about ${name} for ${message.author.username}`);
+  //     dbRequest.open('GET', `https://kvstore.p.rapidapi.com/collections/discord_data/items/${id}_ostatnia_wizyta`);
+  //     dbRequest.setRequestHeader('x-rapidapi-host', 'kvstore.p.rapidapi.com');
+  //     dbRequest.setRequestHeader('x-rapidapi-key', rapidApiKey);
+  //     dbRequest.send(data);
+  //     dbRequest.addEventListener('readystatechange', function () {
+  //       if (this.readyState === this.DONE) {
+  //         // console.log(this.responseText);
+  //         console.log(`<✅> Got data about ${name}.`);
+  //         const dataPawel = JSON.parse(this.responseText);
+  //         if (!dataPawel.hasOwnProperty('status')) {
+  //           const timeData = parseInt(dataPawel.value, 10);
+  //           const exampleEmbed = new Discord.MessageEmbed()
+  //             .setColor('#0099ff')
+  //             .setTitle(`${name} ostatnio na kanale:`)
+  //             .setDescription(calculateTimeDiff(timeData))
+  //             .setAuthor('Ziewamy Blacha')
+  //             .setTimestamp(timeData);
+  //           if (name === 'E-Zigarette') {
+  //             exampleEmbed.setFooter('Persona non grata', 'https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/237/reversed-hand-with-middle-finger-extended_emoji-modifier-fitzpatrick-type-3_1f595-1f3fc_1f3fc.png');
+  //           }
+  //           message.channel.send(exampleEmbed);
+  //         } else if (message.mentions.users.first().bot) {
+  //           message.channel.send('Brak danych. Użytkownik ' + `${message.mentions.users.first()}` + ' jest botem. 😕');
+  //         } else if (name === 'E-Zigarette' && false) {
+  //           message.channel.send('🖕🏼⛔');
+  //         } else {
+  //           message.channel.send('Brak danych o ' + `${message.mentions.users.first()}` + ' 😕');
+  //         }
+  //       }
+  //     });
+  //   } catch (e) {
+  //     message.reply(' error with the command `seen`.');
+  //     console.log('<❌> Error with the command seen.');
+  //     console.log('<❌>' + e);
+  //     return;
+  //   }
+  // }
 
   if (checkPrefix(message, 'corona')) {
     let country = message.content.slice('$corona '.length).toLowerCase();
@@ -601,6 +621,44 @@ client.on('message', (message) => {
       }
     });
   }
+
+  if (checkPrefix(message, 'db')) {
+    if (message.mentions.users.first() === undefined) {
+      message.reply('please mention a user.');
+      console.log(`<❌> User was not mentioned. ${message.author.username}`);
+      return;
+    }
+    const { id } = message.mentions.users.first();
+    const name = message.mentions.users.first().username;
+
+    googleDB.dbRead().then(data => {
+      let properData = undefined;
+      for (let i = 0; i < data.length; i += 1) {
+        if (data[i].discord_id === id) {
+          properData = data[i]
+        }
+      }
+      if (properData === undefined) {
+        message.reply(' no data about this user.');
+        return;
+      }
+      const timeData = parseInt(properData.last_seen, 10);
+      const exampleEmbed = new Discord.MessageEmbed()
+              .setColor('#0099ff')
+              .setTitle(`${name} ostatnio na kanale:`)
+              .setDescription(calculateTimeDiff(timeData))
+              .addFields(
+                {name: 'Time connected / week', value: preetifyMinutes(properData.minutes_connected), inline: true },
+                {name: 'Time on mute / week', value: preetifyMinutes(properData.minutes_on_mute), inline: true },
+                {name: 'Channel level', value: `${properData.channel_level} lvl`, inline: true },
+                {name: 'Time connected / all', value: preetifyMinutes(properData.all_time_minutes), inline: true },
+                {name: 'Time on mute / all', value: preetifyMinutes(properData.all_time_on_mute), inline: true },
+                )
+              .setAuthor('Ziewamy Blacha')
+              .setTimestamp(timeData);
+      message.channel.send(exampleEmbed);
+    });
+  }
 });
 
 client.on('voiceStateUpdate', (oldMember, newMember) => {
@@ -610,21 +668,87 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
     console.log('ciekawe');
   } else if (newUserChannel === undefined) {
     try {
-      if (newMember.channel.hasOwnProperty('name') && newMember.channel.name === 'Ziewamy Blacha') {
+      if (newMember.channel.hasOwnProperty('name') && newMember.channel.name !== 'AFK') {
         console.log(`<🎤> User ${newMember.member.displayName} on channel ${newMember.channel.name}`);
         console.log(`<✅> Saving data for ${newMember.member.displayName} || id: ${newMember.member.id}`);
         // const channel = client.channels.cache.get('654415996702162987');
-        const data = Date.now().toString();
-        const dbRequest = new XMLHttpRequest();
-        dbRequest.withCredentials = true;
-        dbRequest.open('PUT', `https://kvstore.p.rapidapi.com/collections/discord_data/items/${newMember.member.id}_ostatnia_wizyta`);
-        dbRequest.setRequestHeader('x-rapidapi-host', 'kvstore.p.rapidapi.com');
-        dbRequest.setRequestHeader('x-rapidapi-key', rapidApiKey);
-        dbRequest.send(data);
+        const dataTime = Date.now();
+        googleDB.dbRead().then(data => {
+          console.log('read db');
+          let properData = undefined;
+          let index = 0;
+          for (let i = 0; i < data.length; i += 1) {
+            if (data[i].discord_id === newMember.member.id) {
+              properData = data[i]
+              index = i;
+            }
+          }
+          if (properData === undefined) {
+            console.log('<✅> Creating new user in db.');
+            googleDB.dbAddNewUser(newMember.member.id, newMember.member.displayName, dataTime);
+            return;
+          } else {
+            console.log('<✅> Found user. Updating data.');
+            //update username
+            properData.username = newMember.member.displayName;
+
+            //timediff since last update
+            const timeDiff = Math.round((dataTime - parseInt(properData.last_seen, 10))/60000);
+            //check if muting or deafening
+            if ((oldMember.mute && !newMember.mute) || (oldMember.deaf && !newMember.mute)) {
+              properData.minutes_on_mute = parseInt(properData.minutes_on_mute, 10) + timeDiff;
+              properData.all_time_on_mute = parseInt(properData.all_time_on_mute, 10) + timeDiff;
+            }
+            //check if last time was connected
+            if (oldMember.channel != null) {
+              properData.minutes_connected = parseInt(properData.minutes_connected, 10) + timeDiff;
+              properData.all_time_minutes = parseInt(properData.all_time_minutes, 10) + timeDiff;
+            }
+            properData.last_seen = dataTime;
+            googleDB.dbUpdateUser(properData, index)
+          }
+        });
       }
     } catch (e) {
-      console.log('<❌> === 🔥 VOICE CHANNEL ERROR 🔥 ===');
-      // console.log(e);
+      console.log('<🔥> User has left the server.');
+      if (oldMember.channel.name !== 'AFK' && !newMember.hasOwnProperty('channel')) {
+        const dataTime = Date.now();
+        googleDB.dbRead().then(data => {
+          console.log('read db');
+          let properData = undefined;
+          let index = 0;
+          for (let i = 0; i < data.length; i += 1) {
+            if (data[i].discord_id === oldMember.member.id) {
+              properData = data[i]
+              index = i;
+            }
+          }
+          if (properData === undefined) {
+            console.log('<✅> Creating new user in db.');
+            googleDB.dbAddNewUser(oldMember.member.id, oldMember.member.displayName, dataTime);
+            return;
+          } else {
+            console.log('<✅> Found user. Updating data.');
+            //update username
+            properData.username = newMember.member.displayName;
+
+            //timediff since last update
+            const timeDiff = Math.round((dataTime - parseInt(properData.last_seen, 10))/60000);
+
+            //check if was muted or deafeaned
+            if (oldMember.mute || oldMember.deaf) {
+              properData.minutes_on_mute = parseInt(properData.minutes_on_mute, 10) + timeDiff;
+              properData.all_time_on_mute = parseInt(properData.all_time_on_mute, 10) + timeDiff;
+            }
+            properData.minutes_connected = parseInt(properData.minutes_connected, 10) + timeDiff;
+            properData.all_time_minutes = parseInt(properData.all_time_minutes, 10) + timeDiff;
+            properData.last_seen = dataTime;
+
+          
+            googleDB.dbUpdateUser(properData, index)
+          }
+        });
+      }
     }
   }
 });

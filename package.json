@@ -12,10 +12,10 @@
   },
   "dependencies": {
     "cron": "^1.8.2",
-    "crypto-js": "^4.0.0",
     "discord.js": "12.2.0",
     "dotenv": "8.2.0",
     "express": "^4.17.1",
+    "googleapis": "^39.2.0",
     "request": "2.81.0",
     "xmlhttprequest": "1.8.0"
   },
