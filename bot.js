@@ -674,13 +674,14 @@ client.on('message', (message) => {
         .setTitle(`${name} ostatnio na kanale:`)
         .setDescription(calculateTimeDiff(timeData) + " ago")
         .addFields(
-          { name: 'Time connected / week', value: preetifyMinutes(properData.minutes_connected), inline: true },
-          { name: 'Time on mute / week', value: preetifyMinutes(properData.minutes_on_mute), inline: true },
+          { name: '🎙️ Time connected / week', value: preetifyMinutes(properData.minutes_connected), inline: true },
+          { name: '🔇 Time on mute / week', value: preetifyMinutes(properData.minutes_on_mute), inline: true },
           // {name: 'Channel level', value: `${properData.channel_level} lvl`, inline: true },
-          { name: 'Time connected / all', value: preetifyMinutes(properData.all_time_minutes), inline: true },
-          { name: 'Time on mute / all', value: preetifyMinutes(properData.all_time_on_mute), inline: true },
+          { name: '🎙️ Time connected / all', value: preetifyMinutes(properData.all_time_minutes), inline: false },
+          { name: '🔇 Time on mute / all', value: preetifyMinutes(properData.all_time_on_mute), inline: true },
         )
         .setAuthor('Ziewamy Blacha')
+        .setFooter('📅')
         .setTimestamp(timeData);
       message.channel.send(exampleEmbed);
     });
