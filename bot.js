@@ -165,6 +165,7 @@ client.on('ready', () => {
     });
   });
 
+  clearDatabase.start();
   changeChannelTitle.start();
 });
 
