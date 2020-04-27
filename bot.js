@@ -94,10 +94,9 @@ function calculateTimeDiff(timeOld) {
 function displayRanking() {
   client.channels.fetch('654415996702162987').then(channel => {
     const { name } = channel;
-    console.log(`<🕛> Running DB job.`);
     googleDB.dbRead().then(data => {
+      console.log('<✅> Displaying server ranking.');
       data.sort((a, b) => (parseFloat(b.minutes_connected) - parseFloat(b.minutes_on_mute)) - (parseFloat(a.minutes_connected) - parseFloat(a.minutes_on_mute)));
-      console.log(data);
       const exampleEmbed = new Discord.MessageEmbed()
         .setColor('#0099ff')
         .setTitle(`🎉 Server Activity 🎉`)
@@ -169,6 +168,7 @@ client.on('ready', () => {
   });
   console.log('<🕛> JOB EVERY MON 03:00:01 clear database and show winners.');
   let clearDatabase = new cron.CronJob('01 00 03 * * MON', () => {
+    console.log(`<🕛> Running DB job.`);
     displayRanking();
     googleDB.clearMinutesWeekly();
   });
