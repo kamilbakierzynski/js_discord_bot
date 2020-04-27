@@ -166,14 +166,20 @@ client.on('ready', () => {
       }
     });
   });
-  console.log('<🕛> JOB EVERY MON 03:00:01 clear database and show winners.');
+  console.log('<🕛> JOB EVERY MON 03:00:01 (05:00:01 UTC +2) clear database and show winners.');
   let clearDatabase = new cron.CronJob('01 00 03 * * MON', () => {
     console.log(`<🕛> Running DB job.`);
     displayRanking();
     googleDB.clearMinutesWeekly();
   });
+  console.log('<🕛> JOB EVERY MON 02:59:00 (04:59:00 UTC +2) archive database.');
+  let archiveDatabase = new cron.CronJob('00 59 02 * * MON', () => {
+    console.log(`<🕛> Running archive job.`);
+    googleDB.archiveData();
+  });
 
 
+  archiveDatabase.start();
   clearDatabase.start();
   changeChannelTitle.start();
 });
@@ -675,7 +681,7 @@ client.on('message', (message) => {
         .setDescription(calculateTimeDiff(timeData) + " ago")
         .addFields(
           { name: '🎙️ Time connected / week', value: preetifyMinutes(properData.minutes_connected), inline: true },
-          { name: '🔇 Time on mute / week', value: preetifyMinutes(properData.minutes_on_mute), inline: true },
+          { name: '🔇 Time on mute / week', value: preetifyMinutes(properData.minutes_on_mute), inline: false },
           // {name: 'Channel level', value: `${properData.channel_level} lvl`, inline: true },
           { name: '🎙️ Time connected / all', value: preetifyMinutes(properData.all_time_minutes), inline: false },
           { name: '🔇 Time on mute / all', value: preetifyMinutes(properData.all_time_on_mute), inline: true },
