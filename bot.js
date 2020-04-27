@@ -94,10 +94,9 @@ function calculateTimeDiff(timeOld) {
 function displayRanking() {
   client.channels.fetch('654415996702162987').then(channel => {
     const { name } = channel;
-    console.log(`<🕛> Running DB job.`);
     googleDB.dbRead().then(data => {
+      console.log('<✅> Displaying server ranking.');
       data.sort((a, b) => (parseFloat(b.minutes_connected) - parseFloat(b.minutes_on_mute)) - (parseFloat(a.minutes_connected) - parseFloat(a.minutes_on_mute)));
-      console.log(data);
       const exampleEmbed = new Discord.MessageEmbed()
         .setColor('#0099ff')
         .setTitle(`🎉 Server Activity 🎉`)
@@ -107,9 +106,9 @@ function displayRanking() {
           { name: '2️⃣ Second place', value: "🥈 " + data[1].username + ` (ONLINE: ${data[1].minutes_connected} / AFK: ${data[1].minutes_on_mute})`, inline: false },
           { name: '3️⃣ Third place', value: "🥉 " + data[2].username + ` (ONLINE: ${data[2].minutes_connected} / AFK: ${data[2].minutes_on_mute})`, inline: false },
           { name: 'Off the podium', value: '------', inline: false },
-          { name: '4️⃣ Fourth place', value: "🥉 " + data[3].username + ` (ONLINE: ${data[3].minutes_connected} / AFK: ${data[3].minutes_on_mute})`, inline: false },
-          { name: '5️⃣ Fifth place', value: "🥉 " + data[4].username + ` (ONLINE: ${data[4].minutes_connected} / AFK: ${data[4].minutes_on_mute})`, inline: false },
-          { name: '6️⃣ Sixth place', value: "🥉 " + data[5].username + ` (ONLINE: ${data[5].minutes_connected} / AFK: ${data[5].minutes_on_mute})`, inline: false },
+          { name: '4️⃣ Fourth place', value: data[3].username + ` (ONLINE: ${data[3].minutes_connected} / AFK: ${data[3].minutes_on_mute})`, inline: false },
+          { name: '5️⃣ Fifth place', value: data[4].username + ` (ONLINE: ${data[4].minutes_connected} / AFK: ${data[4].minutes_on_mute})`, inline: false },
+          { name: '6️⃣ Sixth place', value: data[5].username + ` (ONLINE: ${data[5].minutes_connected} / AFK: ${data[5].minutes_on_mute})`, inline: false },
         )
         .setAuthor('Ziewamy Blacha')
         .setTimestamp();
@@ -169,6 +168,7 @@ client.on('ready', () => {
   });
   console.log('<🕛> JOB EVERY MON 03:00:01 clear database and show winners.');
   let clearDatabase = new cron.CronJob('01 00 03 * * MON', () => {
+    console.log(`<🕛> Running DB job.`);
     displayRanking();
     googleDB.clearMinutesWeekly();
   });
@@ -674,13 +674,14 @@ client.on('message', (message) => {
         .setTitle(`${name} ostatnio na kanale:`)
         .setDescription(calculateTimeDiff(timeData) + " ago")
         .addFields(
-          { name: 'Time connected / week', value: preetifyMinutes(properData.minutes_connected), inline: true },
-          { name: 'Time on mute / week', value: preetifyMinutes(properData.minutes_on_mute), inline: true },
+          { name: '🎙️ Time connected / week', value: preetifyMinutes(properData.minutes_connected), inline: true },
+          { name: '🔇 Time on mute / week', value: preetifyMinutes(properData.minutes_on_mute), inline: true },
           // {name: 'Channel level', value: `${properData.channel_level} lvl`, inline: true },
-          { name: 'Time connected / all', value: preetifyMinutes(properData.all_time_minutes), inline: true },
-          { name: 'Time on mute / all', value: preetifyMinutes(properData.all_time_on_mute), inline: true },
+          { name: '🎙️ Time connected / all', value: preetifyMinutes(properData.all_time_minutes), inline: false },
+          { name: '🔇 Time on mute / all', value: preetifyMinutes(properData.all_time_on_mute), inline: true },
         )
         .setAuthor('Ziewamy Blacha')
+        .setFooter('📅')
         .setTimestamp(timeData);
       message.channel.send(exampleEmbed);
     });
