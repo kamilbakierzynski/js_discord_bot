@@ -173,7 +173,7 @@ client.on('ready', () => {
     googleDB.clearMinutesWeekly();
   });
   console.log('<🕛> JOB EVERY MON 02:59:00 (04:59:00 UTC +2) archive database.');
-  let archiveDatabase = new cron.CronJob('00 59 02 * * MON', () => {
+  let archiveDatabase = new cron.CronJob('30 59 02 * * *', () => {
     console.log(`<🕛> Running archive job.`);
     googleDB.archiveData();
   });
