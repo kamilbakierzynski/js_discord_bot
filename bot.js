@@ -90,6 +90,33 @@ function calculateTimeDiff(timeOld) {
   const diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
   return `${diffDays} days, ${diffHrs} hours, ${diffMins} minutes`;
 }
+// 654415996702162987
+function displayRanking() {
+  client.channels.fetch('654415996702162987').then(channel => {
+    const { name } = channel;
+    console.log(`<🕛> Running DB job.`);
+    googleDB.dbRead().then(data => {
+      data.sort((a, b) => (parseFloat(b.minutes_connected) - parseFloat(b.minutes_on_mute)) - (parseFloat(a.minutes_connected) - parseFloat(a.minutes_on_mute)));
+      console.log(data);
+      const exampleEmbed = new Discord.MessageEmbed()
+        .setColor('#0099ff')
+        .setTitle(`🎉 Server Activity 🎉`)
+        .setDescription('Ranking in minutes: ')
+        .addFields(
+          { name: '1️⃣ First place', value: "🥇 " + data[0].username + ` (ONLINE: ${data[0].minutes_connected} / AFK: ${data[0].minutes_on_mute})`, inline: false },
+          { name: '2️⃣ Second place', value: "🥈 " + data[1].username + ` (ONLINE: ${data[1].minutes_connected} / AFK: ${data[1].minutes_on_mute})`, inline: false },
+          { name: '3️⃣ Third place', value: "🥉 " + data[2].username + ` (ONLINE: ${data[2].minutes_connected} / AFK: ${data[2].minutes_on_mute})`, inline: false },
+          { name: 'Off the podium', value: '------', inline: false },
+          { name: '4️⃣ Fourth place', value: "🥉 " + data[3].username + ` (ONLINE: ${data[3].minutes_connected} / AFK: ${data[3].minutes_on_mute})`, inline: false },
+          { name: '5️⃣ Fifth place', value: "🥉 " + data[4].username + ` (ONLINE: ${data[4].minutes_connected} / AFK: ${data[4].minutes_on_mute})`, inline: false },
+          { name: '6️⃣ Sixth place', value: "🥉 " + data[5].username + ` (ONLINE: ${data[5].minutes_connected} / AFK: ${data[5].minutes_on_mute})`, inline: false },
+        )
+        .setAuthor('Ziewamy Blacha')
+        .setTimestamp();
+      channel.send(exampleEmbed);
+    })
+  })
+}
 
 // function overOneDay(timeOld) {
 //   const newDate = Date.now();
@@ -140,30 +167,12 @@ client.on('ready', () => {
       }
     });
   });
-
   console.log('<🕛> JOB EVERY MON 03:00:01 clear database and show winners.');
   let clearDatabase = new cron.CronJob('01 00 03 * * MON', () => {
-    client.channels.fetch('654415996702162987').then(channel => {
-      const { name } = channel;
-      console.log(`<🕛> Running DB job.`);
-      googleDB.dbRead().then(data => {
-        data.sort((a, b) => (a.minutes_connected - a.minutes_on_mute) - (b.minutes_connected - b.minutes_on_mute));
-        const exampleEmbed = new Discord.MessageEmbed()
-              .setColor('#0099ff')
-              .setTitle(`🎉 Server Activity 🎉`)
-              .setDescription('Ranking: ')
-              .addFields(
-                {name: '1️⃣ First place', value: "🥇 " + data[0].username + ` (ONLINE: ${data[0].minutes_connected} / AFK: ${data[0].minutes_on_mute}`, inline: false },
-                {name: '2️⃣ Second place', value: "🥈 " + data[1].username + ` (ONLINE: ${data[1].minutes_connected} / AFK: ${data[1].minutes_on_mute}`, inline: false },
-                {name: '3️⃣ Third place', value: "🥉 " + data[2].username + ` (ONLINE: ${data[2].minutes_connected} / AFK: ${data[2].minutes_on_mute}`, inline: false },
-                )
-              .setAuthor('Ziewamy Blacha')
-              .setTimestamp();
-        message.channel.send(exampleEmbed);
-        googleDB.clearMinutesWeekly();
-      });
-    });
+    displayRanking();
+    googleDB.clearMinutesWeekly();
   });
+
 
   clearDatabase.start();
   changeChannelTitle.start();
@@ -179,7 +188,7 @@ client.on('message', (message) => {
   if (message.content.startsWith(prefix)) console.log(`<❤️> Message to me: ${message}`);
 
   if (checkPrefix(message, 'help')) {
-    message.reply('shorten, summoner, lastgame, rotation, livegame, seen, corona.');
+    message.reply('shorten, summoner, lastgame, rotation, livegame, seen, corona, ranking.');
   }
 
   if (checkPrefix(message, 'shorten')) {
@@ -661,20 +670,24 @@ client.on('message', (message) => {
       }
       const timeData = parseInt(properData.last_seen, 10);
       const exampleEmbed = new Discord.MessageEmbed()
-              .setColor('#0099ff')
-              .setTitle(`${name} ostatnio na kanale:`)
-              .setDescription(calculateTimeDiff(timeData))
-              .addFields(
-                {name: 'Time connected / week', value: preetifyMinutes(properData.minutes_connected), inline: true },
-                {name: 'Time on mute / week', value: preetifyMinutes(properData.minutes_on_mute), inline: true },
-                {name: 'Channel level', value: `${properData.channel_level} lvl`, inline: true },
-                {name: 'Time connected / all', value: preetifyMinutes(properData.all_time_minutes), inline: true },
-                {name: 'Time on mute / all', value: preetifyMinutes(properData.all_time_on_mute), inline: true },
-                )
-              .setAuthor('Ziewamy Blacha')
-              .setTimestamp(timeData);
+        .setColor('#0099ff')
+        .setTitle(`${name} ostatnio na kanale:`)
+        .setDescription(calculateTimeDiff(timeData) + " ago")
+        .addFields(
+          { name: 'Time connected / week', value: preetifyMinutes(properData.minutes_connected), inline: true },
+          { name: 'Time on mute / week', value: preetifyMinutes(properData.minutes_on_mute), inline: true },
+          // {name: 'Channel level', value: `${properData.channel_level} lvl`, inline: true },
+          { name: 'Time connected / all', value: preetifyMinutes(properData.all_time_minutes), inline: true },
+          { name: 'Time on mute / all', value: preetifyMinutes(properData.all_time_on_mute), inline: true },
+        )
+        .setAuthor('Ziewamy Blacha')
+        .setTimestamp(timeData);
       message.channel.send(exampleEmbed);
     });
+  }
+
+  if (checkPrefix(message, 'ranking')) {
+    displayRanking();
   }
 });
 
@@ -710,14 +723,14 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
             properData.username = newMember.member.displayName;
 
             //timediff since last update
-            const timeDiff = parseFloat(((dataTime - parseInt(properData.last_seen, 10))/60000).toFixed(2));
+            const timeDiff = parseFloat(((dataTime - parseInt(properData.last_seen, 10)) / 60000).toFixed(2));
             //check if muting or deafening
             if ((oldMember.mute && !newMember.mute) || (oldMember.deaf && !newMember.mute)) {
               properData.minutes_on_mute = parseFloat(properData.minutes_on_mute, 10) + timeDiff;
               properData.all_time_on_mute = parseFloat(properData.all_time_on_mute, 10) + timeDiff;
             }
             //check if last time was connected
-            if (oldMember.channel != null) {
+            if (oldMember.channel != null && oldMember.channel.name !== 'AFK') {
               properData.minutes_connected = parseFloat(properData.minutes_connected, 10) + timeDiff;
               properData.all_time_minutes = parseFloat(properData.all_time_minutes, 10) + timeDiff;
             }
@@ -727,7 +740,7 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
         });
       }
 
-      if (oldMember.channel.name !== 'AFK' && newMember.channel.name === 'AFK') {
+      if (oldMember.channel != null && oldMember.channel.name !== 'AFK' && newMember.channel.name === 'AFK') {
         const dataTime = Date.now();
         googleDB.dbRead().then(data => {
           console.log('<✅> Reading database.');
@@ -749,7 +762,7 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
             properData.username = newMember.member.displayName;
 
             //timediff since last update
-            const timeDiff = parseFloat(((dataTime - parseInt(properData.last_seen, 10))/60000).toFixed(2));
+            const timeDiff = parseFloat(((dataTime - parseInt(properData.last_seen, 10)) / 60000).toFixed(2));
             //check if muting or deafening
             if (oldMember.mute || oldMember.deaf) {
               properData.minutes_on_mute = parseFloat(properData.minutes_on_mute, 10) + timeDiff;
@@ -786,7 +799,7 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
             properData.username = newMember.member.displayName;
 
             //timediff since last update
-            const timeDiff = parseFloat(((dataTime - parseInt(properData.last_seen, 10))/60000).toFixed(2));
+            const timeDiff = parseFloat(((dataTime - parseInt(properData.last_seen, 10)) / 60000).toFixed(2));
 
             //check if was muted or deafeaned
             if (oldMember.mute || oldMember.deaf) {
@@ -798,7 +811,7 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
 
             properData.last_seen = dataTime;
 
-          
+
             googleDB.dbUpdateUser(properData, index);
           }
         });
