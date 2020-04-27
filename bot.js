@@ -150,15 +150,15 @@ client.on('ready', () => {
         data.sort((a, b) => (a.minutes_connected - a.minutes_on_mute) - (b.minutes_connected - b.minutes_on_mute));
         const exampleEmbed = new Discord.MessageEmbed()
               .setColor('#0099ff')
-              .setTitle(`Server Activity`)
-              .setDescription(calculateTimeDiff(timeData))
+              .setTitle(`🎉 Server Activity 🎉`)
+              .setDescription('Ranking: ')
               .addFields(
-                {name: 'First place', value: data[0].username + ` (ONLINE: ${data[0].minutes_connected} / AFK: ${data[0].minutes_on_mute}`, inline: false },
-                {name: 'Second place', value: data[1].username + ` (ONLINE: ${data[1].minutes_connected} / AFK: ${data[1].minutes_on_mute}`, inline: false },
-                {name: 'Third place', value: data[2].username + ` (ONLINE: ${data[2].minutes_connected} / AFK: ${data[2].minutes_on_mute}`, inline: false },
+                {name: '1️⃣ First place', value: "🥇 " + data[0].username + ` (ONLINE: ${data[0].minutes_connected} / AFK: ${data[0].minutes_on_mute}`, inline: false },
+                {name: '2️⃣ Second place', value: "🥈 " + data[1].username + ` (ONLINE: ${data[1].minutes_connected} / AFK: ${data[1].minutes_on_mute}`, inline: false },
+                {name: '3️⃣ Third place', value: "🥉 " + data[2].username + ` (ONLINE: ${data[2].minutes_connected} / AFK: ${data[2].minutes_on_mute}`, inline: false },
                 )
               .setAuthor('Ziewamy Blacha')
-              .setTimestamp(timeData);
+              .setTimestamp();
         message.channel.send(exampleEmbed);
         googleDB.clearMinutesWeekly();
       });
