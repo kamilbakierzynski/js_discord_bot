@@ -58,6 +58,8 @@ exports.dbUpdateUser = async function dbUpdateUser(object, index) {
     if (index < 1) {
         return;
     }
+    object.minutes_day = object.minutes_connected;
+    object.minutes_day_afk = object.minutes_on_mute;
     let convertObjToArray = []
     for (let key in object) {
         convertObjToArray.push(object[key]);
@@ -117,17 +119,12 @@ exports.clearMinutesWeekly = async function clearMinutesWeekly() {
     });
 
     const gsAPI = google.sheets({ version: 'v4', auth: client });
-    const optionsColD = {
+    const optionsClear = {
         spreadsheetId: spreadsheetId,
-        range: `Users!D2:D`,
-    };
-    const optionsColE = {
-        spreadsheetId: spreadsheetId,
-        range: `Users!E2:E`,
+        range: `Users!D2:E`,
     };
 
-    await gsAPI.spreadsheets.values.clear(optionsColD);
-    await gsAPI.spreadsheets.values.clear(optionsColE);
+    await gsAPI.spreadsheets.values.clear(optionsClear);
 }
 
 exports.archiveData = function archiveData() {
@@ -146,8 +143,8 @@ exports.archiveData = function archiveData() {
 
         for (let i = 0; i < data.length; i += 1) {
             usernamesList.push(data[i].username);
-            onlineValuesList.push(data[i].minutes_connected);
-            afkValuesList.push(data[i].minutes_on_mute);
+            onlineValuesList.push(data[i].minutes_day);
+            afkValuesList.push(data[i].minutes_day_afk);
         }
 
         const gsAPI = google.sheets({ version: 'v4', auth: client });
@@ -184,12 +181,19 @@ exports.archiveData = function archiveData() {
                 values: [afkValuesList]
             }
         };
+        const optionsClearDaily = {
+            spreadsheetId: spreadsheetId,
+            range: `Users!H2:I`,
+        };
+
 
         await gsAPI.spreadsheets.values.update(optionsUpdateUsernamesOnline);
         await gsAPI.spreadsheets.values.update(optionsUpdateUsernamesAfk);
 
         await gsAPI.spreadsheets.values.append(optionsUpdateValuesOnline);
         await gsAPI.spreadsheets.values.append(optionsUpdateValuesAfk);
+
+        await gsAPI.spreadsheets.values.clear(optionsClearDaily);
         
     });
 }
