@@ -777,7 +777,7 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
       }
     } catch (e) {
       console.log('<🔥> User has left the server.');
-      if (oldMember.channel.name !== 'AFK' && !newMember.hasOwnProperty('channel')) {
+      if (oldMember.channel != null && oldMember.channel.name !== 'AFK' && !newMember.hasOwnProperty('channel')) {
         const dataTime = Date.now();
         googleDB.dbRead().then(data => {
           console.log('<✅> Reading database.');
