@@ -12,7 +12,7 @@ const client = new google.auth.JWT(
     ["https://www.googleapis.com/auth/spreadsheets"]
 );
 
-exports.dbRead = async function dbRead() {
+const dbRead = exports.dbRead = async function dbRead() {
     client.authorize(function (error, tokens) {
         if (error) {
             console.log(error);
@@ -128,6 +128,70 @@ exports.clearMinutesWeekly = async function clearMinutesWeekly() {
 
     await gsAPI.spreadsheets.values.clear(optionsColD);
     await gsAPI.spreadsheets.values.clear(optionsColE);
+}
+
+exports.archiveData = function archiveData() {
+    client.authorize(function (error, tokens) {
+        if (error) {
+            console.log(error);
+            status = false;
+        }
+        // console.log('Connected!');
+    });
+    dbRead().then(async data => {
+        let usernamesList = ['time'];
+        const currentDate = Date.now().toString();
+        let onlineValuesList = [currentDate];
+        let afkValuesList = [currentDate];
+
+        for (let i = 0; i < data.length; i += 1) {
+            usernamesList.push(data[i].username);
+            onlineValuesList.push(data[i].minutes_connected);
+            afkValuesList.push(data[i].minutes_on_mute);
+        }
+
+        const gsAPI = google.sheets({ version: 'v4', auth: client });
+
+        const optionsUpdateUsernamesOnline = {
+            spreadsheetId: spreadsheetId,
+            range: `Online!A1`,
+            valueInputOption: 'USER_ENTERED',
+            resource: {
+                values: [usernamesList]
+            }
+        };
+        const optionsUpdateUsernamesAfk = {
+            spreadsheetId: spreadsheetId,
+            range: `Afk!A1`,
+            valueInputOption: 'USER_ENTERED',
+            resource: {
+                values: [usernamesList]
+            }
+        };
+        const optionsUpdateValuesOnline = {
+            spreadsheetId: spreadsheetId,
+            range: `Online!A2`,
+            valueInputOption: 'USER_ENTERED',
+            resource: {
+                values: [onlineValuesList]
+            }
+        };
+        const optionsUpdateValuesAfk = {
+            spreadsheetId: spreadsheetId,
+            range: `Afk!A2`,
+            valueInputOption: 'USER_ENTERED',
+            resource: {
+                values: [afkValuesList]
+            }
+        };
+
+        await gsAPI.spreadsheets.values.update(optionsUpdateUsernamesOnline);
+        await gsAPI.spreadsheets.values.update(optionsUpdateUsernamesAfk);
+
+        await gsAPI.spreadsheets.values.append(optionsUpdateValuesOnline);
+        await gsAPI.spreadsheets.values.append(optionsUpdateValuesAfk);
+        
+    });
 }
 
 function convertToArr(data) {
