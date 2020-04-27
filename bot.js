@@ -102,13 +102,13 @@ function displayRanking() {
         .setTitle(`🎉 Server Activity 🎉`)
         .setDescription('Ranking in minutes: ')
         .addFields(
-          { name: '1️⃣ First place', value: "🥇 " + `**${data[0].username}**` + ` *(ONLINE: ${data[0].minutes_connected} / AFK: ${data[0].minutes_on_mute})*`, inline: false },
-          { name: '2️⃣ Second place', value: "🥈 " + `**${data[1].username}**` + ` *(ONLINE: ${data[1].minutes_connected} / AFK: ${data[1].minutes_on_mute})*`, inline: false },
-          { name: '3️⃣ Third place', value: "🥉 " + `**${data[2].username}**` + ` *(ONLINE: ${data[2].minutes_connected} / AFK: ${data[2].minutes_on_mute})*`, inline: false },
+          { name: '1️⃣ First place', value: "🥇 " + `**${data[0].username}**` + ` *(ONLINE: ${preetifyMinutes(data[0].minutes_connected)} | AFK: ${preetifyMinutes(data[0].minutes_on_mute)})*`, inline: false },
+          { name: '2️⃣ Second place', value: "🥈 " + `**${data[1].username}**` + ` *(ONLINE: ${preetifyMinutes(data[1].minutes_connected)} | AFK: ${preetifyMinutes(data[1].minutes_on_mute)})*`, inline: false },
+          { name: '3️⃣ Third place', value: "🥉 " + `**${data[2].username}**` + ` *(ONLINE: ${preetifyMinutes(data[2].minutes_connected)} | AFK: ${preetifyMinutes(data[2].minutes_on_mute)})*`, inline: false },
           { name: 'Off the podium', value: '------', inline: false },
-          { name: '4️⃣ Fourth place', value: `**${data[3].username}**` + ` *(ONLINE: ${data[3].minutes_connected} / AFK: ${data[3].minutes_on_mute})*`, inline: false },
-          { name: '5️⃣ Fifth place', value: `**${data[4].username}**` + ` *(ONLINE: ${data[4].minutes_connected} / AFK: ${data[4].minutes_on_mute})*`, inline: false },
-          { name: '6️⃣ Sixth place', value: `**${data[5].username}**` + ` *(ONLINE: ${data[5].minutes_connected} / AFK: ${data[5].minutes_on_mute})*`, inline: false },
+          { name: '4️⃣ Fourth place', value: `**${data[3].username}**` + ` *(ONLINE: ${preetifyMinutes(data[3].minutes_connected)} | AFK: ${preetifyMinutes(data[3].minutes_on_mute)})*`, inline: false },
+          { name: '5️⃣ Fifth place', value: `**${data[4].username}**` + ` *(ONLINE: ${preetifyMinutes(data[4].minutes_connected)} | AFK: ${preetifyMinutes(data[4].minutes_on_mute)})*`, inline: false },
+          { name: '6️⃣ Sixth place', value: `**${data[5].username}**` + ` *(ONLINE: ${preetifyMinutes(data[5].minutes_connected)} | AFK: ${preetifyMinutes(data[5].minutes_on_mute)})*`, inline: false },
         )
         .setAuthor('Ziewamy Blacha')
         .setTimestamp();
@@ -172,7 +172,7 @@ client.on('ready', () => {
     displayRanking();
     googleDB.clearMinutesWeekly();
   });
-  console.log('<🕛> JOB EVERY MON 02:59:00 (04:59:00 UTC +2) archive database.');
+  console.log('<🕛> JOB EVERY DAY 02:59:00 (04:59:00 UTC +2) archive database.');
   let archiveDatabase = new cron.CronJob('30 59 02 * * *', () => {
     console.log(`<🕛> Running archive job.`);
     googleDB.archiveData();
