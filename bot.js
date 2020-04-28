@@ -704,6 +704,10 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
   if (oldUserChannel === undefined && newUserChannel !== undefined) {
     console.log('ciekawe');
   } else if (newUserChannel === undefined) {
+    if (newMember.member.user.bot) {
+      console.log('<🎤> Saving data. Skip bot.');
+      return;
+    }
     try {
       if (newMember.channel.hasOwnProperty('name') && newMember.channel.name !== 'AFK') {
         console.log(`<🎤> User ${newMember.member.displayName} on channel ${newMember.channel.name}`);
