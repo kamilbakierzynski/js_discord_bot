@@ -55,7 +55,7 @@ exports.dbAddNewUser = async function dbAddNewUser(discord_id, username, last_se
 }
 
 exports.dbUpdateUser = async function dbUpdateUser(object, index) {
-    if (index < 1) {
+    if (index < 0) {
         return;
     }
     object.minutes_day = object.minutes_connected;
