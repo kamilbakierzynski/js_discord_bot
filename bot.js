@@ -734,11 +734,13 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
             //check if muting or deafening
             if ((oldMember.mute && !newMember.mute) || (oldMember.deaf && !newMember.mute)) {
               properData.minutes_on_mute = parseFloat(properData.minutes_on_mute, 10) + timeDiff;
+              properData.minutes_day_afk = parseFloat(properData.minutes_day_afk, 10) + timeDiff;
               properData.all_time_on_mute = parseFloat(properData.all_time_on_mute, 10) + timeDiff;
             }
             //check if last time was connected
             if (oldMember.channel != null && oldMember.channel.name !== 'AFK') {
               properData.minutes_connected = parseFloat(properData.minutes_connected, 10) + timeDiff;
+              properData.minutes_day = parseFloat(properData.minutes_day, 10) + timeDiff;
               properData.all_time_minutes = parseFloat(properData.all_time_minutes, 10) + timeDiff;
             }
             properData.last_seen = dataTime;
@@ -773,9 +775,11 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
             //check if muting or deafening
             if (oldMember.mute || oldMember.deaf) {
               properData.minutes_on_mute = parseFloat(properData.minutes_on_mute, 10) + timeDiff;
+              properData.minutes_day_afk = parseFloat(properData.minutes_day_afk, 10) + timeDiff;
               properData.all_time_on_mute = parseFloat(properData.all_time_on_mute, 10) + timeDiff;
             }
             properData.minutes_connected = parseFloat(properData.minutes_connected, 10) + timeDiff;
+            properData.minutes_day = parseFloat(properData.minutes_day, 10) + timeDiff;
             properData.all_time_minutes = parseFloat(properData.all_time_minutes, 10) + timeDiff;
             properData.last_seen = dataTime;
             googleDB.dbUpdateUser(properData, index);
@@ -811,9 +815,11 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
             //check if was muted or deafeaned
             if (oldMember.mute || oldMember.deaf) {
               properData.minutes_on_mute = parseFloat(properData.minutes_on_mute, 10) + timeDiff;
+              properData.minutes_day_afk = parseFloat(properData.minutes_day_afk) + timeDiff;
               properData.all_time_on_mute = parseFloat(properData.all_time_on_mute, 10) + timeDiff;
             }
             properData.minutes_connected = parseFloat(properData.minutes_connected, 10) + timeDiff;
+            properData.minutes_day = parseFloat(properData.minutes_day, 10) + timeDiff;
             properData.all_time_minutes = parseFloat(properData.all_time_minutes, 10) + timeDiff;
 
             properData.last_seen = dataTime;
