@@ -58,8 +58,6 @@ exports.dbUpdateUser = async function dbUpdateUser(object, index) {
     if (index < 0) {
         return;
     }
-    object.minutes_day = object.minutes_connected;
-    object.minutes_day_afk = object.minutes_on_mute;
     let convertObjToArray = []
     for (let key in object) {
         convertObjToArray.push(object[key]);
