@@ -16,12 +16,15 @@ Made as a side project for me and my friends during my first steps in JavaScript
     type `$seen @<mention user>` to check when was the last time he performed action on the voice channel. It also saves how many minutes user was connected to the channel.
 - **Ranking**:
     type `$ranking` connected with last seen. Displays current ranking of most active (who is most often logged in) users.
-- **Corona**:
-    type `$corona <country name>` to check current statistics about this country.
+- **Coronavirus statistics**:
+    type `$corona <country name>` to check recent stats about Coronavirus in this country.
 - **More still in development...**
 
 ## Install:
+It was made for personal use but if you would like to use it go on. Some of the functionality is hard coded so it needs to be changed.
+
+Apart from that you also:
 - You have to get your own API key from RIOT GAMES. Get one [here](https://developer.riotgames.com/).
-- For the `corona` functionality you have to get API key from RAPID API.
 - Data saving uses Google Sheets API.
+- For the `corona` functionality you need [this API key](https://rapidapi.com/api-sports/api/covid-193/endpoints).
 - [Heroku](https://www.heroku.com) is a good option to deploy this. Provide api keys and prefix as a config var in Heroku dashboard.
