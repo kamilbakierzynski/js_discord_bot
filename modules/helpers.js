@@ -84,7 +84,7 @@ exports.displayRanking = function displayRanking(client) {
         client.googledb.dbRead().then(data => {
             console.log('<✅> Displaying server ranking.');
             data.sort((a, b) => (parseFloat(b.minutes_connected) - parseFloat(b.minutes_on_mute)) - (parseFloat(a.minutes_connected) - parseFloat(a.minutes_on_mute)));
-            const exampleEmbed = new Discord.MessageEmbed()
+            const exampleEmbed = new client.Discord.MessageEmbed()
                 .setColor('#0099ff')
                 .setTitle(`🎉 Server Activity 🎉`)
                 .setDescription('Ranking in minutes: ')

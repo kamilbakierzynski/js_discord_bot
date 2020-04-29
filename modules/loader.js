@@ -5,20 +5,25 @@ require('dotenv').config({ path: "../.env" });
 
 exports.registerModules = async client => {
   const moduleFiles = await readdir('./modules/');
-  console.log(`Loading ${moduleFiles.length} modules`);
+  console.log(`<⏳> Loading ${moduleFiles.length} modules`);
+
+  const registerModules = [];
   moduleFiles.forEach(file => {
     const moduleName = file.split('.')[0];
     if (moduleName === 'loader') {
       return;
     }
+    registeredModules.push(moduleName);
     client[moduleName.toLowerCase()] = require('./' + moduleName);
   });
+  console.log(`<✅> Loaded: [${registeredModules.join(' ')}]`);
 };
 
 exports.registerCommands = async client => {
   const cmdFiles = await readdir('./commands/');
   if (cmdFiles.length > 0)
-    console.log(`Loading ${cmdFiles.length} commands`);
+    console.log(`<⏳> Loading ${cmdFiles.length} commands`);
+
   const registeredCommands = [];
   cmdFiles.forEach(file => {
     const commandName = file.split('.')[0];
@@ -26,12 +31,12 @@ exports.registerCommands = async client => {
     client.commands.set(props.name, props);
     registeredCommands.push(commandName);
   });
-  console.log(`Loaded: [${registeredCommands.join(' ')}]`);
+  console.log(`<✅> Loaded: [${registeredCommands.join(' ')}]`);
 };
 
 exports.registerEvents = async client => {
   const eventFiles = await readdir('./events/');
-  console.log(`Loading ${eventFiles.length} events`);
+  console.log(`<⏳> Loading ${eventFiles.length} events`);
 
   const registeredEvents = [];
   eventFiles.forEach(file => {
@@ -40,7 +45,7 @@ exports.registerEvents = async client => {
     client.on(eventName, evt.bind(null, client));
     registeredEvents.push(eventName);
   });
-  console.log(`Loaded: [${registeredEvents.join(' ')}]`);
+  console.log(`<✅> Loaded: [${registeredEvents.join(' ')}]`);
 };
 
 exports.registerSecrets = async client => {
