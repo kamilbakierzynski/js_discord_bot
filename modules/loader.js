@@ -7,7 +7,7 @@ exports.registerModules = async client => {
   const moduleFiles = await readdir('./modules/');
   console.log(`<⏳> Loading ${moduleFiles.length} modules`);
 
-  const registerModules = [];
+  const registeredModules = [];
   moduleFiles.forEach(file => {
     const moduleName = file.split('.')[0];
     if (moduleName === 'loader') {
