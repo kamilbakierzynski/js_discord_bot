@@ -12,6 +12,8 @@ Made as a side project for me and my friends during my first steps in JavaScript
     type `$livegame <summoner name>` to check if the player is currently playing and for how long.
 - **Last game**:
     type `$lastgame <summoner name>` to get data about summoner's last game.
+- **Rotation**:
+    type `$rotation` to get data about current rotation.
 - **Last seen**:
     type `$seen @<mention user>` to check when was the last time he performed action on the voice channel. It also saves how many minutes user was connected to the channel.
 - **Ranking**:

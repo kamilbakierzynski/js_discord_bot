@@ -92,7 +92,6 @@ module.exports = async (client, oldMember, newMember) => {
                 });
             }
         } catch (e) {
-            console.log(e);
             console.log('<🔥> User has left the server.');
             if (oldMember.channel != null && oldMember.channel.name !== 'AFK' && !newMember.hasOwnProperty('channel')) {
                 const dataTime = Date.now();
