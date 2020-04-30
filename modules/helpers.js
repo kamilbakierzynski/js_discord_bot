@@ -115,11 +115,10 @@ exports.displayRanking = function displayRanking(client) {
                     { name: 'Place', value: place, inline: true },
                     { name: 'Name', value: names, inline: true },
                     { name: 'Time (Online - AFK)', value: times, inline: true },
-
                 )
                 .setAuthor('Ziewamy Blacha')
                 .setTimestamp();
-            channel.send(exampleEmbed);
+            channel.send(rankingEmbed);
         })
     })
 }
