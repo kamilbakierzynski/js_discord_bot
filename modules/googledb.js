@@ -217,7 +217,7 @@ function convertToObj(data) {
             if (data[j][i] === '') {
                 tempObj[keys[i]] = 0;
             } else {
-                tempObj[keys[i]] = data[j][i];
+                tempObj[keys[i]] = data[j][i].replace(',', '.');
             }
         }
         output.push(tempObj);
