@@ -44,10 +44,13 @@ module.exports = {
                 return string + frame + formatter + formatMinutes(properData[timeFrameFieldsOffline[index]]) + formatter + '\n'}, "");
 
             const timeData = parseInt(properData.last_seen, 10);
+
+            let user = message.mentions.users.first();
+
             const seenEmbed = new client.Discord.MessageEmbed()
                 .setColor('#0099ff')
                 .setTitle(`${name} ostatnio na kanale:`)
-                .setThumbnail(message.mentions.users.first().avatar || "https://discordapp.com/assets/322c936a8c8be1b803cd94861bdfa868.png")
+                .setThumbnail(user.defaultAvatarURL)
                 .setDescription(client.helpers.calculateTimeDiff(timeData) + " ago")
                 .addFields(
                     { name: '🎙️ Time connected', value: timeStringOnline, inline: true },
