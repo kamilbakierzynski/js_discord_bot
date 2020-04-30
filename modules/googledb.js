@@ -201,7 +201,7 @@ function convertToArr(data) {
     for (let i = 0; i < objectArr.length; i += 1) {
         let tempList = [];
         for (let j = 0; j < objectArr[i].length; j += 1) {
-            tempList.push(objectArr[i][j].replace('.', ','));
+            tempList.push(objectArr[i][j].toString().replace('.', ','));
         }
         output.push(tempList);
     }
