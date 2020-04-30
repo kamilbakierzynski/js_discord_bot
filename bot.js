@@ -26,7 +26,7 @@ const init = async () => {
     await loader.registerCommands(client);
     await loader.registerEvents(client);
     await loader.registerSecrets(client);
-    await client.login(process.env.TEST_BOT_TOKEN);
+    await client.login(process.env.BOT_TOKEN);
 };
 
 init();
