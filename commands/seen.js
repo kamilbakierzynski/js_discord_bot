@@ -14,26 +14,46 @@ module.exports = {
             let properData = undefined;
             for (let i = 0; i < data.length; i += 1) {
                 if (data[i].discord_id === id) {
-                    properData = data[i]
+                    properData = {...data[i]};
                 }
             }
             if (properData === undefined) {
                 message.reply(' no data about this user.');
                 return;
             }
+
+            data.map(user => user.diff = parseFloat(user.minutes_connected, 10) - parseFloat(user.minutes_on_mute, 10));
+            data.sort((a, b) => b.diff - a.diff);
+
+            const place = data.findIndex(element => element.discord_id === properData.discord_id);
+
+            const formatMinutes = client.helpers.preetifyMinutes;
+
+            const timeFrames = ['Day: ', 'Week: ', 'All: '];
+            const timeFrameFieldsOnline = ['minutes_day', 'minutes_connected', 'all_time_minutes'];
+            const timeFrameFieldsOffline = ['minutes_day_afk', 'minutes_on_mute', 'all_time_on_mute'];
+
+            const timeStringOnline = timeFrames.reduce((string, frame, index) => {
+                let formatter = '';
+                index === 1 ? formatter = "**" : null;
+                return string + frame + formatter + formatMinutes(properData[timeFrameFieldsOnline[index]]) + formatter + '\n'}, "");
+
+            const timeStringOfflne = timeFrames.reduce((string, frame, index) => {
+                let formatter = '';
+                index === 1 ? formatter = "**" : null;
+                return string + frame + formatter + formatMinutes(properData[timeFrameFieldsOffline[index]]) + formatter + '\n'}, "");
+
             const timeData = parseInt(properData.last_seen, 10);
             const seenEmbed = new client.Discord.MessageEmbed()
                 .setColor('#0099ff')
                 .setTitle(`${name} ostatnio na kanale:`)
+                .setThumbnail(message.mentions.users.first().avatar || "https://discordapp.com/assets/322c936a8c8be1b803cd94861bdfa868.png")
                 .setDescription(client.helpers.calculateTimeDiff(timeData) + " ago")
                 .addFields(
-                    { name: '🎙️ Time connected / week', value: client.helpers.preetifyMinutes(properData.minutes_connected), inline: true },
-                    { name: '🔇 Time on mute / week', value: client.helpers.preetifyMinutes(properData.minutes_on_mute), inline: false },
-                    // {name: 'Channel level', value: `${properData.channel_level} lvl`, inline: true },
-                    { name: '🎙️ Time connected / all', value: client.helpers.preetifyMinutes(properData.all_time_minutes), inline: false },
-                    { name: '🔇 Time on mute / all', value: client.helpers.preetifyMinutes(properData.all_time_on_mute), inline: true },
+                    { name: '🎙️ Time connected', value: timeStringOnline, inline: true },
+                    { name: '🔇 Time on mute', value: timeStringOfflne, inline: true },
                 )
-                .setAuthor('Ziewamy Blacha')
+                .setAuthor(`Miejsce: ${place + 1}`)
                 .setFooter('📅')
                 .setTimestamp(timeData);
             message.channel.send(seenEmbed);

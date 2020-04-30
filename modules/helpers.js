@@ -77,25 +77,44 @@ exports.calculateTimeDiff = function calculateTimeDiff(timeOld) {
     return `${diffDays} days, ${diffHrs} hours, ${diffMins} minutes`;
 }
 
-
 exports.displayRanking = function displayRanking(client) {
+    const formatMinutes = client.helpers.preetifyMinutes;
+
     client.channels.fetch('654415996702162987').then(channel => {
         const { name } = channel;
         client.googledb.dbRead().then(data => {
             console.log('<✅> Displaying server ranking.');
-            data.sort((a, b) => (parseFloat(b.minutes_connected) - parseFloat(b.minutes_on_mute)) - (parseFloat(a.minutes_connected) - parseFloat(a.minutes_on_mute)));
+            data.map(user => user.diff = parseFloat(user.minutes_connected, 10) - parseFloat(user.minutes_on_mute, 10));
+            data.sort((a, b) => b.diff - a.diff);
+
+            const decodeNumbers = {0: '0️⃣', 1: '1️⃣', 2: '2️⃣', 3: '3️⃣', 4: '4️⃣', 5: '5️⃣', 6: '6️⃣', 7: '7️⃣', 8: '8️⃣', 9: '9️⃣'};
+            const medalsDecode = {0: '🥇', 1: '🥈', 2: '🥉'};
+            
+            const { place, names, times } = data.reduce((object, user, index) => {
+                if (index == 3) {
+                    object.names = object.names + "\n";
+                    object.times = object.times + "\n";
+                    object.place = object.place + "\n";
+                }
+                if (index > 2) {
+                    object.place = object.place + (index + 1) + "\n";
+                    object.names = object.names + `**${user.username}**\n`;
+                } else {
+                    object.place = object.place + (index + 1) + "\n";
+                    object.names = object.names + `${medalsDecode[index]} **${user.username}**\n`;
+                }
+                object.times = object.times + `**${formatMinutes(user.diff)}**\n`;
+
+                return object;
+            }, {place: '', names: '', times: ''});
+
             const rankingEmbed = new client.Discord.MessageEmbed()
-                .setColor('#0099ff')
+                .setColor('#FFD700')
                 .setTitle(`🎉 Server Activity 🎉`)
-                .setDescription('Ranking in minutes: ')
                 .addFields(
-                    { name: '1️⃣ First place', value: "🥇 " + `**${data[0].username}**` + ` *(ONLINE: ${client.helpers.preetifyMinutes(data[0].minutes_connected)} | AFK: ${client.helpers.preetifyMinutes(data[0].minutes_on_mute)})*`, inline: false },
-                    { name: '2️⃣ Second place', value: "🥈 " + `**${data[1].username}**` + ` *(ONLINE: ${client.helpers.preetifyMinutes(data[1].minutes_connected)} | AFK: ${client.helpers.preetifyMinutes(data[1].minutes_on_mute)})*`, inline: false },
-                    { name: '3️⃣ Third place', value: "🥉 " + `**${data[2].username}**` + ` *(ONLINE: ${client.helpers.preetifyMinutes(data[2].minutes_connected)} | AFK: ${client.helpers.preetifyMinutes(data[2].minutes_on_mute)})*`, inline: false },
-                    { name: 'Off the podium', value: '------', inline: false },
-                    { name: '4️⃣ Fourth place', value: `**${data[3].username}**` + ` *(ONLINE: ${client.helpers.preetifyMinutes(data[3].minutes_connected)} | AFK: ${client.helpers.preetifyMinutes(data[3].minutes_on_mute)})*`, inline: false },
-                    { name: '5️⃣ Fifth place', value: `**${data[4].username}**` + ` *(ONLINE: ${client.helpers.preetifyMinutes(data[4].minutes_connected)} | AFK: ${client.helpers.preetifyMinutes(data[4].minutes_on_mute)})*`, inline: false },
-                    { name: '6️⃣ Sixth place', value: `**${data[5].username}**` + ` *(ONLINE: ${client.helpers.preetifyMinutes(data[5].minutes_connected)} | AFK: ${client.helpers.preetifyMinutes(data[5].minutes_on_mute)})*`, inline: false },
+                    { name: 'Place', value: place, inline: true },
+                    { name: 'Name', value: names, inline: true },
+                    { name: 'Time (Online - AFK)', value: times, inline: true },
                 )
                 .setAuthor('Ziewamy Blacha')
                 .setTimestamp();
