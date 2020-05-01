@@ -37,7 +37,7 @@ module.exports = async (client, oldMember, newMember) => {
                         //timediff since last update
                         const timeDiff = parseFloat(((dataTime - parseInt(properData.last_seen, 10)) / 60000).toFixed(2));
                         //check if muting or deafening
-                        if ((oldMember.mute && !newMember.mute)) {
+                        if ((oldMember.mute === true) && (newMember.mute === false)) {
                             console.log('<✅> User was muted.');
                             properData.minutes_on_mute = parseFloat(properData.minutes_on_mute, 10) + timeDiff;
                             properData.minutes_day_afk = parseFloat(properData.minutes_day_afk, 10) + timeDiff;
