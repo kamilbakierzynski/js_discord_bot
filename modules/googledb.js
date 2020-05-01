@@ -141,8 +141,8 @@ exports.archiveData = function archiveData() {
 
         for (let i = 0; i < data.length; i += 1) {
             usernamesList.push(data[i].username);
-            onlineValuesList.push(data[i].minutes_day);
-            afkValuesList.push(data[i].minutes_day_afk);
+            onlineValuesList.push(data[i].minutes_day.toString().replace('.', ','));
+            afkValuesList.push(data[i].minutes_day_afk.toString().replace('.', ','));
         }
 
         const gsAPI = google.sheets({ version: 'v4', auth: client });
