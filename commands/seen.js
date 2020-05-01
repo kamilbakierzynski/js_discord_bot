@@ -44,6 +44,9 @@ module.exports = {
                 return string + frame + formatter + formatMinutes(properData[timeFrameFieldsOffline[index]]) + formatter + '\n'}, "");
 
             const timeData = parseInt(properData.last_seen, 10);
+
+            let user = message.mentions.users.first();
+
             const seenEmbed = new client.Discord.MessageEmbed()
                 .setColor('#0099ff')
                 .setTitle(`${name} ostatnio na kanale:`)
