@@ -60,7 +60,7 @@ exports.dbUpdateUser = async function dbUpdateUser(object, index) {
     }
     let convertObjToArray = []
     for (let key in object) {
-        convertObjToArray.push(object[key]);
+        convertObjToArray.push(object[key].toString().replace('.', ','));
     }
     client.authorize(function (error, tokens) {
         if (error) {
@@ -201,7 +201,7 @@ function convertToArr(data) {
     for (let i = 0; i < objectArr.length; i += 1) {
         let tempList = [];
         for (let j = 0; j < objectArr[i].length; j += 1) {
-            tempList.push(objectArr[i][j]);
+            tempList.push(objectArr[i][j].toString().replace('.', ','));
         }
         output.push(tempList);
     }
@@ -217,7 +217,7 @@ function convertToObj(data) {
             if (data[j][i] === '') {
                 tempObj[keys[i]] = 0;
             } else {
-                tempObj[keys[i]] = data[j][i].replace(',', '.');
+                tempObj[keys[i]] = data[j][i].toString().replace(',', '.');
             }
         }
         output.push(tempObj);

@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 const express = require('express');
 const cron = require('cron');
+var path = require('path');
 
 require('dotenv').config();
 
@@ -17,7 +18,8 @@ app.listen(PORT, () => {
   console.log(`<🔔> App is running on port ${PORT}!`);
 });
 app.get('/', (req, res) => {
-  res.send(`<✅> SERVER UP!; <🔔> Current port: ${PORT}`);
+  // res.send(`<✅> SERVER UP!; <🔔> Current port: ${PORT}`);
+  res.sendFile(path.join(__dirname + '/index.html'));
 });
 
 const init = async () => {

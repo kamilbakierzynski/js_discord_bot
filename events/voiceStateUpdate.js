@@ -37,7 +37,8 @@ module.exports = async (client, oldMember, newMember) => {
                         //timediff since last update
                         const timeDiff = parseFloat(((dataTime - parseInt(properData.last_seen, 10)) / 60000).toFixed(2));
                         //check if muting or deafening
-                        if ((oldMember.mute && !newMember.mute) || (oldMember.deaf && !newMember.mute)) {
+                        if ((oldMember.mute && !newMember.mute) || ((oldMember.deaf || newMember.deaf) && newMember.mute)) {
+                            console.log('<✅> User was muted/deaf.');
                             properData.minutes_on_mute = parseFloat(properData.minutes_on_mute, 10) + timeDiff;
                             properData.minutes_day_afk = parseFloat(properData.minutes_day_afk, 10) + timeDiff;
                             properData.all_time_on_mute = parseFloat(properData.all_time_on_mute, 10) + timeDiff;
@@ -71,7 +72,8 @@ module.exports = async (client, oldMember, newMember) => {
                         client.googledb.dbAddNewUser(newMember.member.id, newMember.member.displayName, dataTime);
                         return;
                     } else {
-                        console.log('<✅> Found user. Updating data.');
+                        console.log(`<✅> From ${oldMember.channel.name} to AFK.`);
+                        console.log(`<✅> Saving data for ${newMember.member.displayName} || id: ${newMember.member.id}`);
                         //update username
                         properData.username = newMember.member.displayName;
 
@@ -79,6 +81,7 @@ module.exports = async (client, oldMember, newMember) => {
                         const timeDiff = parseFloat(((dataTime - parseInt(properData.last_seen, 10)) / 60000).toFixed(2));
                         //check if muting or deafening
                         if (oldMember.mute || oldMember.deaf) {
+                            console.log('<✅> User was muted/deaf.');
                             properData.minutes_on_mute = parseFloat(properData.minutes_on_mute, 10) + timeDiff;
                             properData.minutes_day_afk = parseFloat(properData.minutes_day_afk, 10) + timeDiff;
                             properData.all_time_on_mute = parseFloat(properData.all_time_on_mute, 10) + timeDiff;
@@ -110,6 +113,7 @@ module.exports = async (client, oldMember, newMember) => {
                         client.googledb.dbAddNewUser(oldMember.member.id, oldMember.member.displayName, dataTime);
                         return;
                     } else {
+                        console.log(`<✅> ${newMember.member.displayName} leaving channel.`);
                         console.log('<✅> Found user. Updating data.');
                         //update username
                         properData.username = newMember.member.displayName;
@@ -119,6 +123,7 @@ module.exports = async (client, oldMember, newMember) => {
 
                         //check if was muted or deafeaned
                         if (oldMember.mute || oldMember.deaf) {
+                            console.log('<✅> User was muted/deaf.');
                             properData.minutes_on_mute = parseFloat(properData.minutes_on_mute, 10) + timeDiff;
                             properData.minutes_day_afk = parseFloat(properData.minutes_day_afk) + timeDiff;
                             properData.all_time_on_mute = parseFloat(properData.all_time_on_mute, 10) + timeDiff;
