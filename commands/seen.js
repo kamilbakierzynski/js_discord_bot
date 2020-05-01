@@ -50,7 +50,7 @@ module.exports = {
             const seenEmbed = new client.Discord.MessageEmbed()
                 .setColor('#0099ff')
                 .setTitle(`${name} ostatnio na kanale:`)
-                .setThumbnail(user.defaultAvatarURL)
+                .setThumbnail(user.displayAvatarURL() || user.defaultAvatarURL)
                 .setDescription(client.helpers.calculateTimeDiff(timeData) + " ago")
                 .addFields(
                     { name: '🎙️ Time connected', value: timeStringOnline, inline: true },
