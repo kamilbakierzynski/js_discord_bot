@@ -109,7 +109,7 @@ exports.dbUpdate = async function dbUpdate(objectArr) {
 
 exports.refreshDbDataAll = async function refreshDbDataAll(clientDiscord) {
     let usersList = {};
-    clientDiscord.guilds.cache.get('497134370797387789').voiceStates.cache.forEach((value, key) => {
+    clientDiscord.guilds.cache.get('654415996702162984').voiceStates.cache.forEach((value, key) => {
         usersList = { ...usersList, [key]: { id: key, mute: value.selfMute, channelID: value.channelID } };
     });
 
