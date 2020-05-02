@@ -27,7 +27,7 @@ module.exports = {
                 message.reply(' no data about this user.');
                 return;
             }
-            if (usersList[properData.discord_id] !== undefined) {
+            if (usersList[properData.discord_id] !== undefined && usersList[properData.discord_id].channelID !== '654418034081136650') {
                 const dataTime = Date.now();
                 const timeDiff = parseFloat(((dataTime - parseInt(properData.last_seen, 10)) / 60000).toFixed(2));
                 //check if muting or deafening
