@@ -156,7 +156,7 @@ exports.refreshDbDataAll = async function refreshDbDataAll(clientDiscord) {
         const gsAPI = google.sheets({ version: 'v4', auth: client });
         const options = {
             spreadsheetId: spreadsheetId,
-            range: `Test!A2`,
+            range: `Users!A2`,
             valueInputOption: 'USER_ENTERED',
             resource: {
                 values: newData
