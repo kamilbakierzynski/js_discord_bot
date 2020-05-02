@@ -12,14 +12,24 @@ client.Discord = Discord;
 
 
 const app = express();
+const ejs = require('ejs');
+app.set('view engine', 'ejs');
+
+let data = {};
+
+app.use(express.static(__dirname + '/public'));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`<🔔> App is running on port ${PORT}!`);
+  data.port = PORT;
 });
+
 app.get('/', (req, res) => {
-  // res.send(`<✅> SERVER UP!; <🔔> Current port: ${PORT}`);
-  res.sendFile(path.join(__dirname + '/index.html'));
+    data.username = client.user.tag;
+    data.commandsCount = client.commands.size;
+    data.readyAt = client.readyAt.toDateString();
+    res.render('index', {data: data});
 });
 
 const init = async () => {
