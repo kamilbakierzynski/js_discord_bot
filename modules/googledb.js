@@ -115,11 +115,11 @@ exports.refreshDbDataAll = async function refreshDbDataAll(clientDiscord) {
 
     const dataTime = Date.now();
     dbRead().then(async data => {
-        const newData = data.reduce((akum, user, index) => {
+        const newData = data.reduce((akum, user) => {
             if (usersList[user.discord_id] === undefined) {
                 return [...akum, objectToArray(user)];
             }
-            if (user.channelID === '654418034081136650') {
+            if (usersList[user.discord_id].channelID === '654418034081136650') {
                 return [...akum, objectToArray(user)];
             }
             //timediff since last update
