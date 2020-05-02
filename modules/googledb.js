@@ -113,6 +113,7 @@ exports.refreshDbDataAll = async function refreshDbDataAll(clientDiscord) {
         usersList = { ...usersList, [key]: { id: key, mute: value.selfMute, channelID: value.channelID } };
     });
 
+    const dataTime = Date.now();
     dbRead().then(async data => {
         const newData = data.reduce((akum, user, index) => {
             if (usersList[user.discord_id] === undefined) {
@@ -122,7 +123,6 @@ exports.refreshDbDataAll = async function refreshDbDataAll(clientDiscord) {
                 return [...akum, objectToArray(user)];
             }
             //timediff since last update
-            const dataTime = Date.now();
             const timeDiff = parseFloat(((dataTime - parseInt(user.last_seen, 10)) / 60000).toFixed(2));
             //check if muting or deafening
             if (usersList[user.discord_id].mute) {
