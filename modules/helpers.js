@@ -84,7 +84,7 @@ exports.displayRanking = function displayRanking(client) {
         const { name } = channel;
         client.googledb.dbRead().then(data => {
             console.log('<✅> Displaying server ranking.');
-            data.map(user => user.diff = parseFloat(user.minutes_connected, 10) - parseFloat(user.minutes_on_mute, 10));
+            data.map(user => user.diff = parseFloat(user.minutes_connected) - parseFloat(user.minutes_on_mute));
             data.sort((a, b) => b.diff - a.diff);
 
             const decodeNumbers = {0: '0️⃣', 1: '1️⃣', 2: '2️⃣', 3: '3️⃣', 4: '4️⃣', 5: '5️⃣', 6: '6️⃣', 7: '7️⃣', 8: '8️⃣', 9: '9️⃣'};
