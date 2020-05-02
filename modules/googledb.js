@@ -107,6 +107,74 @@ exports.dbUpdate = async function dbUpdate(objectArr) {
 
 }
 
+exports.refreshDbDataAll = async function refreshDbDataAll(clientDiscord) {
+    let usersList = {};
+    clientDiscord.guilds.cache.get('497134370797387789').voiceStates.cache.forEach((value, key) => {
+        usersList = { ...usersList, [key]: { id: key, mute: value.selfMute, channelID: value.channelID } };
+    });
+
+    dbRead().then(async data => {
+        const newData = data.reduce((akum, user, index) => {
+            if (usersList[user.discord_id] === undefined) {
+                return [...akum, objectToArray(user)];
+            }
+            if (user.channelID === '654418034081136650') {
+                return [...akum, objectToArray(user)];
+            }
+            //timediff since last update
+            const dataTime = Date.now();
+            const timeDiff = parseFloat(((dataTime - parseInt(user.last_seen, 10)) / 60000).toFixed(2));
+            //check if muting or deafening
+            if (usersList[user.discord_id].mute) {
+                user.minutes_on_mute = parseFloat(user.minutes_on_mute, 10) + timeDiff;
+                user.minutes_day_afk = parseFloat(user.minutes_day_afk, 10) + timeDiff;
+                user.all_time_on_mute = parseFloat(user.all_time_on_mute, 10) + timeDiff;
+            }
+            //check if last time was connected
+            user.minutes_connected = parseFloat(user.minutes_connected, 10) + timeDiff;
+            user.minutes_day = parseFloat(user.minutes_day, 10) + timeDiff;
+            user.all_time_minutes = parseFloat(user.all_time_minutes, 10) + timeDiff;
+
+            user.last_seen = dataTime;
+            return [...akum, objectToArray(user)];
+        }, []);
+
+        //aktualizacja użytkowników aktualnie dostępnych na kanale,
+        //dostęp do obiektów tylko tych użytkowników plus ich index w tabeli,
+        //trzeba przekonwertować z obiektów na listy
+        //jedyne co zostało to wysłać batch update do sheetsów
+
+        console.log(newData);
+        client.authorize(function (error, tokens) {
+            if (error) {
+                console.log(error);
+                status = false;
+            }
+            // console.log('Connected!');
+        });
+
+        const gsAPI = google.sheets({ version: 'v4', auth: client });
+        const options = {
+            spreadsheetId: spreadsheetId,
+            range: `Test!A2`,
+            valueInputOption: 'USER_ENTERED',
+            resource: {
+                values: newData
+            }
+    };
+
+    await gsAPI.spreadsheets.values.update(options);
+    });
+}
+
+function objectToArray(object) {
+    let convertObjToArray = []
+    for (let key in object) {
+        convertObjToArray.push(object[key].toString().replace('.', ','));
+    }
+    return convertObjToArray;
+}
+
 exports.clearMinutesWeekly = async function clearMinutesWeekly() {
     client.authorize(function (error, tokens) {
         if (error) {
@@ -192,20 +260,16 @@ exports.archiveData = function archiveData() {
         await gsAPI.spreadsheets.values.append(optionsUpdateValuesAfk);
 
         await gsAPI.spreadsheets.values.clear(optionsClearDaily);
-        
+
     });
 }
 
-function convertToArr(data) {
-    let output = [];
-    for (let i = 0; i < objectArr.length; i += 1) {
-        let tempList = [];
-        for (let j = 0; j < objectArr[i].length; j += 1) {
-            tempList.push(objectArr[i][j].toString().replace('.', ','));
-        }
-        output.push(tempList);
+function convertToArr(objectArr) {
+    let tempList = [];
+    for (let j = 0; j < objectArr.length; j += 1) {
+        tempList.push(objectArr[j].toString().replace('.', ','));
     }
-    return output;
+    return tempList;
 }
 
 function convertToObj(data) {
@@ -215,7 +279,7 @@ function convertToObj(data) {
         let tempObj = {}
         for (let i = 0; i < data[j].length; i += 1) {
             if (data[j][i] === '') {
-                tempObj[keys[i]] = 0;
+                tempObj[keys[i]] = "0";
             } else {
                 tempObj[keys[i]] = data[j][i].toString().replace(',', '.');
             }
