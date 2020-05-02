@@ -116,12 +116,14 @@ exports.refreshDbDataAll = async function refreshDbDataAll(clientDiscord) {
     const dataTime = Date.now();
     dbRead().then(async data => {
         const newData = data.reduce((akum, user) => {
-            if (usersList[user.discord_id] === undefined) {
+            if (usersList[user.discord_id] == undefined) {
+                console.log('<S> Skipping ' + user.username);
                 return [...akum, objectToArray(user)];
             }
             if (usersList[user.discord_id].channelID === '654418034081136650') {
                 return [...akum, objectToArray(user)];
             }
+            console.log('<P> Passing ' + user.username);
             //timediff since last update
             const timeDiff = parseFloat(((dataTime - parseInt(user.last_seen, 10)) / 60000).toFixed(2));
             //check if muting or deafening
