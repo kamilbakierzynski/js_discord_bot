@@ -17,14 +17,12 @@ module.exports = async (client, oldMember, newMember) => {
                 const dataTime = Date.now();
                 client.googledb.dbRead().then(data => {
                     console.log('<✅> Reading database.');
-                    let properData = undefined;
-                    let index = 0;
-                    for (let i = 0; i < data.length; i += 1) {
-                        if (data[i].discord_id === newMember.member.id) {
-                            properData = data[i]
-                            index = i;
-                        }
-                    }
+                    let { properData, index } = data.reduce((akum, user, index) =>
+                        user.discord_id === newMember.member.id
+                            ? {properData: user, index: index}
+                            : akum,
+                        {properData: undefined, index: 0});
+
                     if (properData === undefined) {
                         console.log('<✅> Creating new user in db.');
                         client.googledb.dbAddNewUser(newMember.member.id, newMember.member.displayName, dataTime);

@@ -163,6 +163,7 @@ exports.refreshDbDataAll = async function refreshDbDataAll(clientDiscord) {
     };
 
     await gsAPI.spreadsheets.values.update(options);
+    return;
     });
 }
 
