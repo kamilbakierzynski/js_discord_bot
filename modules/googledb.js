@@ -144,7 +144,6 @@ exports.refreshDbDataAll = async function refreshDbDataAll(clientDiscord) {
         //trzeba przekonwertować z obiektów na listy
         //jedyne co zostało to wysłać batch update do sheetsów
 
-        console.log(newData);
         client.authorize(function (error, tokens) {
             if (error) {
                 console.log(error);
