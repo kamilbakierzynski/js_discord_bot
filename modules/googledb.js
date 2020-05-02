@@ -115,7 +115,7 @@ exports.refreshDbDataAll = async function refreshDbDataAll(clientDiscord) {
 
     // client.guilds.cache.get('497134370797387789').members.cache.get('339856582575915009').voice.channelID
 
-    client.guilds.cache.get('654415996702162984').members.cache.forEach((value, key) => {
+    clientDiscord.guilds.cache.get('654415996702162984').members.cache.forEach((value, key) => {
         if (value.voice.selfMute !== undefined && value.voice.channelID !== null) {
             usersList = { ...usersList, [key]: {id: key, mute: value.voice.selfMute, channelID: value.voice.channelID }}
         }
