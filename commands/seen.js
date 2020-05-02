@@ -10,7 +10,7 @@ module.exports = {
         const { id } = message.mentions.users.first();
         const name = message.mentions.users.first().username;
 
-        clientDiscord.guilds.cache.get('654415996702162984').voiceStates.cache.forEach((value, key) => {
+        client.guilds.cache.get('654415996702162984').voiceStates.cache.forEach((value, key) => {
             usersList = { ...usersList, [key]: { id: key, mute: value.selfMute, channelID: value.channelID } };
         });
 
