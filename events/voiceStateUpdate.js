@@ -37,7 +37,7 @@ module.exports = async (client, oldMember, newMember) => {
                         //timediff since last update
                         const timeDiff = parseFloat(((dataTime - parseInt(properData.last_seen, 10)) / 60000).toFixed(2));
                         //check if muting or deafening
-                        if ((oldMember.mute === true) && (newMember.mute === false)) {
+                        if ((oldMember.mute === true) && (newMember.mute === false) && timeDiff > 1000) {
                             console.log(`<✅> User was muted. Adding ${timeDiff} to AFK stats.`);
                             console.log(`<T> Old user mute: ${oldMember.mute}; New user mute ${newMember.mute}; Old user deaf: ${oldMember.deaf}; New user dead ${newMember.deaf}`);
                             properData.minutes_on_mute = parseFloat(properData.minutes_on_mute, 10) + timeDiff;

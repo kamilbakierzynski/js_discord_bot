@@ -33,19 +33,19 @@ module.exports = {
                 const timeDiff = parseFloat(((dataTime - parseInt(properData.last_seen, 10)) / 60000).toFixed(2));
                 //check if muting or deafening
                 if (usersList[properData.discord_id].mute) {
-                    properData.minutes_on_mute = parseFloat(properData.minutes_on_mute, 10) + timeDiff;
-                    properData.minutes_day_afk = parseFloat(properData.minutes_day_afk, 10) + timeDiff;
-                    properData.all_time_on_mute = parseFloat(properData.all_time_on_mute, 10) + timeDiff;
+                    properData.minutes_on_mute = parseFloat(properData.minutes_on_mute) + timeDiff;
+                    properData.minutes_day_afk = parseFloat(properData.minutes_day_afk) + timeDiff;
+                    properData.all_time_on_mute = parseFloat(properData.all_time_on_mute) + timeDiff;
                 }
                 //check if last time was connected
-                properData.minutes_connected = parseFloat(properData.minutes_connected, 10) + timeDiff;
-                properData.minutes_day = parseFloat(properData.minutes_day, 10) + timeDiff;
-                properData.all_time_minutes = parseFloat(properData.all_time_minutes, 10) + timeDiff;
+                properData.minutes_connected = parseFloat(properData.minutes_connected) + timeDiff;
+                properData.minutes_day = parseFloat(properData.minutes_day) + timeDiff;
+                properData.all_time_minutes = parseFloat(properData.all_time_minutes) + timeDiff;
 
                 properData.last_seen = dataTime;
             }
 
-            data.map(user => user.diff = parseFloat(user.minutes_connected, 10) - parseFloat(user.minutes_on_mute, 10));
+            data.map(user => user.diff = parseFloat(user.minutes_connected) - parseFloat(user.minutes_on_mute));
             data.sort((a, b) => b.diff - a.diff);
 
             const place = data.findIndex(element => element.discord_id === properData.discord_id);

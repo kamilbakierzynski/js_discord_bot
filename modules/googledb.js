@@ -126,14 +126,14 @@ exports.refreshDbDataAll = async function refreshDbDataAll(clientDiscord) {
             const timeDiff = parseFloat(((dataTime - parseInt(user.last_seen, 10)) / 60000).toFixed(2));
             //check if muting or deafening
             if (usersList[user.discord_id].mute) {
-                user.minutes_on_mute = parseFloat(user.minutes_on_mute, 10) + timeDiff;
-                user.minutes_day_afk = parseFloat(user.minutes_day_afk, 10) + timeDiff;
-                user.all_time_on_mute = parseFloat(user.all_time_on_mute, 10) + timeDiff;
+                user.minutes_on_mute = parseFloat(user.minutes_on_mute) + timeDiff;
+                user.minutes_day_afk = parseFloat(user.minutes_day_afk) + timeDiff;
+                user.all_time_on_mute = parseFloat(user.all_time_on_mute) + timeDiff;
             }
             //check if last time was connected
-            user.minutes_connected = parseFloat(user.minutes_connected, 10) + timeDiff;
-            user.minutes_day = parseFloat(user.minutes_day, 10) + timeDiff;
-            user.all_time_minutes = parseFloat(user.all_time_minutes, 10) + timeDiff;
+            user.minutes_connected = parseFloat(user.minutes_connected) + timeDiff;
+            user.minutes_day = parseFloat(user.minutes_day) + timeDiff;
+            user.all_time_minutes = parseFloat(user.all_time_minutes) + timeDiff;
 
             user.last_seen = dataTime;
             return [...akum, objectToArray(user)];
