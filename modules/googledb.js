@@ -146,8 +146,10 @@ exports.refreshDbDataAll = async function refreshDbDataAll(clientDiscord) {
             user.all_time_minutes = parseFloat(user.all_time_minutes) + timeDiff;
 
             user.last_seen = dataTime;
-            return [...akum, objectToArray(user)];
-        }, []);
+            akum.raw = [...akum.raw, user];
+            akum.formatted = [...akum.formatted, objectToArray(user)];
+            return akum;
+        }, {raw: [], formatted: []});
 
         //aktualizacja użytkowników aktualnie dostępnych na kanale,
         //dostęp do obiektów tylko tych użytkowników plus ich index w tabeli,
@@ -168,11 +170,11 @@ exports.refreshDbDataAll = async function refreshDbDataAll(clientDiscord) {
             range: `Users!A2`,
             valueInputOption: 'USER_ENTERED',
             resource: {
-                values: newData
+                values: newData.formatted
             }
     };
 
-    clientDiscord.helpers.displayRankingWithData(clientDiscord, newData);
+    clientDiscord.helpers.displayRankingWithData(clientDiscord, newData.raw);
     gsAPI.spreadsheets.values.update(options);
     return;
     });
