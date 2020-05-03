@@ -70,11 +70,20 @@ module.exports = {
 
             let user = message.mentions.users.first();
 
+            let outputMedals = '';
+            for (let i = 0; i < properData.medals.length; i += 1) {
+                let currentChar = properData.medals.charAt(i);
+                currentChar === 'G' ? outputMedals += '🥇' : null
+                currentChar === 'S' ? outputMedals += '🥈' : null
+                currentChar === 'B' ? outputMedals += '🥉' : null
+            }
+            outputMedals === '' ? null : outputMedals += '\n\n';
+
             const seenEmbed = new client.Discord.MessageEmbed()
                 .setColor('#0099ff')
                 .setTitle(name)
                 .setThumbnail(user.displayAvatarURL() || user.defaultAvatarURL)
-                .setDescription("**Ostatnio na kanale:**\n" + client.helpers.calculateTimeDiff(timeData) + " ago")
+                .setDescription(outputMedals + "**Ostatnio na kanale:**\n" + client.helpers.calculateTimeDiff(timeData) + " ago")
                 .addFields(
                     { name: '🎙️ Time connected', value: timeStringOnline, inline: true },
                     { name: '🔇 Time on mute', value: timeStringOfflne, inline: true },

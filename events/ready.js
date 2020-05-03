@@ -4,8 +4,8 @@ module.exports = async client => {
     console.log(`<🔔> Logged in as ${client.user.tag}!`);
 
     client.user.setPresence({
-        activity: { name: 'League of Legends', type: 'PLAYING' },
-        status: 'idle',
+        activity: { name: 'Baza danych', type: 'PLAYING' },
+        status: 'online',
     })
         .catch(console.error);
 
@@ -26,20 +26,54 @@ module.exports = async client => {
             }
         });
     });
-    console.log('<🕛> JOB EVERY MON 03:00:01 (05:00:01 UTC +2) clear database and show winners.');
-    let clearDatabase = new cron.CronJob('01 00 03 * * MON', () => {
+    console.log('<🕛> JOB EVERY MON 02:59:30 (04:59:30 UTC +2) clear database and show winners.');
+    let clearDatabase = new cron.CronJob('30 59 02 * * MON', () => {
         console.log(`<🕛> Running DB job.`);
-        displayRanking();
-        client.googledb.clearMinutesWeekly();
+        client.channels.fetch('654415996702162987').then(channel => {
+            channel.send('🕛 Reset ranking scores.');
+            try {
+                client.googledb.clearMinutesWeekly();
+                channel.send(`✅ Clear ranking.`);
+            } catch (e) {
+                console.log('<❌> Error while clearing db.');
+                channel.send(`❌ Clear job failed.`);
+                console.log(e);
+            }
+        });
+    });
+    console.log('<🕛> JOB EVERY MON 02:58:30 (04:58:30 UTC +2) save data');
+    let saveDatabase = new cron.CronJob('30 58 02 * * MON', () => {
+        console.log(`<🕛> Running save data.`);
+        client.channels.fetch('654415996702162987').then(channel => {
+            channel.send('🕛 Save scores and display final results.'); 
+            try {
+                client.googledb.refreshDbDataAll(client);
+            } catch (e) {
+                console.log('<❌> Error while save scores and final results.');
+                channel.send(`❌ Save job failed.`);
+                console.log(e);
+            }
+        });
     });
     console.log('<🕛> JOB EVERY DAY 02:59:00 (04:59:00 UTC +2) archive database.');
-    let archiveDatabase = new cron.CronJob('30 59 02 * * *', () => {
+    let archiveDatabase = new cron.CronJob('00 59 02 * * *', () => {
         console.log(`<🕛> Running archive job.`);
-        client.googledb.archiveData();
+        client.channels.fetch('654415996702162987').then(channel => {
+            channel.send('🕛 Data backup.');
+            try {
+                client.googledb.archiveData();   
+                channel.send(`✅ Data backup.`);
+            } catch (e) {
+                console.log('<❌> Error while archiveData.');
+                channel.send(`❌ Data backup failed.`);
+                console.log(e);
+            }
+        });
     });
 
 
     archiveDatabase.start();
     clearDatabase.start();
     changeChannelTitle.start();
+    saveDatabase.start();
 }
