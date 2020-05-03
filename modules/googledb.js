@@ -172,7 +172,7 @@ exports.refreshDbDataAll = async function refreshDbDataAll(clientDiscord) {
             }
     };
 
-    client.helpers.displayRankingWithData(client, newData);
+    clientDiscord.helpers.displayRankingWithData(clientDiscord, newData);
     gsAPI.spreadsheets.values.update(options);
     return;
     });
