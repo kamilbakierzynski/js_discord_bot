@@ -124,6 +124,8 @@ exports.displayRanking = function displayRanking(client) {
 }
 
 exports.displayRankingWithData = function displayRankingWithData(client, data) {
+    const formatMinutes = client.helpers.preetifyMinutes;
+    
     client.channels.fetch('654415996702162987').then(channel => {
         console.log('<✅> Displaying server ranking.');
             data.map(user => user.diff = parseFloat(user.minutes_connected) - parseFloat(user.minutes_on_mute));
