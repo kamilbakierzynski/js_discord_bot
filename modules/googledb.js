@@ -126,10 +126,14 @@ exports.refreshDbDataAll = async function refreshDbDataAll(clientDiscord) {
         const newData = data.reduce((akum, user) => {
             if (usersList[user.discord_id] == undefined) {
                 console.log('<S> Skipping ' + user.username);
-                return [...akum, objectToArray(user)];
+                akum.raw = [...akum.raw, user];
+                akum.formatted = [...akum.formatted, objectToArray(user)];
+                return akum;
             }
             if (usersList[user.discord_id].channelID === '654418034081136650') {
-                return [...akum, objectToArray(user)];
+                akum.raw = [...akum.raw, user];
+                akum.formatted = [...akum.formatted, objectToArray(user)];
+                return akum;;
             }
             console.log('<P> Passing ' + user.username);
             //timediff since last update
