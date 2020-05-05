@@ -30,58 +30,58 @@ const dbRead = exports.dbRead = async function dbRead() {
     return convertToObj(data);
 }
 
-exports.dbAddNewUser = async function dbAddNewUser(discord_id, username, last_seen) {
-    client.authorize(function (error, tokens) {
-        if (error) {
-            console.log(error);
-            status = false;
-        }
-    });
+// exports.dbAddNewUser = async function dbAddNewUser(discord_id, username, last_seen) {
+//     client.authorize(function (error, tokens) {
+//         if (error) {
+//             console.log(error);
+//             status = false;
+//         }
+//     });
 
-    const gsAPI = google.sheets({ version: 'v4', auth: client });
-    const options = {
-        spreadsheetId: spreadsheetId,
-        range: 'Users!A2',
-        valueInputOption: 'USER_ENTERED',
-        resource: {
-            //      discord_id, username, last_seen, minutes_connected, minutes_on_mute, all_time_minutes, all_time_on_mute, minutes_day, minutes_day_afk, medals, need_for_working  
-            values: [[discord_id, username, last_seen, 0, 0, 0, 0, 0, 0, 0, 0]]
-        }
-    };
+//     const gsAPI = google.sheets({ version: 'v4', auth: client });
+//     const options = {
+//         spreadsheetId: spreadsheetId,
+//         range: 'Users!A2',
+//         valueInputOption: 'USER_ENTERED',
+//         resource: {
+//             //      discord_id, username, last_seen, minutes_connected, minutes_on_mute, all_time_minutes, all_time_on_mute, minutes_day, minutes_day_afk, medals, need_for_working  
+//             values: [[discord_id, username, last_seen, 0, 0, 0, 0, 0, 0, 0, 0]]
+//         }
+//     };
 
-    await gsAPI.spreadsheets.values.append(options);
-}
+//     await gsAPI.spreadsheets.values.append(options);
+// }
 
-exports.dbUpdateUser = async function dbUpdateUser(object, index) {
-    if (index < 0) {
-        return;
-    }
-    let convertObjToArray = []
-    for (let key in object) {
-        convertObjToArray.push(object[key].toString().replace('.', ','));
-    }
-    client.authorize(function (error, tokens) {
-        if (error) {
-            console.log(error);
-            status = false;
-        }
-    });
+// exports.dbUpdateUser = async function dbUpdateUser(object, index) {
+//     if (index < 0) {
+//         return;
+//     }
+//     let convertObjToArray = []
+//     for (let key in object) {
+//         convertObjToArray.push(object[key].toString().replace('.', ','));
+//     }
+//     client.authorize(function (error, tokens) {
+//         if (error) {
+//             console.log(error);
+//             status = false;
+//         }
+//     });
 
-    const gsAPI = google.sheets({ version: 'v4', auth: client });
-    const options = {
-        spreadsheetId: spreadsheetId,
-        range: `Users!A${index + 2}`,
-        valueInputOption: 'USER_ENTERED',
-        resource: {
-            values: [convertObjToArray]
-        }
-    };
+//     const gsAPI = google.sheets({ version: 'v4', auth: client });
+//     const options = {
+//         spreadsheetId: spreadsheetId,
+//         range: `Users!A${index + 2}`,
+//         valueInputOption: 'USER_ENTERED',
+//         resource: {
+//             values: [convertObjToArray]
+//         }
+//     };
 
-    await gsAPI.spreadsheets.values.update(options);
-}
+//     await gsAPI.spreadsheets.values.update(options);
+// }
 
 exports.dbUpdate = async function dbUpdate(objectArr) {
-    const output = convertToArr(objectArr);
+    const output = objectArr.reduce((akum, user) => [...akum, objectToArray(user)], []);
     client.authorize(function (error, tokens) {
         if (error) {
             console.log(error);
@@ -103,70 +103,70 @@ exports.dbUpdate = async function dbUpdate(objectArr) {
 
 }
 
-exports.refreshDbDataAll = async function refreshDbDataAll(clientDiscord) {
-    let usersList = {};
-    clientDiscord.guilds.cache.get('654415996702162984').members.cache.forEach((value, key) => {
-        if (value.voice.selfMute !== undefined && value.voice.channelID !== null) {
-            usersList = { ...usersList, [key]: {id: key, mute: value.voice.selfMute, channelID: value.voice.channelID }}
-        }
-    });
+// exports.refreshDbDataAll = async function refreshDbDataAll(clientDiscord) {
+//     let usersList = {};
+//     clientDiscord.guilds.cache.get('654415996702162984').members.cache.forEach((value, key) => {
+//         if (value.voice.selfMute !== undefined && value.voice.channelID !== null) {
+//             usersList = { ...usersList, [key]: {id: key, mute: value.voice.selfMute, channelID: value.voice.channelID }}
+//         }
+//     });
 
-    const dataTime = Date.now();
-    dbRead().then(data => {
-        const newData = data.reduce((akum, user) => {
-            if (usersList[user.discord_id] == undefined) {
-                console.log('<S> Skipping ' + user.username);
-                akum.raw = [...akum.raw, user];
-                akum.formatted = [...akum.formatted, objectToArray(user)];
-                return akum;
-            }
-            if (usersList[user.discord_id].channelID === '654418034081136650') {
-                akum.raw = [...akum.raw, user];
-                akum.formatted = [...akum.formatted, objectToArray(user)];
-                return akum;;
-            }
-            console.log('<P> Passing ' + user.username);
-            //timediff since last update
-            const timeDiff = parseFloat(((dataTime - parseInt(user.last_seen, 10)) / 60000).toFixed(2));
-            //check if muting or deafening
-            if (usersList[user.discord_id].mute) {
-                user.minutes_on_mute = parseFloat(user.minutes_on_mute) + timeDiff;
-                user.minutes_day_afk = parseFloat(user.minutes_day_afk) + timeDiff;
-                user.all_time_on_mute = parseFloat(user.all_time_on_mute) + timeDiff;
-            }
-            //check if last time was connected
-            user.minutes_connected = parseFloat(user.minutes_connected) + timeDiff;
-            user.minutes_day = parseFloat(user.minutes_day) + timeDiff;
-            user.all_time_minutes = parseFloat(user.all_time_minutes) + timeDiff;
+//     const dataTime = Date.now();
+//     dbRead().then(data => {
+//         const newData = data.reduce((akum, user) => {
+//             if (usersList[user.discord_id] == undefined) {
+//                 console.log('<S> Skipping ' + user.username);
+//                 akum.raw = [...akum.raw, user];
+//                 akum.formatted = [...akum.formatted, objectToArray(user)];
+//                 return akum;
+//             }
+//             if (usersList[user.discord_id].channelID === '654418034081136650') {
+//                 akum.raw = [...akum.raw, user];
+//                 akum.formatted = [...akum.formatted, objectToArray(user)];
+//                 return akum;;
+//             }
+//             console.log('<P> Passing ' + user.username);
+//             //timediff since last update
+//             const timeDiff = parseFloat(((dataTime - parseInt(user.last_seen, 10)) / 60000).toFixed(2));
+//             //check if muting or deafening
+//             if (usersList[user.discord_id].mute) {
+//                 user.minutes_on_mute = parseFloat(user.minutes_on_mute) + timeDiff;
+//                 user.minutes_day_afk = parseFloat(user.minutes_day_afk) + timeDiff;
+//                 user.all_time_on_mute = parseFloat(user.all_time_on_mute) + timeDiff;
+//             }
+//             //check if last time was connected
+//             user.minutes_connected = parseFloat(user.minutes_connected) + timeDiff;
+//             user.minutes_day = parseFloat(user.minutes_day) + timeDiff;
+//             user.all_time_minutes = parseFloat(user.all_time_minutes) + timeDiff;
 
-            user.last_seen = dataTime;
-            akum.raw = [...akum.raw, user];
-            akum.formatted = [...akum.formatted, objectToArray(user)];
-            return akum;
-        }, {raw: [], formatted: []});
+//             user.last_seen = dataTime;
+//             akum.raw = [...akum.raw, user];
+//             akum.formatted = [...akum.formatted, objectToArray(user)];
+//             return akum;
+//         }, {raw: [], formatted: []});
 
-        client.authorize(function (error, tokens) {
-            if (error) {
-                console.log(error);
-                status = false;
-            }
-        });
+//         client.authorize(function (error, tokens) {
+//             if (error) {
+//                 console.log(error);
+//                 status = false;
+//             }
+//         });
 
-        const gsAPI = google.sheets({ version: 'v4', auth: client });
-        const options = {
-            spreadsheetId: spreadsheetId,
-            range: `Users!A2`,
-            valueInputOption: 'USER_ENTERED',
-            resource: {
-                values: newData.formatted
-            }
-    };
+//         const gsAPI = google.sheets({ version: 'v4', auth: client });
+//         const options = {
+//             spreadsheetId: spreadsheetId,
+//             range: `Users!A2`,
+//             valueInputOption: 'USER_ENTERED',
+//             resource: {
+//                 values: newData.formatted
+//             }
+//     };
 
-    clientDiscord.helpers.displayRankingWithData(clientDiscord, newData.raw);
-    gsAPI.spreadsheets.values.update(options);
-    return;
-    });
-}
+//     clientDiscord.helpers.displayRankingWithData(clientDiscord, newData.raw);
+//     gsAPI.spreadsheets.values.update(options);
+//     return;
+//     });
+// }
 
 function objectToArray(object) {
     let convertObjToArray = []
@@ -261,14 +261,6 @@ exports.archiveData = function archiveData() {
         await gsAPI.spreadsheets.values.clear(optionsClearDaily);
 
     });
-}
-
-function convertToArr(objectArr) {
-    let tempList = [];
-    for (let j = 0; j < objectArr.length; j += 1) {
-        tempList.push(objectArr[j].toString().replace('.', ','));
-    }
-    return tempList;
 }
 
 function convertToObj(data) {

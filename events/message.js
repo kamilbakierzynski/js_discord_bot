@@ -5,6 +5,7 @@ module.exports = async (client, message) => {
     try {
         client.commands.get(message.content.substring(1).split(" ")[0]).execute(client, message);
     } catch (e) {
-        message.reply(' wrong command :(');
+        console.log(e);
+        message.reply(" wrong command or there was a problem with the one you've typed.");
     }
 };
