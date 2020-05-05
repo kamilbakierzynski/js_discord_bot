@@ -16,7 +16,7 @@ module.exports = {
             const roatationEmbed = new client.Discord.MessageEmbed()
                 .setColor('#0099ff')
                 .setTitle('Free champions')
-                .setAuthor('Ziewamy Blacha')
+                .setAuthor(client.user.username)
                 .addField('Free champions this week', client.helpers.formatRotation(client, rotationInfo))
                 .setTimestamp()
                 .setFooter('League of Legends');

@@ -30,9 +30,7 @@ module.exports = {
                 console.log(`<✅> Got data about country.`);
                 try {
                     const coronaData = JSON.parse(this.responseText);
-                    // console.log(coronaData);
                     const response = coronaData.response[0];
-                    // console.log(response);
                     if (response === undefined) {
                         message.reply(` error getting data about ${country}.`);
                         console.log('<❌> Got connection but country was wrong.')

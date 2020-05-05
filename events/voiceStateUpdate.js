@@ -13,7 +13,6 @@ module.exports = async (client, oldMember, newMember) => {
             if (newMember.channel.hasOwnProperty('name') && newMember.channel.name !== 'AFK') {
                 console.log(`<🎤> User ${newMember.member.displayName} on channel ${newMember.channel.name}`);
                 console.log(`<✅> Saving data for ${newMember.member.displayName} || id: ${newMember.member.id}`);
-                // const channel = client.channels.cache.get('654415996702162987');
                 const dataTime = Date.now();
                 client.googledb.dbRead().then(data => {
                     console.log('<✅> Reading database.');

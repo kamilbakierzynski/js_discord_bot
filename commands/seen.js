@@ -85,12 +85,12 @@ module.exports = {
                 .setColor('#0099ff')
                 .setTitle(name)
                 .setThumbnail(user.displayAvatarURL() || user.defaultAvatarURL)
-                .setDescription(outputMedals + "**Ostatnio na kanale:**\n" + client.helpers.calculateTimeDiff(timeData) + " ago")
+                .setDescription(outputMedals + "**Last time online:**\n" + client.helpers.calculateTimeDiff(timeData) + " ago")
                 .addFields(
                     { name: '🎙️ Time connected', value: timeStringOnline, inline: true },
                     { name: '🔇 Time on mute', value: timeStringOfflne, inline: true },
                 )
-                .setAuthor(`Miejsce: ${place + 1}`)
+                .setAuthor(`Place: ${place + 1}`)
                 .setFooter('📅')
                 .setTimestamp(timeData);
             message.channel.send(seenEmbed);

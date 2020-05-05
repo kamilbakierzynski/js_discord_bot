@@ -63,6 +63,7 @@ exports.formatSeries = function formatSeries(data) {
             output += '- ';
         }
     }
+    
 
     return output;
 }
@@ -71,9 +72,9 @@ exports.calculateTimeDiff = function calculateTimeDiff(timeOld) {
     const newDate = Date.now();
     const old = new Date(timeOld);
     const diffMs = (newDate - old);
-    const diffDays = Math.floor(diffMs / 86400000); // days
-    const diffHrs = Math.floor((diffMs % 86400000) / 3600000); // hours
-    const diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
+    const diffDays = Math.floor(diffMs / 86400000);
+    const diffHrs = Math.floor((diffMs % 86400000) / 3600000);
+    const diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000);
     return `${diffDays} days, ${diffHrs} hours, ${diffMins} minutes`;
 }
 
@@ -87,7 +88,7 @@ exports.displayRanking = function displayRanking(client) {
             data.map(user => user.diff = parseFloat(user.minutes_connected) - parseFloat(user.minutes_on_mute));
             data.sort((a, b) => b.diff - a.diff);
 
-            const decodeNumbers = {0: '0️⃣', 1: '1️⃣', 2: '2️⃣', 3: '3️⃣', 4: '4️⃣', 5: '5️⃣', 6: '6️⃣', 7: '7️⃣', 8: '8️⃣', 9: '9️⃣'};
+            // const decodeNumbers = {0: '0️⃣', 1: '1️⃣', 2: '2️⃣', 3: '3️⃣', 4: '4️⃣', 5: '5️⃣', 6: '6️⃣', 7: '7️⃣', 8: '8️⃣', 9: '9️⃣'};
             const medalsDecode = {0: '🥇', 1: '🥈', 2: '🥉'};
             
             const { place, names, times } = data.reduce((object, user, index) => {
@@ -116,7 +117,7 @@ exports.displayRanking = function displayRanking(client) {
                     { name: 'Name', value: names, inline: true },
                     { name: 'Time (Online - AFK)', value: times, inline: true },
                 )
-                .setAuthor('Ziewamy Blacha')
+                .setAuthor(client.user.username)
                 .setTimestamp();
             channel.send(rankingEmbed);
         })
@@ -160,7 +161,7 @@ exports.displayRankingWithData = function displayRankingWithData(client, data) {
                     { name: 'Name', value: names, inline: true },
                     { name: 'Time (Online - AFK)', value: times, inline: true },
                 )
-                .setAuthor('Ziewamy Blacha')
+                .setAuthor(client.user.username)
                 .setTimestamp();
             channel.send(rankingEmbed);
     });

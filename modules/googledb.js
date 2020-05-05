@@ -18,7 +18,6 @@ const dbRead = exports.dbRead = async function dbRead() {
             console.log(error);
             status = false;
         }
-        // console.log('Connected!');
     });
     const gsAPI = google.sheets({ version: 'v4', auth: client });
     const options = {
@@ -37,7 +36,6 @@ exports.dbAddNewUser = async function dbAddNewUser(discord_id, username, last_se
             console.log(error);
             status = false;
         }
-        // console.log('Connected!');
     });
 
     const gsAPI = google.sheets({ version: 'v4', auth: client });
@@ -46,8 +44,8 @@ exports.dbAddNewUser = async function dbAddNewUser(discord_id, username, last_se
         range: 'Users!A2',
         valueInputOption: 'USER_ENTERED',
         resource: {
-            //      discord_id, username, last_seen, minutes_connected, minutes_on_mute, all_time_minutes, all_time_on_mute, channel_level, channel_xp
-            values: [[discord_id, username, last_seen, 0, 0, 0, 0, 1, 0]]
+            //      discord_id, username, last_seen, minutes_connected, minutes_on_mute, all_time_minutes, all_time_on_mute, minutes_day, minutes_day_afk, medals, need_for_working  
+            values: [[discord_id, username, last_seen, 0, 0, 0, 0, 0, 0, 0, 0]]
         }
     };
 
@@ -67,7 +65,6 @@ exports.dbUpdateUser = async function dbUpdateUser(object, index) {
             console.log(error);
             status = false;
         }
-        // console.log('Connected!');
     });
 
     const gsAPI = google.sheets({ version: 'v4', auth: client });
@@ -90,7 +87,6 @@ exports.dbUpdate = async function dbUpdate(objectArr) {
             console.log(error);
             status = false;
         }
-        // console.log('Connected!');
     });
 
     const gsAPI = google.sheets({ version: 'v4', auth: client });
@@ -109,12 +105,6 @@ exports.dbUpdate = async function dbUpdate(objectArr) {
 
 exports.refreshDbDataAll = async function refreshDbDataAll(clientDiscord) {
     let usersList = {};
-    // clientDiscord.guilds.cache.get('654415996702162984').voiceStates.cache.forEach((value, key) => {
-    //     usersList = { ...usersList, [key]: { id: key, mute: value.selfMute, channelID: value.channelID } };
-    // });
-
-    // client.guilds.cache.get('497134370797387789').members.cache.get('339856582575915009').voice.channelID
-
     clientDiscord.guilds.cache.get('654415996702162984').members.cache.forEach((value, key) => {
         if (value.voice.selfMute !== undefined && value.voice.channelID !== null) {
             usersList = { ...usersList, [key]: {id: key, mute: value.voice.selfMute, channelID: value.voice.channelID }}
@@ -155,17 +145,11 @@ exports.refreshDbDataAll = async function refreshDbDataAll(clientDiscord) {
             return akum;
         }, {raw: [], formatted: []});
 
-        //aktualizacja użytkowników aktualnie dostępnych na kanale,
-        //dostęp do obiektów tylko tych użytkowników plus ich index w tabeli,
-        //trzeba przekonwertować z obiektów na listy
-        //jedyne co zostało to wysłać batch update do sheetsów
-
         client.authorize(function (error, tokens) {
             if (error) {
                 console.log(error);
                 status = false;
             }
-            // console.log('Connected!');
         });
 
         const gsAPI = google.sheets({ version: 'v4', auth: client });
@@ -198,7 +182,6 @@ exports.clearMinutesWeekly = async function clearMinutesWeekly() {
             console.log(error);
             status = false;
         }
-        // console.log('Connected!');
     });
 
     const gsAPI = google.sheets({ version: 'v4', auth: client });
@@ -216,7 +199,6 @@ exports.archiveData = function archiveData() {
             console.log(error);
             status = false;
         }
-        // console.log('Connected!');
     });
     dbRead().then(async data => {
         let usernamesList = ['time'];
