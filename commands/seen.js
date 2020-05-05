@@ -10,7 +10,7 @@ module.exports = {
         const { id } = message.mentions.users.first();
         const name = message.mentions.users.first().username;
 
-        const data = client.localCache;
+        const data = [...client.localCache];
         let properData = undefined;
         let index = 0;
         for (let i = 0; i < data.length; i += 1) {

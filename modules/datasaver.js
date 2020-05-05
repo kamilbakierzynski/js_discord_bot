@@ -10,7 +10,9 @@ exports.saveDataLocally = function saveDataLocally(client) {
     let usersList = {};
     client.guilds.cache.get('654415996702162984').members.cache.forEach((value, key) => {
         if (value.voice.selfMute !== undefined && value.voice.channelID !== null) {
-            usersList = { ...usersList, [key]: {id: key, mute: value.voice.selfMute, channelID: value.voice.channelID, username: value.user.username }}
+            usersList = { ...usersList, [key]: {id: key, mute: value.voice.selfMute,
+                                                channelID: value.voice.channelID,
+                                                username: value.nickname || value.user.username }}
         }
     });
 
