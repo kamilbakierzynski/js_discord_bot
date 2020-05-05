@@ -128,6 +128,10 @@ exports.displayRankingWithData = function displayRankingWithData(client, data) {
     const formatMinutes = client.helpers.preetifyMinutes;
     
     client.channels.fetch('654415996702162987').then(channel => {
+        if (data === undefined) {
+            channel.send('❌ There is a problem with data. Try again later.');
+            return;
+        }
         console.log('<✅> Displaying server ranking.');
             data.map(user => user.diff = parseFloat(user.minutes_connected) - parseFloat(user.minutes_on_mute));
             data.sort((a, b) => b.diff - a.diff);

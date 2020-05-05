@@ -9,7 +9,7 @@ module.exports = async client => {
     })
         .catch(console.error);
 
-    console.log('<🕛> JOB AT 22:00:01 (00:00:01 UTC +2) change channel title.');
+    console.log('<🕛> JOB EVERY DAY 22:00:01 (00:00:01 UTC +2) change channel title.');
     let changeChannelTitle = new cron.CronJob('01 00 22 * * *', () => {
         client.channels.fetch('654415996702162987').then(channel => {
             const { name } = channel;
@@ -70,10 +70,26 @@ module.exports = async client => {
             }
         });
     });
-
+    console.log('<🕛> JOB EVERY MIN save local data.');
+    let saveDataLocally = new cron.CronJob('00 * * * * *', () => {
+        if (client.localCache !== undefined) {
+            client.datasaver.saveDataLocally(client);
+        }
+    });
+    console.log('<🕛> JOB EVERY [15 MIN] upload data.');
+    let uploadData = new cron.CronJob('0/15 * * * *', () => {
+        if (client.localCache !== undefined) {
+            console.log('<🕛> Uploading data to Google Sheet');
+            client.datasaver.updateOnlineDb(client);
+        }
+    });
 
     archiveDatabase.start();
     clearDatabase.start();
     changeChannelTitle.start();
     saveDatabase.start();
+    client.datasaver.updateLocalCache(client).then(data => {
+        saveDataLocally.start();
+        uploadData.start();
+    });
 }
