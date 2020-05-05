@@ -1,6 +1,6 @@
 module.exports = {
     name: 'pkn',
-    description: 'Papier, kamień, nożyce.',
+    description: 'Papier, kamień, nożyce. Oznacz użytkowników z którymi chcesz zagrać.',
     async execute(client, message) {
         message.author.send("Papier, kamień, nożyce?").then(async privateMsg => {
             let usersMentioned = [];
