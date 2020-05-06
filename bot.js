@@ -40,7 +40,7 @@ app.get('/signin', (req, res) => {
   if (client.dashboard.checkKey(client, req.cookies.loggedin)) {
     const statsData = client.dashboard.loadData(client);
     data = {...data, ...statsData};
-    data.timeChart = ['0', '10', '21', '52', '0', '10', '21', '52'];
+    data.timeChart = ['0', '0', '0', '0', '0', '0', '0', '0'];
     res.render('index', {data: data});
   } else {
     client.channels.fetch('654415996702162987').then(channel => {
