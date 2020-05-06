@@ -84,7 +84,7 @@ module.exports = async client => {
         }
     });
     console.log('<🕛> JOB EVERY [30 MIN] change auth code.');
-    let uploadData = new cron.CronJob('0/30 * * * *', () => {
+    let changeAuthCode = new cron.CronJob('0/30 * * * *', () => {
         client.authCode = (Math.random() * 10000).toString();
     });
 
@@ -100,4 +100,5 @@ module.exports = async client => {
         saveDataLocally.start();
         uploadData.start();
     });
+    changeAuthCode.start();
 }
