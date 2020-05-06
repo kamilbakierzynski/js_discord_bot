@@ -34,6 +34,22 @@ exports.saveDataLocally = function saveDataLocally(client) {
     }, []);
 }
 
+exports.clearWeekRanking = function clearWeekRanking(client) {
+    client.localCache = client.localCache.reduce((akum, user) => {
+        user.minutes_connected = 0;
+        user.minutes_on_mute = 0;
+        return [...akum, user];
+    }, []);
+}
+
+exports.clearDayRanking = function clearDayRanking(client) {
+    client.localCache = client.localCache.reduce((akum, user) => {
+        user.minutes_day = 0;
+        user.minutes_day_afk = 0;
+        return [...akum, user];
+    }, []);
+}
+
 exports.addNewUser = function addNewUser(client, discord_id, username, last_seen) {
     client.localCache = [...client.localCache,
         {discord_id: discord_id,
