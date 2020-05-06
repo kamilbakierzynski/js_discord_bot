@@ -22,7 +22,7 @@ exports.loadData = function loadData(client) {
                   onlineDonutChart: Math.round((data.allOnline / allMinutes) * 100),
                   afkDonutChart: Math.round((data.allAfk / allMinutes) * 100)};
 
-    output.onlineNow = usersList.size | 0;
+    output.onlineNow = Object.keys(usersList).length | 0;
 
     output.percentOnlineToday = Math.round((client.localCache.filter(user => user.minutes_day != 0).length / client.localCache.length) * 100);
 
@@ -38,7 +38,7 @@ exports.loadDataRanking = function loadDataRanking(client) {
             akum.afkMost.count = user.all_time_on_mute;
             akum.afkMost.username = user.username;
         }
-        if (akum.afkLeast > user.all_time_on_mute && user.all_time_on_mute != 0) {
+        if (akum.afkLeast > user.all_time_on_mute && user.minutes_connected != 0) {
             akum.afkLeast.count = user.all_time_on_mute;
             akum.afkLeast.username = user.username;
         }
@@ -65,4 +65,19 @@ exports.loadDataRanking = function loadDataRanking(client) {
         rankingData: rankingData
     };
     return processedDataTop;
+}
+
+exports.findKey = function findKey(client) {
+    const parsedNumber = parseInt(client.authCode, 10);
+    for (let i = 500; i <= parsedNumber; i += 1) {
+      if (parsedNumber % i == 0) {
+        return i;
+      }
+    }
+  }
+
+exports.checkKey = function checkKey(client, key) {
+    const parsedKey = parseInt(key, 10);
+    const parsedCode = parseInt(client.authCode, 10);
+    return (parsedCode % parsedKey == 0)
 }

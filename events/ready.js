@@ -85,12 +85,12 @@ module.exports = async client => {
     });
     console.log('<🕛> JOB EVERY [30 MIN] change auth code.');
     let changeAuthCode = new cron.CronJob('0/30 * * * *', () => {
-        client.authCode = (Math.random() * 10000).toString();
+        client.authCode = (Math.random() * 10000).toFixed(0);
     });
 
 
     //ensure we have some value at the start
-    client.authCode = (Math.random() * 10000).toString();
+    client.authCode = (Math.random() * 10000).toFixed(0);
 
     archiveDatabase.start();
     clearDatabase.start();
