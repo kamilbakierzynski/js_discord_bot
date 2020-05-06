@@ -37,7 +37,7 @@ app.get('/signin', (req, res) => {
   data.username = client.user.tag;
   data.commandsCount = client.commands.size;
   data.readyAt = client.readyAt.toDateString();
-  if (req.cookies.loggedin === 'true') {
+  if (client.dashboard.checkKey(client, req.cookies.loggedin)) {
     const statsData = client.dashboard.loadData(client);
     data = {...data, ...statsData};
     data.timeChart = ['0', '10', '21', '52', '0', '10', '21', '52'];
@@ -55,7 +55,7 @@ app.post('/signin', urlencodedParser, (req, res) => {
   console.log(req.body.password);
   if (client.authCode === req.body.password) {
     console.log(true);
-    res.cookie("loggedin", true, {expire: 3600000 + Date.now()});
+    res.cookie("loggedin", client.dashboard.findKey(client), {expire: 300000 + Date.now()});
     const statsData = client.dashboard.loadData(client);
     data = {...data, ...statsData};
     data.timeChart = ['0', '0', '0', '0', '0', '0', '0', '0'];
@@ -67,7 +67,7 @@ app.post('/signin', urlencodedParser, (req, res) => {
 });
 
 app.get('/ranking', (req, res) => {
-  if (req.cookies.loggedin === 'true') {
+  if (client.dashboard.checkKey(client, req.cookies.loggedin)) {
   const topStatsData = client.dashboard.loadDataRanking(client);
   data = {...data, ...topStatsData};
   res.render('ranking', {data: data});
