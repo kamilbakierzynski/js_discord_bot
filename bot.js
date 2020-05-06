@@ -1,7 +1,6 @@
 const Discord = require('discord.js');
 const express = require('express');
-const cron = require('cron');
-var path = require('path');
+const bodyParser = require('body-parser');
 
 require('dotenv').config();
 
@@ -9,11 +8,13 @@ const client = new Discord.Client();
 client.commands = new Discord.Collection();
 client.loader = require('./modules/loader');
 client.Discord = Discord;
-
+const cookieParser = require('cookie-parser');
 
 const app = express();
-const ejs = require('ejs');
 app.set('view engine', 'ejs');
+app.use(cookieParser());
+
+const urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 let data = {};
 
@@ -29,7 +30,50 @@ app.get('/', (req, res) => {
     data.username = client.user.tag;
     data.commandsCount = client.commands.size;
     data.readyAt = client.readyAt.toDateString();
+    res.render('home', {data: data});
+});
+
+app.get('/signin', (req, res) => {
+  data.username = client.user.tag;
+  data.commandsCount = client.commands.size;
+  data.readyAt = client.readyAt.toDateString();
+  if (req.cookies.loggedin === 'true') {
+    const statsData = client.dashboard.loadData(client);
+    data = {...data, ...statsData};
+    data.timeChart = ['0', '10', '21', '52', '0', '10', '21', '52'];
     res.render('index', {data: data});
+  } else {
+    client.channels.fetch('654415996702162987').then(channel => {
+      channel.send(`Login page authorization code: ◻️${client.authCode}◻️`).then(msg => msg.delete({ timeout: 20000 }));
+    });
+    res.render('signin', {data: data});
+  }
+  console.log(data.authCode);
+});
+
+app.post('/signin', urlencodedParser, (req, res) => {
+  console.log(req.body.password);
+  if (client.authCode === req.body.password) {
+    console.log(true);
+    res.cookie("loggedin", true, {expire: 3600000 + Date.now()});
+    const statsData = client.dashboard.loadData(client);
+    data = {...data, ...statsData};
+    data.timeChart = ['0', '0', '0', '0', '0', '0', '0', '0'];
+    console.log(data);
+    res.render('index', {data: data});
+  } else {
+    res.redirect('/signin');
+  }
+});
+
+app.get('/ranking', (req, res) => {
+  if (req.cookies.loggedin === 'true') {
+  const topStatsData = client.dashboard.loadDataRanking(client);
+  data = {...data, ...topStatsData};
+  res.render('ranking', {data: data});
+  } else {
+    res.redirect('/signin');
+  }
 });
 
 const init = async () => {

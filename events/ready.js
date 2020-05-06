@@ -32,7 +32,7 @@ module.exports = async client => {
         client.channels.fetch('654415996702162987').then(channel => {
             channel.send('🕛 Reset ranking scores.');
             try {
-                client.googledb.clearMinutesWeekly();
+                client.datasaver.clearWeekRanking(client);
                 channel.send(`✅ Clear ranking.`);
             } catch (e) {
                 console.log('<❌> Error while clearing db.');
@@ -41,13 +41,13 @@ module.exports = async client => {
             }
         });
     });
-    console.log('<🕛> JOB EVERY MON 02:58:30 (04:58:30 UTC +2) save data');
-    let saveDatabase = new cron.CronJob('30 58 02 * * MON', () => {
+    console.log('<🕛> JOB EVERY MON 02:59:20 (04:59:20 UTC +2) save data');
+    let saveDatabase = new cron.CronJob('20 59 02 * * MON', () => {
         console.log(`<🕛> Running save data.`);
         client.channels.fetch('654415996702162987').then(channel => {
-            channel.send('🕛 Save scores and display final results.'); 
+            channel.send('🕛 Final results.');
             try {
-                client.googledb.refreshDbDataAll(client);
+                client.helpers.displayRankingWithData(client, client.localCache);
             } catch (e) {
                 console.log('<❌> Error while save scores and final results.');
                 channel.send(`❌ Save job failed.`);
@@ -55,13 +55,13 @@ module.exports = async client => {
             }
         });
     });
-    console.log('<🕛> JOB EVERY DAY 02:59:00 (04:59:00 UTC +2) archive database.');
-    let archiveDatabase = new cron.CronJob('00 59 02 * * *', () => {
+    console.log('<🕛> JOB EVERY DAY 02:59:02 (04:59:00 UTC +2) archive database.');
+    let archiveDatabase = new cron.CronJob('02 59 02 * * *', () => {
         console.log(`<🕛> Running archive job.`);
         client.channels.fetch('654415996702162987').then(channel => {
             channel.send('🕛 Data backup.');
             try {
-                client.googledb.archiveData();   
+                client.googledb.archiveData().then(result => client.datasaver.clearDayRanking(client));   
                 channel.send(`✅ Data backup.`);
             } catch (e) {
                 console.log('<❌> Error while archiveData.');
@@ -83,6 +83,14 @@ module.exports = async client => {
             client.datasaver.updateOnlineDb(client);
         }
     });
+    console.log('<🕛> JOB EVERY [30 MIN] change auth code.');
+    let uploadData = new cron.CronJob('0/30 * * * *', () => {
+        client.authCode = (Math.random() * 10000).toString();
+    });
+
+
+    //ensure we have some value at the start
+    client.authCode = (Math.random() * 10000).toString();
 
     archiveDatabase.start();
     clearDatabase.start();

@@ -27,6 +27,15 @@ exports.convertSecondsToTime = function convertSecondsToTime(time) {
     return `${mins}:${secs}`;
 }
 
+exports.convertMinutesToTime = function convertMinutesToTime(time) {
+    const hours = Math.floor(time / 60);
+    let mins = time - hours * 60;
+    if (mins < 10) {
+        mins = `0${mins}`;
+    }
+    return `${hours}:${mins}`;
+}
+
 exports.preetifyMinutes = function preetifyMinutes(mins) {
     const roundMin = Math.round(parseFloat(mins));
     if (roundMin < 60) {
