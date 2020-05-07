@@ -20,13 +20,13 @@
 
 <body style="margin: 28px;">
     <div class="login-clean" style="background-color: rgb(255,255,255);">
-        <h2 class="text-center">See your server stats.</h2>
-        <p class="text-center" style="margin: 18px;margin-top: 3px;margin-bottom: 96px;">For security reasons check your main Discord Text Channel for authorization code then pass it bellow.</p>
-        <form method="POST" action='/signin' id='code-login'>
+        <h2 class="text-center">Wrong code.</h2>
+        <p class="text-center" style="margin: 18px;margin-top: 3px;margin-bottom: 96px;">Make sure you've typed the code correctly.</p>
+        <form method="post">
             <h2 class="sr-only">Login Form</h2>
-            <div class="illustration"><i class="fab fa-discord" style="color: #055ada;"></i></div>
-            <div class="form-group"><input class="form-control" type="password" name="password" placeholder="Code" required=""></div>
-            <div class="form-group"><button class="btn btn-primary btn-block" type="submit" style="background-color: #055ada;">Sign In</button></div><a class="forgot" href="#">Didn't recieve any code?</a></form>
+            <div class="illustration"><i class="icon ion-close-round" style="color: #f85555;"></i></div>
+            <div class="form-group"><a class="btn btn-primary btn-block" role="button" href="/signin" style="background-color: #055ada;">Try again</a></div>
+        </form>
     </div>
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>

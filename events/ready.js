@@ -61,7 +61,7 @@ module.exports = async client => {
         client.channels.fetch('654415996702162987').then(channel => {
             channel.send('🕛 Data backup.');
             try {
-                client.googledb.archiveData().then(result => client.datasaver.clearDayRanking(client));   
+                client.googledb.archiveData(client);
                 channel.send(`✅ Data backup.`);
             } catch (e) {
                 console.log('<❌> Error while archiveData.');
@@ -85,12 +85,12 @@ module.exports = async client => {
     });
     console.log('<🕛> JOB EVERY [30 MIN] change auth code.');
     let changeAuthCode = new cron.CronJob('0/30 * * * *', () => {
-        client.authCode = (Math.random() * 10000).toFixed(0);
+        client.authCode = ((Math.random() * 100000) + 11111).toFixed(0);
     });
 
 
     //ensure we have some value at the start
-    client.authCode = (Math.random() * 10000).toFixed(0);
+    client.authCode = ((Math.random() * 100000) + 11111).toFixed(0);
 
     archiveDatabase.start();
     clearDatabase.start();
