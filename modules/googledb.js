@@ -30,55 +30,45 @@ const dbRead = exports.dbRead = async function dbRead() {
     return convertToObj(data);
 }
 
-// exports.dbAddNewUser = async function dbAddNewUser(discord_id, username, last_seen) {
-//     client.authorize(function (error, tokens) {
-//         if (error) {
-//             console.log(error);
-//             status = false;
-//         }
-//     });
+exports.getArchiveData = async function getArchiveData() {
+    client.authorize(function (error, tokens) {
+        if (error) {
+            console.log(error);
+            status = false;
+        }
+    });
+    const gsAPI = google.sheets({ version: 'v4', auth: client });
+    const options = {
+        spreadsheetId: spreadsheetId,
+        range: 'Online',
+    };
 
-//     const gsAPI = google.sheets({ version: 'v4', auth: client });
-//     const options = {
-//         spreadsheetId: spreadsheetId,
-//         range: 'Users!A2',
-//         valueInputOption: 'USER_ENTERED',
-//         resource: {
-//             //      discord_id, username, last_seen, minutes_connected, minutes_on_mute, all_time_minutes, all_time_on_mute, minutes_day, minutes_day_afk, medals, need_for_working  
-//             values: [[discord_id, username, last_seen, 0, 0, 0, 0, 0, 0, 0, 0]]
-//         }
-//     };
-
-//     await gsAPI.spreadsheets.values.append(options);
-// }
-
-// exports.dbUpdateUser = async function dbUpdateUser(object, index) {
-//     if (index < 0) {
-//         return;
-//     }
-//     let convertObjToArray = []
-//     for (let key in object) {
-//         convertObjToArray.push(object[key].toString().replace('.', ','));
-//     }
-//     client.authorize(function (error, tokens) {
-//         if (error) {
-//             console.log(error);
-//             status = false;
-//         }
-//     });
-
-//     const gsAPI = google.sheets({ version: 'v4', auth: client });
-//     const options = {
-//         spreadsheetId: spreadsheetId,
-//         range: `Users!A${index + 2}`,
-//         valueInputOption: 'USER_ENTERED',
-//         resource: {
-//             values: [convertObjToArray]
-//         }
-//     };
-
-//     await gsAPI.spreadsheets.values.update(options);
-// }
+    const response = await gsAPI.spreadsheets.values.get(options);
+    let data = response.data.values;
+    data.shift();
+    const formatData = data.reduce((akumTop, day) => {
+        const calculated = day.reduce((akum, value, index) => {
+            if (index === 0) {
+                akum.day = value;
+            }
+            if (index !== 0 && value != '') {
+                akum.avg += parseInt(value, 10);
+                akum.count += 1;
+            }
+            return akum;
+        }, {day: 0, avg: 0, count: 0});
+        return [...akumTop, calculated];
+    }, []);
+    const outputData = formatData.map(element => ({day: element.day, value: element.avg = Math.round(element.avg / element.count)}));
+    const outputFormat = outputData.reduce((akum, day) => {
+        const oneDay = 86400000;
+        const dateFormat = new Date(day.day - oneDay);
+        akum.daysFields = [...akum.daysFields, "&quot;" + dateFormat.toLocaleDateString() + "&quot;"];
+        akum.valueFields = [...akum.valueFields, day.value];
+        return akum;
+    }, {daysFields: [], valueFields: []});
+    return outputFormat;
+}
 
 exports.dbUpdate = async function dbUpdate(objectArr) {
     const output = objectArr.reduce((akum, user) => [...akum, objectToArray(user)], []);
@@ -193,14 +183,14 @@ exports.clearMinutesWeekly = async function clearMinutesWeekly() {
     await gsAPI.spreadsheets.values.clear(optionsClear);
 }
 
-exports.archiveData = function archiveData() {
+exports.archiveData = async function archiveData(clientDiscord) {
     client.authorize(function (error, tokens) {
         if (error) {
             console.log(error);
             status = false;
         }
     });
-    dbRead().then(async data => {
+    await dbRead().then(async data => {
         let usernamesList = ['time'];
         const currentDate = Date.now().toString();
         let onlineValuesList = [currentDate];
@@ -259,6 +249,8 @@ exports.archiveData = function archiveData() {
         await gsAPI.spreadsheets.values.append(optionsUpdateValuesAfk);
 
         await gsAPI.spreadsheets.values.clear(optionsClearDaily);
+
+        clientDiscord.datasaver.clearDayRanking(clientDiscord);
 
     });
 }

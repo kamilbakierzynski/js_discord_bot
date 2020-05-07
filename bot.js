@@ -38,31 +38,41 @@ app.get('/signin', (req, res) => {
   data.commandsCount = client.commands.size;
   data.readyAt = client.readyAt.toDateString();
   if (client.dashboard.checkKey(client, req.cookies.loggedin)) {
+    res.cookie("loggedin", client.dashboard.findKey(client), {expire: 300000 + Date.now()});
     const statsData = client.dashboard.loadData(client);
     data = {...data, ...statsData};
-    data.timeChart = ['0', '0', '0', '0', '0', '0', '0', '0'];
-    res.render('index', {data: data});
+    client.googledb.getArchiveData().then(dataOnline => {
+      const { daysFields, valueFields } = dataOnline;
+      data.timeChart = valueFields;
+      data.timeChartLabels = daysFields;
+      res.render('index', {data: data});
+    });
   } else {
     client.channels.fetch('654415996702162987').then(channel => {
       channel.send(`Login page authorization code: ◻️${client.authCode}◻️`).then(msg => msg.delete({ timeout: 20000 }));
     });
     res.render('signin', {data: data});
   }
-  console.log(data.authCode);
+});
+
+app.get('/signin-fail', (req, res) => {
+  res.render('signin-fail');
 });
 
 app.post('/signin', urlencodedParser, (req, res) => {
   console.log(req.body.password);
   if (client.authCode === req.body.password) {
-    console.log(true);
     res.cookie("loggedin", client.dashboard.findKey(client), {expire: 300000 + Date.now()});
     const statsData = client.dashboard.loadData(client);
     data = {...data, ...statsData};
-    data.timeChart = ['0', '0', '0', '0', '0', '0', '0', '0'];
-    console.log(data);
-    res.render('index', {data: data});
+    client.googledb.getArchiveData().then(dataOnline => {
+      const { daysFields, valueFields } = dataOnline;
+      data.timeChart = valueFields;
+      data.timeChartLabels = daysFields;
+      res.render('index', {data: data});
+    });
   } else {
-    res.redirect('/signin');
+    res.redirect('/signin-fail');
   }
 });
 
