@@ -73,7 +73,5 @@ module.exports = {
             .setFooter('📅')
             .setTimestamp(timeData);
         message.channel.send(seenEmbed);
-        client.googledb.dbUpdateUser(properData, index);
-
     }
 };

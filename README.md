@@ -1,7 +1,7 @@
-# Discord Bot with users statistics and League of Legends API
+# Discord Bot with users statistics, League of Legends API and Dashboard.
 
 ## About:
-Made as a side project for me and my friends during my first steps in JavaScript. Made using [Discord.js](https://discord.js.org/#/). It was made for personal use but if you would like to use it go on. Some of the functionality is hard coded so it needs to be changed. I'm working on this to make it more versatile. It probably contains some bugs and it's not perfect. If you've spotted something please file an issue.
+Made as a side project for me and my friends during my first steps in JavaScript. Made using [Discord.js](https://discord.js.org/#/) and Bootsrap studio for Dashboard. It was made for personal use but if you would like to use it go on. Some of the functionality is hardcoded so it needs to be changed. I'm working on this to make it more versatile. It probably contains some bugs and it's not perfect. If you've spotted something please file an issue.
 
 **Best to use with your small group of friends.**
 **Right now it won't work great on big servers with multiple channels and hundreds of users.**
@@ -11,19 +11,16 @@ Main feature of this bot is to **track users statistics**:
 1. Last time they where in the channel.
 2. Total number of hours online or afk today/weekly/all.
 3. Display server activity ranking.
+
+**Check recent server statistics on web based dashboard.**
    
 It also get's information from Riot Servers about summoners, games etc.
 I don't think is very scallable and probably is for small group of friends that want to see some stats for fun. I've tested it with 19 other users and it performed fine.
 
 ### Time tracking explained:
-> Every time user performs and action like:
-> - join/leave channel
-> - mute/unmute self
-> - uses `$ranking` or `$seen` command (first one updates all currently active users data, second - only the mentioned user)
-> 
->call to update data in Google Sheets is performed. It separates time spent on mute with the time spent "active". I've chosen Google Sheets over regular database. It gives ability for sharing the spreadsheet, easy printing, graphs, data analisys etc. I think in this scenario it works great.
+> Every minute server checks for online users and then updates the data. Every 15 minutes data is being sent to online spreadsheet. It separates time spent on mute with the time spent "active". I've chosen Google Sheets over regular database. It gives ability for sharing the spreadsheet, easy printing, graphs, data analisys etc. I think in this scenario it works great.
 > Every week on Monday the week data is erased and the awards are given so users can be proud of their accomplishments.
-> All the time users can see their position in ranking with `$ranking` or more detailed stats with `$seen @<mention user>` like *the last time user was seen*.
+> All the time users can see their position in ranking with `$ranking`, page *Ranking* in the Dashboard or more detailed stats with `$seen @<mention user>` like *the last time user was seen*.
 
 
 ## Commands:
@@ -53,3 +50,7 @@ I don't think is very scallable and probably is for small group of friends that 
 - Create Google spreadsheet from attached schema (see ~~instalation_guide/~~) **Currently working on one**
 - For the `$corona` functionality you need [this API key](https://rapidapi.com/api-sports/api/covid-193/endpoints).
 - [Heroku](https://www.heroku.com) is a good option to deploy this.
+
+## Dashboard screenshots:
+![Screenshot1](screenshots/dashboard_index.png)
+![Screenshot2](screenshots/dashboard_ranking.png)
