@@ -10,6 +10,31 @@
             "value": "",
             "required": true
         },
+        "DISCORD_SERVER_ID": {
+            "description": "Discord server id.",
+            "value": "",
+            "required": true
+        },
+        "MAIN_TEXT_CHANNEL_ID": {
+            "description": "Main text channel id of your server. Need for displaying some commands.",
+            "value": "",
+            "required": true
+        },
+        "AFK_CHANNEL_ID": {
+            "description": "Afk channel id. Need for saving data about minutes spent on server.",
+            "value": "",
+            "required": true
+        },
+        "ADMIN_DISCORD_ID": {
+            "description": "Your discord id. Need to save data to cloud from discord chat.",
+            "value": "",
+            "required": true
+        },
+        "BOT_DESCRIPTION": {
+            "description": "Bot description. !<Bot name> is playing <description>!",
+            "value": "life as a bot.",
+            "required": true
+        },
         "RIOT_API_KEY": {
             "description": "Riot Api Key for League of Legends functionality.",
             "value": "",

@@ -1,6 +1,5 @@
 const { promisify } = require('util');
 const readdir = promisify(require('fs').readdir);
-const configData = require('../config.json');
 
 require('dotenv').config({ path: "../.env" });
 
@@ -52,5 +51,14 @@ exports.registerEvents = async client => {
 exports.registerSecrets = async client => {
   client.RIOT_API_KEY = process.env.RIOT_API_KEY;
   client.RAPID_API_KEY = process.env.RAPID_API_KEY;
+  const configData = {
+    "mainTextChannelId": process.env.MAIN_TEXT_CHANNEL_ID,
+    "discordServerId": process.env.DISCORD_SERVER_ID,
+    "afkChannelId": process.env.AFK_CHANNEL_ID,
+    "adminDiscordId": process.env.ADMIN_DISCORD_ID,
+    "defaultCountryForCorona": "All",
+    "prefix": process.env.PREFIX,
+    "botGamePlay": process.env.BOT_DESCRIPTION
+  }
   client.configData = configData;
 }
