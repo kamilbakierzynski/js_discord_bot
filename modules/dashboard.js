@@ -8,7 +8,7 @@ exports.loadData = function loadData(client) {
     }, {daySum: 0, weekSum: 0, allOnline: 0, allAfk: 0});
 
     let usersList = {};
-    client.guilds.cache.get('654415996702162984').members.cache.forEach((value, key) => {
+    client.guilds.cache.get(client.configData.discordServerId).members.cache.forEach((value, key) => {
         if (value.voice.selfMute !== undefined && value.voice.channelID !== null && !value.user.bot) {
             usersList = { ...usersList, [key]: {id: key, mute: value.voice.selfMute,
                                                 channelID: value.voice.channelID,

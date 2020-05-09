@@ -4,7 +4,6 @@ const fs = require('fs');
 
 
 exports.readChampion = function(championId) {
-    // console.log(championId);
     try {
         let rawdata = fs.readFileSync('data/champions.json');
         let champsData = JSON.parse(rawdata);

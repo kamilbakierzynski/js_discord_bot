@@ -1,5 +1,6 @@
 const { promisify } = require('util');
 const readdir = promisify(require('fs').readdir);
+const configData = require('../config.json');
 
 require('dotenv').config({ path: "../.env" });
 
@@ -51,4 +52,5 @@ exports.registerEvents = async client => {
 exports.registerSecrets = async client => {
   client.RIOT_API_KEY = process.env.RIOT_API_KEY;
   client.RAPID_API_KEY = process.env.RAPID_API_KEY;
+  client.configData = configData;
 }

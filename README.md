@@ -1,7 +1,7 @@
 # Discord Bot with users statistics, League of Legends API and Dashboard.
 
 ## About:
-Made as a side project for me and my friends during my first steps in JavaScript. Made using [Discord.js](https://discord.js.org/#/) and Bootsrap studio for Dashboard. It was made for personal use but if you would like to use it go on. Some of the functionality is hardcoded so it needs to be changed. I'm working on this to make it more versatile. It probably contains some bugs and it's not perfect. If you've spotted something please file an issue.
+Made as a side project for me and my friends during my first steps in JavaScript. Made using [Discord.js](https://discord.js.org/#/) and Bootsrap studio for Dashboard. It was made for personal use but if you would like to use it go on. It probably contains some bugs and it's not perfect. If you've spotted something please file an issue.
 
 **Best to use with your small group of friends.**
 **Right now it won't work great on big servers with multiple channels and hundreds of users.**

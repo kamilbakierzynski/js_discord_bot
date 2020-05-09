@@ -8,7 +8,7 @@ exports.updateOnlineDb = function updateOnlineDb(client) {
 
 exports.saveDataLocally = function saveDataLocally(client) {
     let usersList = {};
-    client.guilds.cache.get('654415996702162984').members.cache.forEach((value, key) => {
+    client.guilds.cache.get(client.configData.discordServerId).members.cache.forEach((value, key) => {
         if (value.voice.selfMute !== undefined && value.voice.channelID !== null && !value.user.bot) {
             usersList = { ...usersList, [key]: {id: key, mute: value.voice.selfMute,
                                                 channelID: value.voice.channelID,
@@ -18,7 +18,7 @@ exports.saveDataLocally = function saveDataLocally(client) {
 
     client.localCache = client.localCache.reduce((akum, user) => {
         if (usersList[user.discord_id] !== undefined &&
-            usersList[user.discord_id].channelID !== '654418034081136650') {
+            usersList[user.discord_id].channelID !== client.configData.afkChannelId) {
             user.last_seen = Date.now();
             user.username = usersList[user.discord_id].username;
             user.minutes_connected = parseInt(user.minutes_connected, 10) + 1;

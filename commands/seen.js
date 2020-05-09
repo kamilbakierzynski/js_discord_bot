@@ -11,14 +11,14 @@ module.exports = {
         const name = message.mentions.users.first().username;
 
         const data = [...client.localCache];
-        let properData = undefined;
-        let index = 0;
-        for (let i = 0; i < data.length; i += 1) {
-            if (data[i].discord_id === id) {
-                properData = { ...data[i] };
-                index = i;
+        let { properData, index } = data.reduce((akum, user, index) => {
+            if (user.discord_id === id) {
+                akum.properData = { ...user };
+                akum.index = index;
             }
-        }
+            return akum;
+        }, {properData: undefined, index = 0});
+        
         if (properData === undefined) {
             message.reply(' no data about this user.');
             return;

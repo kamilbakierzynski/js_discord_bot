@@ -90,14 +90,13 @@ exports.calculateTimeDiff = function calculateTimeDiff(timeOld) {
 exports.displayRanking = function displayRanking(client) {
     const formatMinutes = client.helpers.preetifyMinutes;
 
-    client.channels.fetch('654415996702162987').then(channel => {
+    client.channels.fetch(client.configData.mainTextChannelId).then(channel => {
         const { name } = channel;
         client.googledb.dbRead().then(data => {
             console.log('<✅> Displaying server ranking.');
             data.map(user => user.diff = parseFloat(user.minutes_connected) - parseFloat(user.minutes_on_mute));
             data.sort((a, b) => b.diff - a.diff);
 
-            // const decodeNumbers = {0: '0️⃣', 1: '1️⃣', 2: '2️⃣', 3: '3️⃣', 4: '4️⃣', 5: '5️⃣', 6: '6️⃣', 7: '7️⃣', 8: '8️⃣', 9: '9️⃣'};
             const medalsDecode = {0: '🥇', 1: '🥈', 2: '🥉'};
             
             const { place, names, times } = data.reduce((object, user, index) => {
@@ -136,7 +135,7 @@ exports.displayRanking = function displayRanking(client) {
 exports.displayRankingWithData = function displayRankingWithData(client, data) {
     const formatMinutes = client.helpers.preetifyMinutes;
     let dataCopy = [...data];
-    client.channels.fetch('654415996702162987').then(channel => {
+    client.channels.fetch(client.configData.mainTextChannelId).then(channel => {
         if (dataCopy === undefined) {
             channel.send('❌ There is a problem with data. Try again later.');
             return;
@@ -145,7 +144,6 @@ exports.displayRankingWithData = function displayRankingWithData(client, data) {
         dataCopy.map(user => user.diff = parseFloat(user.minutes_connected) - parseFloat(user.minutes_on_mute));
         dataCopy.sort((a, b) => b.diff - a.diff);
 
-            const decodeNumbers = {0: '0️⃣', 1: '1️⃣', 2: '2️⃣', 3: '3️⃣', 4: '4️⃣', 5: '5️⃣', 6: '6️⃣', 7: '7️⃣', 8: '8️⃣', 9: '9️⃣'};
             const medalsDecode = {0: '🥇', 1: '🥈', 2: '🥉'};
             
             const { place, names, times } = dataCopy.reduce((object, user, index) => {
