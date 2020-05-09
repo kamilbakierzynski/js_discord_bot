@@ -39,7 +39,24 @@ exports.saveDataLocally = function saveDataLocally(client) {
 }
 
 exports.clearWeekRanking = function clearWeekRanking(client) {
+    let dataCopy = [...client.localCache];
+    dataCopy.map(user => user.diff = parseFloat(user.minutes_connected) - parseFloat(user.minutes_on_mute));
+    dataCopy.sort((a, b) => b.diff - a.diff).slice(0, 3);
+
     client.localCache = client.localCache.reduce((akum, user) => {
+        user.medals = dataCopy.reduce((result, rankingWinner, index) => {
+            if (user.discord_id === rankingWinner.discord_id) {
+                switch (index) {
+                    case 0:
+                        return result + 'G';
+                    case 1:
+                        return result + 'S';
+                    case 2:
+                        return result + 'B';
+                }
+            }
+            return result;
+        }, user.medals == 0 ? "" : user.medals);
         user.minutes_connected = 0;
         user.minutes_on_mute = 0;
         return [...akum, user];
