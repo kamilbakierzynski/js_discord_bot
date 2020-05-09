@@ -1,5 +1,7 @@
 # Discord Bot with users statistics, League of Legends API and Dashboard.
 
+[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
+
 ## About:
 Made as a side project for me and my friends during my first steps in JavaScript. Made using [Discord.js](https://discord.js.org/#/) and Bootsrap studio for Dashboard. It was made for personal use but if you would like to use it go on. It probably contains some bugs and it's not perfect. If you've spotted something please file an issue.
 
@@ -44,10 +46,10 @@ I don't think is very scallable and probably is for small group of friends that 
 - **More still in development...**
 
 ## What do you need if you really want one?
-- Follow the guide ~~here~~ **Currently working on one**.
+- Follow the guide [here](instalation_guide/GUIDE.md).
 - You have to get your own API key from RIOT GAMES. Get one [here](https://developer.riotgames.com/).
-- Create account with Google Sheets API enabled. ~~Described in guide.~~
-- Create Google spreadsheet from attached schema (see ~~instalation_guide/~~) **Currently working on one**
+- Create account with Google Sheets API enabled. **Described in guide.**
+- Create Google spreadsheet from attached schema [Sheet DB Template](instalation_guide/discord_bot_db.xlm).
 - For the `$corona` functionality you need [this API key](https://rapidapi.com/api-sports/api/covid-193/endpoints).
 - [Heroku](https://www.heroku.com) is a good option to deploy this.
 

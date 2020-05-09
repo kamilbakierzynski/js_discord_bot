@@ -1,0 +1,7 @@
+{
+    "name": "Simple Discord Bot by Kamil Bakierzyński",
+    "description": "Discord Bot with users statistics, League of Legends API and Dashboard.",
+    "repository": "https://github.com/kamilbakierzynski/js_discord_bot",
+    "logo": "https://i.imgur.com/RAL8Vdo.png",
+    "keywords": ["node", "discord.js", "discord", "bot", "statistics", "leagueoflegends"]
+  }
