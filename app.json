@@ -3,5 +3,37 @@
     "description": "Discord Bot with users statistics, League of Legends API and Dashboard.",
     "repository": "https://github.com/kamilbakierzynski/js_discord_bot",
     "logo": "https://i.imgur.com/RAL8Vdo.png",
-    "keywords": ["node", "discord.js", "discord", "bot", "statistics", "leagueoflegends"]
+    "keywords": ["node", "discord.js", "discord", "bot", "statistics", "leagueoflegends"],
+    "env": {
+        "BOT_TOKEN": {
+            "description": "Discord Bot secret key.",
+            "value": "",
+            "required": true
+        },
+        "RIOT_API_KEY": {
+            "description": "Riot Api Key for League of Legends functionality.",
+            "value": "",
+            "required": false
+        },
+        "RAPID_API_KEY": {
+            "description": "Rapid Api Key for Coronavirus functionality.",
+            "value": "",
+            "required": false
+        },
+        "GOOGLE_CLIENT_EMAIL": {
+            "description": "Google Client Email for Google Sheet API account.",
+            "value": "",
+            "required": false
+        },
+        "GOOGLE_PRIVATE_KEY": {
+            "description": "Google Client Private Key for Google Sheet API account.",
+            "value": "",
+            "required": false
+        }, 
+        "SPREADSHEET_ID": {
+            "description": "Google Spreadsheet ID for storing data.",
+            "value": "",
+            "required": false
+        }
+    }
   }
