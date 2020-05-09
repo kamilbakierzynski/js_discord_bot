@@ -16,6 +16,10 @@ exports.saveDataLocally = function saveDataLocally(client) {
         }
     });
 
+    if (usersList.size < 2) {
+        return;
+    }
+
     client.localCache = client.localCache.reduce((akum, user) => {
         if (usersList[user.discord_id] !== undefined &&
             usersList[user.discord_id].channelID !== client.configData.afkChannelId) {
