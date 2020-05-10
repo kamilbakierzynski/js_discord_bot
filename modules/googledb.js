@@ -12,11 +12,35 @@ const client = new google.auth.JWT(
     ["https://www.googleapis.com/auth/spreadsheets"],
 );
 
+function objectToArray(object) {
+    const convertObjToArray = [];
+    for (const key in object) {
+        convertObjToArray.push(object[key].toString().replace('.', ','));
+    }
+    return convertObjToArray;
+}
+
+function convertToObj(data) {
+    const keys = data.shift();
+    const output = [];
+    for (let j = 0; j < data.length; j += 1) {
+        const tempObj = {};
+        for (let i = 0; i < data[j].length; i += 1) {
+            if (data[j][i] === '') {
+                tempObj[keys[i]] = "0";
+            } else {
+                tempObj[keys[i]] = data[j][i].toString().replace(',', '.');
+            }
+        }
+        output.push(tempObj);
+    }
+    return output;
+}
+
 const dbRead = exports.dbRead = async function dbRead() {
-    client.authorize((error, tokens) => {
+    client.authorize((error) => {
         if (error) {
             console.log(error);
-            status = false;
         }
     });
     const gsAPI = google.sheets({ version: 'v4', auth: client });
@@ -31,10 +55,9 @@ const dbRead = exports.dbRead = async function dbRead() {
 };
 
 exports.getArchiveData = async function getArchiveData() {
-    client.authorize((error, tokens) => {
+    client.authorize((error) => {
         if (error) {
             console.log(error);
-            status = false;
         }
     });
     const gsAPI = google.sheets({ version: 'v4', auth: client });
@@ -51,7 +74,7 @@ exports.getArchiveData = async function getArchiveData() {
             if (index === 0) {
                 akum.day = value;
             }
-            if (index !== 0 && value != 0) {
+            if (index !== 0 && parseInt(value, 10) !== 0) {
                 akum.avg += parseInt(value, 10);
                 akum.count += 1;
             }
@@ -72,10 +95,9 @@ exports.getArchiveData = async function getArchiveData() {
 
 exports.dbUpdate = async function dbUpdate(objectArr) {
     const output = objectArr.reduce((akum, user) => [...akum, objectToArray(user)], []);
-    client.authorize((error, tokens) => {
+    client.authorize((error) => {
         if (error) {
             console.log(error);
-            status = false;
         }
     });
 
@@ -92,19 +114,10 @@ exports.dbUpdate = async function dbUpdate(objectArr) {
     await gsAPI.spreadsheets.values.update(options);
 };
 
-function objectToArray(object) {
-    const convertObjToArray = [];
-    for (const key in object) {
-        convertObjToArray.push(object[key].toString().replace('.', ','));
-    }
-    return convertObjToArray;
-}
-
 exports.clearMinutesWeekly = async function clearMinutesWeekly() {
-    client.authorize((error, tokens) => {
+    client.authorize((error) => {
         if (error) {
             console.log(error);
-            status = false;
         }
     });
 
@@ -118,10 +131,9 @@ exports.clearMinutesWeekly = async function clearMinutesWeekly() {
 };
 
 exports.archiveData = async function archiveData(clientDiscord) {
-    client.authorize((error, tokens) => {
+    client.authorize((error) => {
         if (error) {
             console.log(error);
-            status = false;
         }
     });
     await dbRead().then(async (data) => {
@@ -187,20 +199,3 @@ exports.archiveData = async function archiveData(clientDiscord) {
         clientDiscord.datasaver.clearDayRanking(clientDiscord);
     });
 };
-
-function convertToObj(data) {
-    const keys = data.shift();
-    const output = [];
-    for (let j = 0; j < data.length; j += 1) {
-        const tempObj = {};
-        for (let i = 0; i < data[j].length; i += 1) {
-            if (data[j][i] === '') {
-                tempObj[keys[i]] = "0";
-            } else {
-                tempObj[keys[i]] = data[j][i].toString().replace(',', '.');
-            }
-        }
-        output.push(tempObj);
-    }
-    return output;
-}

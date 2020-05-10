@@ -7,7 +7,7 @@ exports.updateOnlineDb = function updateOnlineDb(client) {
 };
 
 exports.saveDataLocally = function saveDataLocally(client) {
-    const usersList = getOnlineUsers(client);
+    const usersList = client.helpers.getOnlineUsers(client);
 
     if (Object.keys(usersList).length < 2) {
         return;
