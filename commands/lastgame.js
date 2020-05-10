@@ -41,11 +41,9 @@ module.exports = {
                             console.log('<✅> Got data about game.');
                             const gameInfo = JSON.parse(HttpInfo.responseText);
 
-                            const summonerParticipantId = gameInfo.participantIdentities.reduce((akum, participant) =>
-                            participant.player.accountId === summonerId ? participant.participantId : akum, "");
+                            const summonerParticipantId = gameInfo.participantIdentities.reduce((akum, participant) => (participant.player.accountId === summonerId ? participant.participantId : akum), "");
 
-                            const participantData = gameInfo.participants.reduce((akum, participant) =>
-                            participant.participantId=== summonerParticipantId ? participant : akum, "");
+                            const participantData = gameInfo.participants.reduce((akum, participant) => (participant.participantId === summonerParticipantId ? participant : akum), "");
 
                             const championName = client.champions.readChampion(participantData.championId);
                             const stats = `${participantData.stats.kills}/${participantData.stats.deaths}/${participantData.stats.assists}`;
@@ -95,5 +93,5 @@ module.exports = {
                 };
             }
         };
-    }
+    },
 };

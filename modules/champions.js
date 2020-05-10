@@ -1,19 +1,17 @@
-'use strict';
 
 const fs = require('fs');
 
 
-exports.readChampion = function(championId) {
+exports.readChampion = function (championId) {
     try {
-        let rawdata = fs.readFileSync('data/champions.json');
-        let champsData = JSON.parse(rawdata);
-        for (let key in champsData.data) {
-            if(champsData.data[key].key == championId) {
+        const rawdata = fs.readFileSync('data/champions.json');
+        const champsData = JSON.parse(rawdata);
+        for (const key in champsData.data) {
+            if (champsData.data[key].key == championId) {
                 return champsData.data[key].name;
             }
         }
     } catch (e) {
         return '=== 🔥 ERROR READING LOCAL CHAMP DATA 🔥 ===';
     }
-}
-
+};

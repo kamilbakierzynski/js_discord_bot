@@ -11,23 +11,23 @@ module.exports = {
         const name = message.mentions.users.first().username;
 
         const data = [...client.localCache];
-        let { properData, index } = data.reduce((akum, user, index) => {
+        const { properData, index } = data.reduce((akum, user, index) => {
             if (user.discord_id === id) {
                 akum.properData = { ...user };
                 akum.index = index;
             }
             return akum;
-        }, {properData: undefined, index: 0});
-        
+        }, { properData: undefined, index: 0 });
+
         if (properData === undefined) {
             message.reply(' no data about this user.');
             return;
         }
 
-        data.map(user => user.diff = parseFloat(user.minutes_connected) - parseFloat(user.minutes_on_mute));
+        data.map((user) => user.diff = parseFloat(user.minutes_connected) - parseFloat(user.minutes_on_mute));
         data.sort((a, b) => b.diff - a.diff);
 
-        const place = data.findIndex(element => element.discord_id === properData.discord_id);
+        const place = data.findIndex((element) => element.discord_id === properData.discord_id);
 
         const formatMinutes = client.helpers.preetifyMinutes;
 
@@ -38,25 +38,25 @@ module.exports = {
         const timeStringOnline = timeFrames.reduce((string, frame, index) => {
             let formatter = '';
             index === 1 ? formatter = "**" : null;
-            return string + frame + formatter + formatMinutes(properData[timeFrameFieldsOnline[index]]) + formatter + '\n'
+            return `${string + frame + formatter + formatMinutes(properData[timeFrameFieldsOnline[index]]) + formatter}\n`;
         }, "");
 
         const timeStringOfflne = timeFrames.reduce((string, frame, index) => {
             let formatter = '';
             index === 1 ? formatter = "**" : null;
-            return string + frame + formatter + formatMinutes(properData[timeFrameFieldsOffline[index]]) + formatter + '\n'
+            return `${string + frame + formatter + formatMinutes(properData[timeFrameFieldsOffline[index]]) + formatter}\n`;
         }, "");
 
         const timeData = parseInt(properData.last_seen, 10);
 
-        let user = message.mentions.users.first();
+        const user = message.mentions.users.first();
 
         let outputMedals = '';
         for (let i = 0; i < properData.medals.length; i += 1) {
-            let currentChar = properData.medals.charAt(i);
-            currentChar === 'G' ? outputMedals += '🥇' : null
-            currentChar === 'S' ? outputMedals += '🥈' : null
-            currentChar === 'B' ? outputMedals += '🥉' : null
+            const currentChar = properData.medals.charAt(i);
+            currentChar === 'G' ? outputMedals += '🥇' : null;
+            currentChar === 'S' ? outputMedals += '🥈' : null;
+            currentChar === 'B' ? outputMedals += '🥉' : null;
         }
         outputMedals === '' ? null : outputMedals += '\n\n';
 
@@ -64,7 +64,7 @@ module.exports = {
             .setColor('#0099ff')
             .setTitle(name)
             .setThumbnail(user.displayAvatarURL() || user.defaultAvatarURL)
-            .setDescription(outputMedals + "**Last time online:**\n" + client.helpers.calculateTimeDiff(timeData) + " ago")
+            .setDescription(`${outputMedals}**Last time online:**\n${client.helpers.calculateTimeDiff(timeData)} ago`)
             .addFields(
                 { name: '🎙️ Time connected', value: timeStringOnline, inline: true },
                 { name: '🔇 Time on mute', value: timeStringOfflne, inline: true },
@@ -73,5 +73,5 @@ module.exports = {
             .setFooter('📅')
             .setTimestamp(timeData);
         message.channel.send(seenEmbed);
-    }
+    },
 };

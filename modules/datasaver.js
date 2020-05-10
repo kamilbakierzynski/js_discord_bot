@@ -1,18 +1,24 @@
 exports.updateLocalCache = async function updateLocalCache(client) {
-    await client.googledb.dbRead().then(data => client.localCache = data);
-}
+    await client.googledb.dbRead().then((data) => client.localCache = data);
+};
 
 exports.updateOnlineDb = function updateOnlineDb(client) {
     client.googledb.dbUpdate(client.localCache);
-}
+};
 
 exports.saveDataLocally = function saveDataLocally(client) {
     let usersList = {};
     client.guilds.cache.get(client.configData.discordServerId).members.cache.forEach((value, key) => {
         if (value.voice.selfMute !== undefined && value.voice.channelID !== null && !value.user.bot) {
-            usersList = { ...usersList, [key]: {id: key, mute: value.voice.selfMute,
+            usersList = {
+ ...usersList,
+[key]: {
+id: key,
+mute: value.voice.selfMute,
                                                 channelID: value.voice.channelID,
-                                                username: value.nickname || value.user.username }}
+                                                username: value.nickname || value.user.username,
+},
+};
         }
     });
 
@@ -21,8 +27,8 @@ exports.saveDataLocally = function saveDataLocally(client) {
     }
 
     client.localCache = client.localCache.reduce((akum, user) => {
-        if (usersList[user.discord_id] !== undefined &&
-            usersList[user.discord_id].channelID !== client.configData.afkChannelId) {
+        if (usersList[user.discord_id] !== undefined
+            && usersList[user.discord_id].channelID !== client.configData.afkChannelId) {
             user.last_seen = Date.now();
             user.username = usersList[user.discord_id].username;
             user.minutes_connected = parseInt(user.minutes_connected, 10) + 1;
@@ -36,11 +42,11 @@ exports.saveDataLocally = function saveDataLocally(client) {
         }
         return [...akum, user];
     }, []);
-}
+};
 
 exports.clearWeekRanking = function clearWeekRanking(client) {
-    let dataCopy = [...client.localCache];
-    dataCopy.map(user => user.diff = parseFloat(user.minutes_connected) - parseFloat(user.minutes_on_mute));
+    const dataCopy = [...client.localCache];
+    dataCopy.map((user) => user.diff = parseFloat(user.minutes_connected) - parseFloat(user.minutes_on_mute));
     dataCopy.sort((a, b) => b.diff - a.diff).slice(0, 3);
 
     client.localCache = client.localCache.reduce((akum, user) => {
@@ -48,11 +54,11 @@ exports.clearWeekRanking = function clearWeekRanking(client) {
             if (user.discord_id === rankingWinner.discord_id) {
                 switch (index) {
                     case 0:
-                        return result + 'G';
+                        return `${result}G`;
                     case 1:
-                        return result + 'S';
+                        return `${result}S`;
                     case 2:
-                        return result + 'B';
+                        return `${result}B`;
                 }
             }
             return result;
@@ -61,7 +67,7 @@ exports.clearWeekRanking = function clearWeekRanking(client) {
         user.minutes_on_mute = 0;
         return [...akum, user];
     }, []);
-}
+};
 
 exports.clearDayRanking = function clearDayRanking(client) {
     client.localCache = client.localCache.reduce((akum, user) => {
@@ -69,13 +75,14 @@ exports.clearDayRanking = function clearDayRanking(client) {
         user.minutes_day_afk = 0;
         return [...akum, user];
     }, []);
-}
+};
 
 exports.addNewUser = function addNewUser(client, discord_id, username, last_seen) {
     client.localCache = [...client.localCache,
-        {discord_id: discord_id,
-         username: username,
-         last_seen: last_seen,
+        {
+ discord_id,
+         username,
+         last_seen,
          minutes_connected: 0,
          minutes_on_mute: 0,
          all_time_minutes: 0,
@@ -83,5 +90,6 @@ exports.addNewUser = function addNewUser(client, discord_id, username, last_seen
          minutes_day: 0,
          minutes_day_afk: 0,
          medals: 0,
-         need_for_working: 0}]
-}
+         need_for_working: 0,
+}];
+};
