@@ -96,7 +96,7 @@ module.exports = async (client) => {
     clearDatabase.start();
     changeChannelTitle.start();
     saveDatabase.start();
-    client.datasaver.updateLocalCache(client).then((data) => {
+    client.datasaver.updateLocalCache(client).then(() => {
         saveDataLocally.start();
         uploadData.start();
     });

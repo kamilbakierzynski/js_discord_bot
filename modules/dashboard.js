@@ -1,9 +1,9 @@
 exports.loadData = function loadData(client) {
     const data = client.localCache.reduce((akum, user) => {
-        akum.daySum += parseInt(user.minutes_day);
-        akum.weekSum += parseInt(user.minutes_connected);
-        akum.allOnline += parseInt(user.all_time_minutes);
-        akum.allAfk += parseInt(user.all_time_on_mute);
+        akum.daySum += parseInt(user.minutes_day, 10);
+        akum.weekSum += parseInt(user.minutes_connected, 10);
+        akum.allOnline += parseInt(user.all_time_minutes, 10);
+        akum.allAfk += parseInt(user.all_time_on_mute, 10);
         return akum;
     }, {
         daySum: 0, weekSum: 0, allOnline: 0, allAfk: 0,
@@ -13,8 +13,12 @@ exports.loadData = function loadData(client) {
 
     const allMinutes = data.allOnline + data.allAfk;
     const output = {
-        dayAvg: client.helpers.convertMinutesToTime(parseInt(data.daySum / client.localCache.filter((x) => x.minutes_day != 0).length)),
-        weekAvg: client.helpers.convertMinutesToTime(parseInt(data.weekSum / client.localCache.filter((x) => x.minutes_connected != 0).length)),
+        dayAvg: client.helpers
+            .convertMinutesToTime(parseInt(data.daySum / client.localCache
+                .filter((x) => x.minutes_day !== 0).length, 10)),
+        weekAvg: client.helpers
+            .convertMinutesToTime(parseInt(data.weekSum / client.localCache
+                .filter((x) => x.minutes_connected !== 0).length, 10)),
         onlineDonutChart: Math.round((data.allOnline / allMinutes) * 100),
         afkDonutChart: Math.round((data.allAfk / allMinutes) * 100),
     };
@@ -35,7 +39,7 @@ exports.loadDataRanking = function loadDataRanking(client) {
             akum.afkMost.count = user.all_time_on_mute;
             akum.afkMost.username = user.username;
         }
-        if (akum.afkLeast > user.all_time_on_mute && user.minutes_connected != 0) {
+        if (akum.afkLeast > user.all_time_on_mute && user.minutes_connected !== 0) {
             akum.afkLeast.count = user.all_time_on_mute;
             akum.afkLeast.username = user.username;
         }
@@ -43,10 +47,13 @@ exports.loadDataRanking = function loadDataRanking(client) {
     }, { medals: { count: 0, username: '' }, afkMost: { count: 0, username: '' }, afkLeast: { count: 0, username: '' } });
 
     const dataCopy = [...client.localCache];
-    dataCopy.map((user) => user.diff = parseFloat(user.minutes_connected) - parseFloat(user.minutes_on_mute));
+    dataCopy.map((user) => ({
+        ...user,
+        diff: parseFloat(user.minutes_connected) - parseFloat(user.minutes_on_mute),
+}));
     dataCopy.sort((a, b) => b.diff - a.diff);
 
-    const rankingData = dataCopy.reduce((akum, user, index) => akum += `<tr>
+    const rankingData = dataCopy.reduce((akum, user, index) => `${akum}<tr>
             <td>${index + 1}</td>
             <td><b>${user.username}</b></td>
             <td>${client.helpers.preetifyMinutes(user.diff)}</td>
@@ -65,14 +72,15 @@ exports.loadDataRanking = function loadDataRanking(client) {
 exports.findKey = function findKey(client) {
     const parsedNumber = parseInt(client.authCode, 10);
     for (let i = 500; i <= parsedNumber; i += 1) {
-        if (parsedNumber % i == 0) {
+        if (parsedNumber % i === 0) {
             return i;
         }
     }
+    return parsedNumber;
 };
 
 exports.checkKey = function checkKey(client, key) {
     const parsedKey = parseInt(key, 10);
     const parsedCode = parseInt(client.authCode, 10);
-    return (parsedCode % parsedKey == 0);
+    return (parsedCode % parsedKey === 0);
 };

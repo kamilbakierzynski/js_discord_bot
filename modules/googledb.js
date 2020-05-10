@@ -82,7 +82,8 @@ exports.getArchiveData = async function getArchiveData() {
         }, { day: 0, avg: 0, count: 0 });
         return [...akumTop, calculated];
     }, []);
-    const outputData = formatData.map((element) => ({ day: element.day, value: element.avg = Math.round(element.avg / element.count) }));
+    const outputData = formatData.map((element) =>
+        ({ day: element.day, value: Math.round(element.avg / element.count) }));
     const outputFormat = outputData.reduce((akum, day) => {
         const oneDay = 86400000;
         const dateFormat = new Date(day.day - oneDay);
