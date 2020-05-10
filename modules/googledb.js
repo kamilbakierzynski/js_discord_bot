@@ -13,10 +13,9 @@ const client = new google.auth.JWT(
 );
 
 const dbRead = exports.dbRead = async function dbRead() {
-    client.authorize((error, tokens) => {
+    client.authorize((error) => {
         if (error) {
             console.log(error);
-            status = false;
         }
     });
     const gsAPI = google.sheets({ version: 'v4', auth: client });
@@ -31,10 +30,9 @@ const dbRead = exports.dbRead = async function dbRead() {
 };
 
 exports.getArchiveData = async function getArchiveData() {
-    client.authorize((error, tokens) => {
+    client.authorize((error) => {
         if (error) {
             console.log(error);
-            status = false;
         }
     });
     const gsAPI = google.sheets({ version: 'v4', auth: client });
@@ -72,10 +70,9 @@ exports.getArchiveData = async function getArchiveData() {
 
 exports.dbUpdate = async function dbUpdate(objectArr) {
     const output = objectArr.reduce((akum, user) => [...akum, objectToArray(user)], []);
-    client.authorize((error, tokens) => {
+    client.authorize((error) => {
         if (error) {
             console.log(error);
-            status = false;
         }
     });
 
@@ -101,10 +98,9 @@ function objectToArray(object) {
 }
 
 exports.clearMinutesWeekly = async function clearMinutesWeekly() {
-    client.authorize((error, tokens) => {
+    client.authorize((error) => {
         if (error) {
             console.log(error);
-            status = false;
         }
     });
 
@@ -118,10 +114,9 @@ exports.clearMinutesWeekly = async function clearMinutesWeekly() {
 };
 
 exports.archiveData = async function archiveData(clientDiscord) {
-    client.authorize((error, tokens) => {
+    client.authorize((error) => {
         if (error) {
             console.log(error);
-            status = false;
         }
     });
     await dbRead().then(async (data) => {
