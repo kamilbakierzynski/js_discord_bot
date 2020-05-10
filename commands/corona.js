@@ -5,6 +5,7 @@ module.exports = {
     description: 'Show current COVID-19 stats in selected country.',
     usage: `corona <country name>`,
     execute(client, message) {
+        const coronaHttp = new XMLHttpRequest();
         let country = message.content.slice('$corona '.length).toLowerCase();
         if (country === '') {
             console.log('<❔> Country empty, getting default country');
@@ -14,7 +15,6 @@ module.exports = {
         console.log(`<❔> Getting data about ${country} | Corona`);
         try {
             const data = null;
-            const coronaHttp = new XMLHttpRequest();
             coronaHttp.withCredentials = true;
             coronaHttp.open("GET", `https://covid-193.p.rapidapi.com/statistics?country=${country}`);
             coronaHttp.setRequestHeader("x-rapidapi-host", "covid-193.p.rapidapi.com");
