@@ -43,5 +43,5 @@ module.exports = {
 
             message.channel.send(exampleEmbed);
         };
-    }
+    },
 };

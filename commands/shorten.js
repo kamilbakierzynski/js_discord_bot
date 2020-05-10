@@ -13,16 +13,16 @@ module.exports = {
             Http.open('GET', url);
             Http.send();
             Http.onload = function (e) {
-                console.log('<✅> Got data.')
+                console.log('<✅> Got data.');
                 const data = JSON.parse(Http.responseText);
                 msg.delete();
                 if (data.ok) {
                     message.reply(`Here is your short link ${data.result.full_short_link}`);
                 } else {
                     message.reply(' there was an error.');
-                    console.log('<❌> Error getting short link.')
+                    console.log('<❌> Error getting short link.');
                 }
             };
         });
-    }
+    },
 };

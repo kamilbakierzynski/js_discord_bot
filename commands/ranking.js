@@ -3,5 +3,5 @@ module.exports = {
     description: 'Display current server activity ranking.',
     execute(client, message) {
         client.helpers.displayRankingWithData(client, client.localCache);
-    }
+    },
 };

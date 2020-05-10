@@ -3,9 +3,9 @@ module.exports = {
     description: 'Display avaliable commands.',
     execute(client, message) {
         let cmds = '';
-        client.commands.forEach(cmd => {
-            cmds = cmds + (` **${cmd.name}** | *${cmd.description}* \n`);
-        })
+        client.commands.forEach((cmd) => {
+            cmds += (` **${cmd.name}** | *${cmd.description}* \n`);
+        });
         message.channel.send(cmds);
-    }
+    },
 };

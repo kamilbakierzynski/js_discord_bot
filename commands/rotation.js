@@ -23,5 +23,5 @@ module.exports = {
 
             message.channel.send(roatationEmbed);
         };
-    }
+    },
 };

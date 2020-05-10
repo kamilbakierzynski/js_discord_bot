@@ -1,6 +1,6 @@
 const cron = require('cron');
 
-module.exports = async client => {
+module.exports = async (client) => {
     console.log(`<🔔> Logged in as ${client.user.tag}!`);
 
     client.user.setPresence({
@@ -10,8 +10,8 @@ module.exports = async client => {
         .catch(console.error);
 
     console.log('<🕛> JOB EVERY DAY 22:00:01 (00:00:01 UTC +2) change channel title.');
-    let changeChannelTitle = new cron.CronJob('01 00 22 * * *', () => {
-        client.channels.fetch(client.configData.mainTextChannelId).then(channel => {
+    const changeChannelTitle = new cron.CronJob('01 00 22 * * *', () => {
+        client.channels.fetch(client.configData.mainTextChannelId).then((channel) => {
             const { name } = channel;
             const day = parseInt(name.split('-')[1], 10);
             console.log(`<🕛> Changing channel name from ${name} to dzień-${day + 1}.`);
@@ -27,9 +27,9 @@ module.exports = async client => {
         });
     });
     console.log('<🕛> JOB EVERY MON 02:59:30 (04:59:30 UTC +2) clear database and show winners.');
-    let clearDatabase = new cron.CronJob('30 59 02 * * MON', () => {
+    const clearDatabase = new cron.CronJob('30 59 02 * * MON', () => {
         console.log(`<🕛> Running DB job.`);
-        client.channels.fetch(client.configData.mainTextChannelId).then(channel => {
+        client.channels.fetch(client.configData.mainTextChannelId).then((channel) => {
             channel.send('🕛 Reset ranking scores.');
             try {
                 client.datasaver.clearWeekRanking(client);
@@ -42,9 +42,9 @@ module.exports = async client => {
         });
     });
     console.log('<🕛> JOB EVERY MON 02:59:20 (04:59:20 UTC +2) save data');
-    let saveDatabase = new cron.CronJob('20 59 02 * * MON', () => {
+    const saveDatabase = new cron.CronJob('20 59 02 * * MON', () => {
         console.log(`<🕛> Running save data.`);
-        client.channels.fetch(client.configData.mainTextChannelId).then(channel => {
+        client.channels.fetch(client.configData.mainTextChannelId).then((channel) => {
             channel.send('🕛 Final results.');
             try {
                 client.helpers.displayRankingWithData(client, client.localCache);
@@ -56,9 +56,9 @@ module.exports = async client => {
         });
     });
     console.log('<🕛> JOB EVERY DAY 02:59:02 (04:59:00 UTC +2) archive database.');
-    let archiveDatabase = new cron.CronJob('02 59 02 * * *', () => {
+    const archiveDatabase = new cron.CronJob('02 59 02 * * *', () => {
         console.log(`<🕛> Running archive job.`);
-        client.channels.fetch(client.configData.mainTextChannelId).then(channel => {
+        client.channels.fetch(client.configData.mainTextChannelId).then((channel) => {
             channel.send('🕛 Data backup.');
             try {
                 client.googledb.archiveData(client);
@@ -71,34 +71,34 @@ module.exports = async client => {
         });
     });
     console.log('<🕛> JOB EVERY MIN save local data.');
-    let saveDataLocally = new cron.CronJob('00 * * * * *', () => {
+    const saveDataLocally = new cron.CronJob('00 * * * * *', () => {
         if (client.localCache !== undefined) {
             client.datasaver.saveDataLocally(client);
         }
     });
     console.log('<🕛> JOB EVERY [15 MIN] upload data.');
-    let uploadData = new cron.CronJob('0/15 * * * *', () => {
+    const uploadData = new cron.CronJob('0/15 * * * *', () => {
         if (client.localCache !== undefined) {
             console.log('<🕛> Uploading data to Google Sheet');
             client.datasaver.updateOnlineDb(client);
         }
     });
     console.log('<🕛> JOB EVERY [30 MIN] change auth code.');
-    let changeAuthCode = new cron.CronJob('0/30 * * * *', () => {
+    const changeAuthCode = new cron.CronJob('0/30 * * * *', () => {
         client.authCode = ((Math.random() * 100000) + 11111).toFixed(0);
     });
 
 
-    //ensure we have some value at the start
+    // ensure we have some value at the start
     client.authCode = ((Math.random() * 100000) + 11111).toFixed(0);
 
     archiveDatabase.start();
     clearDatabase.start();
     changeChannelTitle.start();
     saveDatabase.start();
-    client.datasaver.updateLocalCache(client).then(data => {
+    client.datasaver.updateLocalCache(client).then((data) => {
         saveDataLocally.start();
         uploadData.start();
     });
     changeAuthCode.start();
-}
+};

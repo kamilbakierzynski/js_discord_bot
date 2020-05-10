@@ -13,7 +13,7 @@ module.exports = {
         }
         console.log(`<❔> Getting data about ${country} | Corona`);
         try {
-            var data = null;
+            const data = null;
             var coronaHttp = new XMLHttpRequest();
             coronaHttp.withCredentials = true;
             coronaHttp.open("GET", `https://covid-193.p.rapidapi.com/statistics?country=${country}`);
@@ -34,7 +34,7 @@ module.exports = {
                     const response = coronaData.response[0];
                     if (response === undefined) {
                         message.reply(` error getting data about ${country}.`);
-                        console.log('<❌> Got connection but country was wrong.')
+                        console.log('<❌> Got connection but country was wrong.');
                         return;
                     }
                     const coronaEmbed = new client.Discord.MessageEmbed()
@@ -48,15 +48,15 @@ module.exports = {
                             { name: 'Recovered cases', value: response.cases.recovered, inline: true },
                             { name: 'New deaths', value: response.deaths.new, inline: true },
                             { name: 'Deaths', value: response.deaths.total, inline: true },
-                            { name: 'Tests count', value: response.tests.total, inline: true })
+                            { name: 'Tests count', value: response.tests.total, inline: true },
+)
                         .setAuthor('COVID-19')
                         .setTimestamp(response.time);
                     message.channel.send(coronaEmbed);
                 } catch (e) {
                     console.log('<❌> Error while formatting data about coronavirus.');
-                    return;
                 }
             }
         });
-    }
+    },
 };

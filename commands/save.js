@@ -9,8 +9,6 @@ module.exports = {
         if (client.localCache !== undefined) {
             client.datasaver.updateOnlineDb(client);
             message.channel.send('⚠️ Forced uploading data to Google Sheet');
-            return;
         }
-        return;
-    }
+    },
 };
