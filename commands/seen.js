@@ -17,7 +17,7 @@ module.exports = {
                 akum.index = index;
             }
             return akum;
-        }, {properData: undefined, index = 0});
+        }, {properData: undefined, index: 0});
         
         if (properData === undefined) {
             message.reply(' no data about this user.');
