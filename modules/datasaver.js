@@ -16,7 +16,7 @@ exports.saveDataLocally = function saveDataLocally(client) {
         }
     });
 
-    if (usersList.size < 2) {
+    if (Object.keys(usersList).length < 2) {
         return;
     }
 
