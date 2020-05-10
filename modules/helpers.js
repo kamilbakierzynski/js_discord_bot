@@ -87,6 +87,24 @@ exports.calculateTimeDiff = function calculateTimeDiff(timeOld) {
     return `${diffDays} days, ${diffHrs} hours, ${diffMins} minutes`;
 };
 
+exports.getOnlineUsers = function getOnlineUsers(client) {
+    let usersList = {};
+    client.guilds.cache.get(client.configData.discordServerId).members.cache.forEach((value, key) => {
+        if (value.voice.selfMute !== undefined && value.voice.channelID !== null && !value.user.bot) {
+            usersList = {
+                ...usersList,
+                [key]: {
+                    id: key,
+                    mute: value.voice.selfMute,
+                    channelID: value.voice.channelID,
+                    username: value.nickname || value.user.username,
+                },
+            };
+        }
+    });
+    return usersList;
+}
+
 exports.displayRankingWithData = function displayRankingWithData(client, data) {
     const formatMinutes = client.helpers.preetifyMinutes;
     const dataCopy = [...data];
@@ -99,36 +117,36 @@ exports.displayRankingWithData = function displayRankingWithData(client, data) {
         dataCopy.map((user) => user.diff = parseFloat(user.minutes_connected) - parseFloat(user.minutes_on_mute));
         dataCopy.sort((a, b) => b.diff - a.diff);
 
-            const medalsDecode = { 0: '🥇', 1: '🥈', 2: '🥉' };
+        const medalsDecode = { 0: '🥇', 1: '🥈', 2: '🥉' };
 
-            const { place, names, times } = dataCopy.reduce((object, user, index) => {
-                if (index == 3) {
-                    object.names += "\n";
-                    object.times += "\n";
-                    object.place += "\n";
-                }
-                if (index > 2) {
-                    object.place = `${object.place + (index + 1)}\n`;
-                    object.names += `**${user.username}**\n`;
-                } else {
-                    object.place = `${object.place + (index + 1)}\n`;
-                    object.names += `${medalsDecode[index]} **${user.username}**\n`;
-                }
-                object.times += `**${formatMinutes(user.diff)}**\n`;
+        const { place, names, times } = dataCopy.reduce((object, user, index) => {
+            if (index == 3) {
+                object.names += "\n";
+                object.times += "\n";
+                object.place += "\n";
+            }
+            if (index > 2) {
+                object.place = `${object.place + (index + 1)}\n`;
+                object.names += `**${user.username}**\n`;
+            } else {
+                object.place = `${object.place + (index + 1)}\n`;
+                object.names += `${medalsDecode[index]} **${user.username}**\n`;
+            }
+            object.times += `**${formatMinutes(user.diff)}**\n`;
 
-                return object;
-            }, { place: '', names: '', times: '' });
+            return object;
+        }, { place: '', names: '', times: '' });
 
-            const rankingEmbed = new client.Discord.MessageEmbed()
-                .setColor('#FFD700')
-                .setTitle(`🎉 Server Activity 🎉`)
-                .addFields(
-                    { name: 'Place', value: place, inline: true },
-                    { name: 'Name', value: names, inline: true },
-                    { name: 'Time (Online - AFK)', value: times, inline: true },
-                )
-                .setAuthor(client.user.username)
-                .setTimestamp();
-            channel.send(rankingEmbed);
+        const rankingEmbed = new client.Discord.MessageEmbed()
+            .setColor('#FFD700')
+            .setTitle(`🎉 Server Activity 🎉`)
+            .addFields(
+                { name: 'Place', value: place, inline: true },
+                { name: 'Name', value: names, inline: true },
+                { name: 'Time (Online - AFK)', value: times, inline: true },
+            )
+            .setAuthor(client.user.username)
+            .setTimestamp();
+        channel.send(rankingEmbed);
     });
 };

@@ -6,31 +6,18 @@ exports.loadData = function loadData(client) {
         akum.allAfk += parseInt(user.all_time_on_mute);
         return akum;
     }, {
- daySum: 0, weekSum: 0, allOnline: 0, allAfk: 0,
-});
-
-    let usersList = {};
-    client.guilds.cache.get(client.configData.discordServerId).members.cache.forEach((value, key) => {
-        if (value.voice.selfMute !== undefined && value.voice.channelID !== null && !value.user.bot) {
-            usersList = {
- ...usersList,
-[key]: {
- id: key,
-mute: value.voice.selfMute,
-                                                channelID: value.voice.channelID,
-                                                username: value.nickname || value.user.username,
-},
-};
-        }
+        daySum: 0, weekSum: 0, allOnline: 0, allAfk: 0,
     });
+
+    const usersList = getOnlineUsers(client);
 
     const allMinutes = data.allOnline + data.allAfk;
     const output = {
- dayAvg: client.helpers.convertMinutesToTime(parseInt(data.daySum / client.localCache.filter((x) => x.minutes_day != 0).length)),
-                  weekAvg: client.helpers.convertMinutesToTime(parseInt(data.weekSum / client.localCache.filter((x) => x.minutes_connected != 0).length)),
-                  onlineDonutChart: Math.round((data.allOnline / allMinutes) * 100),
-                  afkDonutChart: Math.round((data.allAfk / allMinutes) * 100),
-};
+        dayAvg: client.helpers.convertMinutesToTime(parseInt(data.daySum / client.localCache.filter((x) => x.minutes_day != 0).length)),
+        weekAvg: client.helpers.convertMinutesToTime(parseInt(data.weekSum / client.localCache.filter((x) => x.minutes_connected != 0).length)),
+        onlineDonutChart: Math.round((data.allOnline / allMinutes) * 100),
+        afkDonutChart: Math.round((data.allAfk / allMinutes) * 100),
+    };
 
     output.onlineNow = Object.keys(usersList).length | 0;
 
@@ -78,11 +65,11 @@ exports.loadDataRanking = function loadDataRanking(client) {
 exports.findKey = function findKey(client) {
     const parsedNumber = parseInt(client.authCode, 10);
     for (let i = 500; i <= parsedNumber; i += 1) {
-      if (parsedNumber % i == 0) {
-        return i;
-      }
+        if (parsedNumber % i == 0) {
+            return i;
+        }
     }
-  };
+};
 
 exports.checkKey = function checkKey(client, key) {
     const parsedKey = parseInt(key, 10);

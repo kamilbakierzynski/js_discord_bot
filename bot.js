@@ -64,14 +64,7 @@ app.post('/signin', urlencodedParser, (req, res) => {
   console.log(req.body.password);
   if (client.authCode === req.body.password) {
     res.cookie("loggedin", client.dashboard.findKey(client), { expire: 300000 + Date.now() });
-    const statsData = client.dashboard.loadData(client);
-    data = { ...data, ...statsData };
-    client.googledb.getArchiveData().then((dataOnline) => {
-      const { daysFields, valueFields } = dataOnline;
-      data.timeChart = valueFields;
-      data.timeChartLabels = daysFields;
-      res.render('index', { data });
-    });
+    res.redirect('/signin');
   } else {
     res.redirect('/signin-fail');
   }

@@ -7,20 +7,7 @@ exports.updateOnlineDb = function updateOnlineDb(client) {
 };
 
 exports.saveDataLocally = function saveDataLocally(client) {
-    let usersList = {};
-    client.guilds.cache.get(client.configData.discordServerId).members.cache.forEach((value, key) => {
-        if (value.voice.selfMute !== undefined && value.voice.channelID !== null && !value.user.bot) {
-            usersList = {
- ...usersList,
-[key]: {
-id: key,
-mute: value.voice.selfMute,
-                                                channelID: value.voice.channelID,
-                                                username: value.nickname || value.user.username,
-},
-};
-        }
-    });
+    const usersList = getOnlineUsers(client);
 
     if (Object.keys(usersList).length < 2) {
         return;
@@ -79,17 +66,17 @@ exports.clearDayRanking = function clearDayRanking(client) {
 
 exports.addNewUser = function addNewUser(client, discord_id, username, last_seen) {
     client.localCache = [...client.localCache,
-        {
- discord_id,
-         username,
-         last_seen,
-         minutes_connected: 0,
-         minutes_on_mute: 0,
-         all_time_minutes: 0,
-         all_time_on_mute: 0,
-         minutes_day: 0,
-         minutes_day_afk: 0,
-         medals: 0,
-         need_for_working: 0,
-}];
+    {
+        discord_id,
+        username,
+        last_seen,
+        minutes_connected: 0,
+        minutes_on_mute: 0,
+        all_time_minutes: 0,
+        all_time_on_mute: 0,
+        minutes_day: 0,
+        minutes_day_afk: 0,
+        medals: 0,
+        need_for_working: 0,
+    }];
 };
