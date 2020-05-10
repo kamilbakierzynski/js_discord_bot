@@ -23,8 +23,10 @@ module.exports = {
             return;
         }
 
-        dataCopy.map((user) => ({ ...user,
-            diff: parseFloat(user.minutes_connected) - parseFloat(user.minutes_on_mute) }));
+        dataCopy.map((user) => ({
+ ...user,
+            diff: parseFloat(user.minutes_connected) - parseFloat(user.minutes_on_mute),
+}));
         data.sort((a, b) => b.diff - a.diff);
 
         const place = data.findIndex((element) => element.discord_id === properData.discord_id);
@@ -36,12 +38,12 @@ module.exports = {
         const timeFrameFieldsOffline = ['minutes_day_afk', 'minutes_on_mute', 'all_time_on_mute'];
 
         const timeStringOnline = timeFrames.reduce((string, frame, index) => {
-            let formatter = index === 1 ? "**" : "";
+            const formatter = index === 1 ? "**" : "";
             return `${string + frame + formatter + formatMinutes(properData[timeFrameFieldsOnline[index]]) + formatter}\n`;
         }, "");
 
         const timeStringOfflne = timeFrames.reduce((string, frame, index) => {
-            let formatter = index === 1 ? "**" : "";
+            const formatter = index === 1 ? "**" : "";
             return `${string + frame + formatter + formatMinutes(properData[timeFrameFieldsOffline[index]]) + formatter}\n`;
         }, "");
 
@@ -64,7 +66,7 @@ module.exports = {
                     break;
                 default:
                     console.log('<❌> Wrong character in medals string.');
-            };
+            }
         }
         if (outputMedals === '') {
             outputMedals += '\n\n';

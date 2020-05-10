@@ -25,8 +25,7 @@ exports.loadData = function loadData(client) {
 
     output.onlineNow = Object.keys(usersList).length | 0;
 
-    output.percentOnlineToday = Math.round((client.localCache.filter((user) =>
-        user.minutes_day != 0).length / client.localCache.length) * 100);
+    output.percentOnlineToday = Math.round((client.localCache.filter((user) => user.minutes_day != 0).length / client.localCache.length) * 100);
 
     return output;
 };
@@ -48,8 +47,10 @@ exports.loadDataRanking = function loadDataRanking(client) {
     }, { medals: { count: 0, username: '' }, afkMost: { count: 0, username: '' }, afkLeast: { count: 0, username: '' } });
 
     const dataCopy = [...client.localCache];
-    dataCopy.map((user) => ({ ...user,
-        diff: parseFloat(user.minutes_connected) - parseFloat(user.minutes_on_mute) }));
+    dataCopy.map((user) => ({
+ ...user,
+        diff: parseFloat(user.minutes_connected) - parseFloat(user.minutes_on_mute),
+}));
     dataCopy.sort((a, b) => b.diff - a.diff);
 
     const rankingData = dataCopy.reduce((akum, user, index) => `${akum}<tr>
