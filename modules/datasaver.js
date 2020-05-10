@@ -34,7 +34,7 @@ exports.saveDataLocally = function saveDataLocally(client) {
 exports.clearWeekRanking = function clearWeekRanking(client) {
     const dataCopy = [...client.localCache];
     dataCopy.map((user) => ({
- ...user,
+        ...user,
         diff: parseFloat(user.minutes_connected) - parseFloat(user.minutes_on_mute),
 }));
     dataCopy.sort((a, b) => b.diff - a.diff).slice(0, 3);

@@ -23,10 +23,9 @@ module.exports = {
             return;
         }
 
-        dataCopy.map((user) => ({
- ...user,
-            diff: parseFloat(user.minutes_connected) - parseFloat(user.minutes_on_mute),
-}));
+        data.map((user) => ({
+            ...user,
+            diff: parseFloat(user.minutes_connected) - parseFloat(user.minutes_on_mute) }));
         data.sort((a, b) => b.diff - a.diff);
 
         const place = data.findIndex((element) => element.discord_id === properData.discord_id);
