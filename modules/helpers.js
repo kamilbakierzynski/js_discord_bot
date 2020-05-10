@@ -87,51 +87,6 @@ exports.calculateTimeDiff = function calculateTimeDiff(timeOld) {
     return `${diffDays} days, ${diffHrs} hours, ${diffMins} minutes`;
 };
 
-exports.displayRanking = function displayRanking(client) {
-    const formatMinutes = client.helpers.preetifyMinutes;
-
-    client.channels.fetch(client.configData.mainTextChannelId).then((channel) => {
-        const { name } = channel;
-        client.googledb.dbRead().then((data) => {
-            console.log('<✅> Displaying server ranking.');
-            data.map((user) => user.diff = parseFloat(user.minutes_connected) - parseFloat(user.minutes_on_mute));
-            data.sort((a, b) => b.diff - a.diff);
-
-            const medalsDecode = { 0: '🥇', 1: '🥈', 2: '🥉' };
-
-            const { place, names, times } = data.reduce((object, user, index) => {
-                if (index == 3) {
-                    object.names += "\n";
-                    object.times += "\n";
-                    object.place += "\n";
-                }
-                if (index > 2) {
-                    object.place = `${object.place + (index + 1)}\n`;
-                    object.names += `**${user.username}**\n`;
-                } else {
-                    object.place = `${object.place + (index + 1)}\n`;
-                    object.names += `${medalsDecode[index]} **${user.username}**\n`;
-                }
-                object.times += `**${formatMinutes(user.diff)}**\n`;
-
-                return object;
-            }, { place: '', names: '', times: '' });
-
-            const rankingEmbed = new client.Discord.MessageEmbed()
-                .setColor('#FFD700')
-                .setTitle(`🎉 Server Activity 🎉`)
-                .addFields(
-                    { name: 'Place', value: place, inline: true },
-                    { name: 'Name', value: names, inline: true },
-                    { name: 'Time (Online - AFK)', value: times, inline: true },
-                )
-                .setAuthor(client.user.username)
-                .setTimestamp();
-            channel.send(rankingEmbed);
-        });
-    });
-};
-
 exports.displayRankingWithData = function displayRankingWithData(client, data) {
     const formatMinutes = client.helpers.preetifyMinutes;
     const dataCopy = [...data];
