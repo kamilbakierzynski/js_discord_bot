@@ -113,13 +113,14 @@ exports.displayRankingWithData = function displayRankingWithData(client, data) {
             return;
         }
         console.log('<✅> Displaying server ranking.');
-        dataCopy.map((user) => ({...user, diff: parseFloat(user.minutes_connected) - parseFloat(user.minutes_on_mute)}));
+        dataCopy.map((user) => ({ ...user,
+            diff: parseFloat(user.minutes_connected) - parseFloat(user.minutes_on_mute) }));
         dataCopy.sort((a, b) => b.diff - a.diff);
 
         const medalsDecode = { 0: '🥇', 1: '🥈', 2: '🥉' };
 
         const { place, names, times } = dataCopy.reduce((object, user, index) => {
-            if (index == 3) {
+            if (index === 3) {
                 object.names += "\n";
                 object.times += "\n";
                 object.place += "\n";

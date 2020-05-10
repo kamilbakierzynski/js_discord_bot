@@ -14,7 +14,7 @@ module.exports = {
         console.log(`<❔> Getting data about ${country} | Corona`);
         try {
             const data = null;
-            var coronaHttp = new XMLHttpRequest();
+            const coronaHttp = new XMLHttpRequest();
             coronaHttp.withCredentials = true;
             coronaHttp.open("GET", `https://covid-193.p.rapidapi.com/statistics?country=${country}`);
             coronaHttp.setRequestHeader("x-rapidapi-host", "covid-193.p.rapidapi.com");
@@ -26,7 +26,7 @@ module.exports = {
             return;
         }
 
-        coronaHttp.addEventListener("readystatechange", function () {
+        coronaHttp.addEventListener("readystatechange", function sendResults() {
             if (this.readyState === this.DONE) {
                 console.log(`<✅> Got data about country.`);
                 try {

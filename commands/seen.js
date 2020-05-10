@@ -11,20 +11,20 @@ module.exports = {
         const name = message.mentions.users.first().username;
 
         const data = [...client.localCache];
-        const { properData, index } = data.reduce((akum, user, index) => {
+        const properData = data.reduce((akum, user) => {
             if (user.discord_id === id) {
-                akum.properData = { ...user };
-                akum.index = index;
+                akum = { ...user };
             }
             return akum;
-        }, { properData: undefined, index: 0 });
+        }, {});
 
         if (properData === undefined) {
             message.reply(' no data about this user.');
             return;
         }
 
-        data.map((user) => user.diff = parseFloat(user.minutes_connected) - parseFloat(user.minutes_on_mute));
+        dataCopy.map((user) => ({ ...user,
+            diff: parseFloat(user.minutes_connected) - parseFloat(user.minutes_on_mute) }));
         data.sort((a, b) => b.diff - a.diff);
 
         const place = data.findIndex((element) => element.discord_id === properData.discord_id);
@@ -36,14 +36,12 @@ module.exports = {
         const timeFrameFieldsOffline = ['minutes_day_afk', 'minutes_on_mute', 'all_time_on_mute'];
 
         const timeStringOnline = timeFrames.reduce((string, frame, index) => {
-            let formatter = '';
-            index === 1 ? formatter = "**" : null;
+            let formatter = index === 1 ? "**" : "";
             return `${string + frame + formatter + formatMinutes(properData[timeFrameFieldsOnline[index]]) + formatter}\n`;
         }, "");
 
         const timeStringOfflne = timeFrames.reduce((string, frame, index) => {
-            let formatter = '';
-            index === 1 ? formatter = "**" : null;
+            let formatter = index === 1 ? "**" : "";
             return `${string + frame + formatter + formatMinutes(properData[timeFrameFieldsOffline[index]]) + formatter}\n`;
         }, "");
 
@@ -54,11 +52,23 @@ module.exports = {
         let outputMedals = '';
         for (let i = 0; i < properData.medals.length; i += 1) {
             const currentChar = properData.medals.charAt(i);
-            currentChar === 'G' ? outputMedals += '🥇' : null;
-            currentChar === 'S' ? outputMedals += '🥈' : null;
-            currentChar === 'B' ? outputMedals += '🥉' : null;
+            switch (currentChar) {
+                case "G":
+                    outputMedals += '🥇';
+                    break;
+                case "S":
+                    outputMedals += '🥈';
+                    break;
+                case "B":
+                    outputMedals += '🥉';
+                    break;
+                default:
+                    console.log('<❌> Wrong character in medals string.');
+            };
         }
-        outputMedals === '' ? null : outputMedals += '\n\n';
+        if (outputMedals === '') {
+            outputMedals += '\n\n';
+        }
 
         const seenEmbed = new client.Discord.MessageEmbed()
             .setColor('#0099ff')

@@ -10,10 +10,14 @@ module.exports = async (client, oldMember, newMember) => {
         }
         try {
             console.log(`<🎤> User ${newMember.member.displayName} on channel ${newMember.channel.name}`);
-            const searchUser = client.localCache.filter((user) => user.discord_id === newMember.member.id);
+            const searchUser = client.localCache.filter((user) =>
+                user.discord_id === newMember.member.id);
             if (searchUser.length === 0) {
                 console.log('<✅> Creating new user in db.');
-                client.datasaver.addNewUser(client, newMember.member.id, newMember.member.displayName, Date.now());
+                client.datasaver.addNewUser(client,
+                                            newMember.member.id,
+                                            newMember.member.displayName,
+                                            Date.now());
                 return;
             }
         } catch (e) {
