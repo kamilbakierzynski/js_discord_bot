@@ -8,17 +8,21 @@ exports.updateOnlineDb = function updateOnlineDb(client) {
 
 exports.saveDataLocally = function saveDataLocally(client) {
     let usersList = {};
-    client.guilds.cache.get('654415996702162984').members.cache.forEach((value, key) => {
-        if (value.voice.selfMute !== undefined && value.voice.channelID !== null) {
+    client.guilds.cache.get(client.configData.discordServerId).members.cache.forEach((value, key) => {
+        if (value.voice.selfMute !== undefined && value.voice.channelID !== null && !value.user.bot) {
             usersList = { ...usersList, [key]: {id: key, mute: value.voice.selfMute,
                                                 channelID: value.voice.channelID,
                                                 username: value.nickname || value.user.username }}
         }
     });
 
+    if (usersList.size < 2) {
+        return;
+    }
+
     client.localCache = client.localCache.reduce((akum, user) => {
         if (usersList[user.discord_id] !== undefined &&
-            usersList[user.discord_id].channelID !== '654418034081136650') {
+            usersList[user.discord_id].channelID !== client.configData.afkChannelId) {
             user.last_seen = Date.now();
             user.username = usersList[user.discord_id].username;
             user.minutes_connected = parseInt(user.minutes_connected, 10) + 1;
@@ -35,7 +39,24 @@ exports.saveDataLocally = function saveDataLocally(client) {
 }
 
 exports.clearWeekRanking = function clearWeekRanking(client) {
+    let dataCopy = [...client.localCache];
+    dataCopy.map(user => user.diff = parseFloat(user.minutes_connected) - parseFloat(user.minutes_on_mute));
+    dataCopy.sort((a, b) => b.diff - a.diff).slice(0, 3);
+
     client.localCache = client.localCache.reduce((akum, user) => {
+        user.medals = dataCopy.reduce((result, rankingWinner, index) => {
+            if (user.discord_id === rankingWinner.discord_id) {
+                switch (index) {
+                    case 0:
+                        return result + 'G';
+                    case 1:
+                        return result + 'S';
+                    case 2:
+                        return result + 'B';
+                }
+            }
+            return result;
+        }, user.medals == 0 ? "" : user.medals);
         user.minutes_connected = 0;
         user.minutes_on_mute = 0;
         return [...akum, user];

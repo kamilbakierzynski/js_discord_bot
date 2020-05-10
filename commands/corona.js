@@ -3,14 +3,15 @@ const { XMLHttpRequest } = require('xmlhttprequest');
 module.exports = {
     name: 'corona',
     description: 'Show current COVID-19 stats in selected country.',
+    usage: `corona <country name>`,
     execute(client, message) {
         let country = message.content.slice('$corona '.length).toLowerCase();
         if (country === '') {
             console.log('<❔> Country empty, getting default country');
-            message.reply('<❌> country was not specified. Getting default - Poland.')
-            country = 'Poland'
+            country = client.configData.defaultCountryForCorona;
+            message.reply(`<❌> country was not specified. Getting default - ${country}.`);
         }
-        console.log(`<❔> Getting data about ${country} | Corona`)
+        console.log(`<❔> Getting data about ${country} | Corona`);
         try {
             var data = null;
             var coronaHttp = new XMLHttpRequest();

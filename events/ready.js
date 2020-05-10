@@ -4,14 +4,14 @@ module.exports = async client => {
     console.log(`<🔔> Logged in as ${client.user.tag}!`);
 
     client.user.setPresence({
-        activity: { name: 'Baza danych', type: 'PLAYING' },
+        activity: { name: client.configData.botGamePlay, type: 'PLAYING' },
         status: 'online',
     })
         .catch(console.error);
 
     console.log('<🕛> JOB EVERY DAY 22:00:01 (00:00:01 UTC +2) change channel title.');
     let changeChannelTitle = new cron.CronJob('01 00 22 * * *', () => {
-        client.channels.fetch('654415996702162987').then(channel => {
+        client.channels.fetch(client.configData.mainTextChannelId).then(channel => {
             const { name } = channel;
             const day = parseInt(name.split('-')[1], 10);
             console.log(`<🕛> Changing channel name from ${name} to dzień-${day + 1}.`);
@@ -29,7 +29,7 @@ module.exports = async client => {
     console.log('<🕛> JOB EVERY MON 02:59:30 (04:59:30 UTC +2) clear database and show winners.');
     let clearDatabase = new cron.CronJob('30 59 02 * * MON', () => {
         console.log(`<🕛> Running DB job.`);
-        client.channels.fetch('654415996702162987').then(channel => {
+        client.channels.fetch(client.configData.mainTextChannelId).then(channel => {
             channel.send('🕛 Reset ranking scores.');
             try {
                 client.datasaver.clearWeekRanking(client);
@@ -44,7 +44,7 @@ module.exports = async client => {
     console.log('<🕛> JOB EVERY MON 02:59:20 (04:59:20 UTC +2) save data');
     let saveDatabase = new cron.CronJob('20 59 02 * * MON', () => {
         console.log(`<🕛> Running save data.`);
-        client.channels.fetch('654415996702162987').then(channel => {
+        client.channels.fetch(client.configData.mainTextChannelId).then(channel => {
             channel.send('🕛 Final results.');
             try {
                 client.helpers.displayRankingWithData(client, client.localCache);
@@ -58,7 +58,7 @@ module.exports = async client => {
     console.log('<🕛> JOB EVERY DAY 02:59:02 (04:59:00 UTC +2) archive database.');
     let archiveDatabase = new cron.CronJob('02 59 02 * * *', () => {
         console.log(`<🕛> Running archive job.`);
-        client.channels.fetch('654415996702162987').then(channel => {
+        client.channels.fetch(client.configData.mainTextChannelId).then(channel => {
             channel.send('🕛 Data backup.');
             try {
                 client.googledb.archiveData(client);

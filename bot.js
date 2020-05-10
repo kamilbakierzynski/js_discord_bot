@@ -48,7 +48,7 @@ app.get('/signin', (req, res) => {
       res.render('index', {data: data});
     });
   } else {
-    client.channels.fetch('654415996702162987').then(channel => {
+    client.channels.fetch(client.configData.mainTextChannelId).then(channel => {
       channel.send(`Login page authorization code: ◻️${client.authCode}◻️`).then(msg => msg.delete({ timeout: 20000 }));
     });
     res.render('signin', {data: data});

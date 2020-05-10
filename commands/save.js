@@ -2,7 +2,7 @@ module.exports = {
     name: 'save',
     description: 'Force saving data.',
     execute(client, message) {
-        if (message.author.id !== '339856582575915009') {
+        if (message.author.id !== client.configData.adminDiscordId) {
             message.channel.send('🚫 Insufficient permission.');
             return;
         }
