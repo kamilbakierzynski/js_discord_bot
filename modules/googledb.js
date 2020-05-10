@@ -74,7 +74,7 @@ exports.getArchiveData = async function getArchiveData() {
             if (index === 0) {
                 akum.day = value;
             }
-            if (index !== 0 && value != 0) {
+            if (index !== 0 && parseInt(value, 10) !== 0) {
                 akum.avg += parseInt(value, 10);
                 akum.count += 1;
             }

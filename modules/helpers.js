@@ -1,7 +1,3 @@
-exports.checkPrefix = function checkPrefix(msg, command) {
-    return msg.content.startsWith(prefix + command);
-};
-
 exports.capitalize = function capitalize(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 };
@@ -89,8 +85,11 @@ exports.calculateTimeDiff = function calculateTimeDiff(timeOld) {
 
 exports.getOnlineUsers = function getOnlineUsers(client) {
     let usersList = {};
-    client.guilds.cache.get(client.configData.discordServerId).members.cache.forEach((value, key) => {
-        if (value.voice.selfMute !== undefined && value.voice.channelID !== null && !value.user.bot) {
+    client.guilds.cache.get(client.configData.discordServerId).members.cache
+    .forEach((value, key) => {
+        if (value.voice.selfMute !== undefined
+            && value.voice.channelID !== null
+            && !value.user.bot) {
             usersList = {
                 ...usersList,
                 [key]: {
@@ -103,7 +102,7 @@ exports.getOnlineUsers = function getOnlineUsers(client) {
         }
     });
     return usersList;
-}
+};
 
 exports.displayRankingWithData = function displayRankingWithData(client, data) {
     const formatMinutes = client.helpers.preetifyMinutes;
@@ -114,7 +113,7 @@ exports.displayRankingWithData = function displayRankingWithData(client, data) {
             return;
         }
         console.log('<✅> Displaying server ranking.');
-        dataCopy.map((user) => user.diff = parseFloat(user.minutes_connected) - parseFloat(user.minutes_on_mute));
+        dataCopy.map((user) => ({...user, diff: parseFloat(user.minutes_connected) - parseFloat(user.minutes_on_mute)}));
         dataCopy.sort((a, b) => b.diff - a.diff);
 
         const medalsDecode = { 0: '🥇', 1: '🥈', 2: '🥉' };
