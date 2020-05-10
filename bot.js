@@ -7,6 +7,7 @@ require('dotenv').config();
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 client.loader = require('./modules/loader');
+
 client.Discord = Discord;
 const cookieParser = require('cookie-parser');
 
@@ -18,7 +19,7 @@ const urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 let data = {};
 
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(`${__dirname}/public`));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
@@ -30,7 +31,7 @@ app.get('/', (req, res) => {
     data.username = client.user.tag;
     data.commandsCount = client.commands.size;
     data.readyAt = client.readyAt.toDateString();
-    res.render('home', {data: data});
+    res.render('home', { data });
 });
 
 app.get('/signin', (req, res) => {
@@ -38,20 +39,20 @@ app.get('/signin', (req, res) => {
   data.commandsCount = client.commands.size;
   data.readyAt = client.readyAt.toDateString();
   if (client.dashboard.checkKey(client, req.cookies.loggedin)) {
-    res.cookie("loggedin", client.dashboard.findKey(client), {expire: 300000 + Date.now()});
+    res.cookie("loggedin", client.dashboard.findKey(client), { expire: 300000 + Date.now() });
     const statsData = client.dashboard.loadData(client);
-    data = {...data, ...statsData};
-    client.googledb.getArchiveData().then(dataOnline => {
+    data = { ...data, ...statsData };
+    client.googledb.getArchiveData().then((dataOnline) => {
       const { daysFields, valueFields } = dataOnline;
       data.timeChart = valueFields;
       data.timeChartLabels = daysFields;
-      res.render('index', {data: data});
+      res.render('index', { data });
     });
   } else {
-    client.channels.fetch(client.configData.mainTextChannelId).then(channel => {
-      channel.send(`Login page authorization code: ◻️${client.authCode}◻️`).then(msg => msg.delete({ timeout: 20000 }));
+    client.channels.fetch(client.configData.mainTextChannelId).then((channel) => {
+      channel.send(`Login page authorization code: ◻️${client.authCode}◻️`).then((msg) => msg.delete({ timeout: 20000 }));
     });
-    res.render('signin', {data: data});
+    res.render('signin', { data });
   }
 });
 
@@ -62,15 +63,8 @@ app.get('/signin-fail', (req, res) => {
 app.post('/signin', urlencodedParser, (req, res) => {
   console.log(req.body.password);
   if (client.authCode === req.body.password) {
-    res.cookie("loggedin", client.dashboard.findKey(client), {expire: 300000 + Date.now()});
-    const statsData = client.dashboard.loadData(client);
-    data = {...data, ...statsData};
-    client.googledb.getArchiveData().then(dataOnline => {
-      const { daysFields, valueFields } = dataOnline;
-      data.timeChart = valueFields;
-      data.timeChartLabels = daysFields;
-      res.render('index', {data: data});
-    });
+    res.cookie("loggedin", client.dashboard.findKey(client), { expire: 300000 + Date.now() });
+    res.redirect('/signin');
   } else {
     res.redirect('/signin-fail');
   }
@@ -79,15 +73,15 @@ app.post('/signin', urlencodedParser, (req, res) => {
 app.get('/ranking', (req, res) => {
   if (client.dashboard.checkKey(client, req.cookies.loggedin)) {
   const topStatsData = client.dashboard.loadDataRanking(client);
-  data = {...data, ...topStatsData};
-  res.render('ranking', {data: data});
+  data = { ...data, ...topStatsData };
+  res.render('ranking', { data });
   } else {
     res.redirect('/signin');
   }
 });
 
 const init = async () => {
-    const loader = client.loader;
+    const { loader } = client;
     await loader.registerModules(client);
     await loader.registerCommands(client);
     await loader.registerEvents(client);

@@ -16,7 +16,7 @@ module.exports = {
             const data = JSON.parse(Http.responseText);
             if (data.hasOwnProperty('status')) {
                 message.reply(data.status.message.toLowerCase());
-                console.log('<❌> Data about summoner not found.')
+                console.log('<❌> Data about summoner not found.');
             } else {
                 const summonerId = data.id;
                 console.log(`<✅> Got summoner id: ${summonerId}`);
@@ -28,7 +28,7 @@ module.exports = {
                 HttpRank.onload = function (e) {
                     console.log('<✅> Got summoner data.');
                     const dataRank = JSON.parse(HttpRank.responseText);
-                    dataRank.forEach(rankedData => {
+                    dataRank.forEach((rankedData) => {
                         const winRatio = (rankedData.wins / (rankedData.wins + rankedData.losses));
                         const summonerEmbed = new client.Discord.MessageEmbed()
                             .setColor('#0099ff')
@@ -61,5 +61,5 @@ module.exports = {
                 };
             }
         };
-    }
+    },
 };

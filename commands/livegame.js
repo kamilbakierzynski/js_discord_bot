@@ -35,8 +35,7 @@ module.exports = {
                     if (liveGameData.hasOwnProperty('status')) {
                         message.channel.send(`${summonerName} not in game.`);
                     } else {
-                        const champion = liveGameData.participants.reduce((akum, participant) => 
-                            participant.summonerId === summonerId ? participant.championId : akum, 0);
+                        const champion = liveGameData.participants.reduce((akum, participant) => (participant.summonerId === summonerId ? participant.championId : akum), 0);
 
                         const liveGameEmbed = new client.Discord.MessageEmbed()
                             .setColor('#0099ff')
@@ -54,5 +53,5 @@ module.exports = {
                 };
             }
         };
-    }
+    },
 };
