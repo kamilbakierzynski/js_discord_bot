@@ -1,6 +1,7 @@
 # Discord Bot with users statistics, League of Legends API and Dashboard.
 [![CodeFactor](https://www.codefactor.io/repository/github/kamilbakierzynski/js_discord_bot/badge)](https://www.codefactor.io/repository/github/kamilbakierzynski/js_discord_bot)
 [![Mergify](https://img.shields.io/endpoint.svg?url=https://gh.mergify.io/badges/kamilbakierzynski/js_discord_bot&style=flat)](https://mergify.io/)
+[![Known Vulnerabilities](https://snyk.io/test/github/kamilbakierzynski/js_discord_bot/badge.svg?targetFile=package.json)](https://snyk.io/test/github/kamilbakierzynski/js_discord_bot?targetFile=package.json)
 
 [![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
 
