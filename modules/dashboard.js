@@ -47,10 +47,8 @@ exports.loadDataRanking = function loadDataRanking(client) {
     }, { medals: { count: 0, username: '' }, afkMost: { count: 0, username: '' }, afkLeast: { count: 0, username: '' } });
 
     const dataCopy = [...client.localCache];
-    dataCopy.map((user) => ({
-        ...user,
-        diff: parseFloat(user.minutes_connected) - parseFloat(user.minutes_on_mute),
-}));
+    dataCopy.map((user) => 
+            user.diff = parseFloat(user.minutes_connected) - parseFloat(user.minutes_on_mute));
     dataCopy.sort((a, b) => b.diff - a.diff);
 
     const rankingData = dataCopy.reduce((akum, user, index) => `${akum}<tr>
