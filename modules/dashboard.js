@@ -9,7 +9,7 @@ exports.loadData = function loadData(client) {
         daySum: 0, weekSum: 0, allOnline: 0, allAfk: 0,
     });
 
-    const usersList = getOnlineUsers(client);
+    const usersList = client.helpers.getOnlineUsers(client);
 
     const allMinutes = data.allOnline + data.allAfk;
     const output = {
