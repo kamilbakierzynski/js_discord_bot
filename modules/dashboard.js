@@ -23,7 +23,7 @@ exports.loadData = function loadData(client) {
         afkDonutChart: Math.round((data.allAfk / allMinutes) * 100),
     };
 
-    output.onlineNow = Object.keys(usersList).length | 0;
+    output.onlineNow = Object.keys(usersList).length || 0;
 
     output.percentOnlineToday = Math.round((client.localCache.filter((user) => user.minutes_day != 0).length / client.localCache.length) * 100);
 

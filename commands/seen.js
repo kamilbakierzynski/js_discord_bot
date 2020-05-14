@@ -66,15 +66,12 @@ module.exports = {
                     console.log('<❌> Wrong character in medals string.');
             }
         }
-        if (outputMedals === '') {
-            outputMedals += '\n\n';
-        }
 
         const seenEmbed = new client.Discord.MessageEmbed()
             .setColor('#0099ff')
-            .setTitle(name)
+            .setTitle(`${name} 🕙(${client.helpers.percentOnline(properData.all_time_minutes, properData.all_time_on_mute)}%)`)
             .setThumbnail(user.displayAvatarURL() || user.defaultAvatarURL)
-            .setDescription(`${outputMedals}**Last time online:**\n${client.helpers.calculateTimeDiff(timeData)} ago`)
+            .setDescription(`${outputMedals}\n**Last time online:**\n${client.helpers.calculateTimeDiff(timeData)} ago`)
             .addFields(
                 { name: '🎙️ Time connected', value: timeStringOnline, inline: true },
                 { name: '🔇 Time on mute', value: timeStringOfflne, inline: true },
