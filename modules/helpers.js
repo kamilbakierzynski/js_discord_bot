@@ -150,3 +150,10 @@ exports.displayRankingWithData = function displayRankingWithData(client, data) {
         channel.send(rankingEmbed);
     });
 };
+
+exports.percentOnline = function percentOnline(time, afk) {
+    const startTime = 1587915360000;
+    const timeNow = Date.now();
+    const timeSpent = (parseInt(time, 10) - parseInt(afk, 10)) * 60 * 1000;
+    return (timeSpent / (timeNow - startTime) * 1000).toFixed(2);
+}
