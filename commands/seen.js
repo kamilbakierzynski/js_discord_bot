@@ -69,7 +69,7 @@ module.exports = {
 
         const seenEmbed = new client.Discord.MessageEmbed()
             .setColor('#0099ff')
-            .setTitle(`${name} 🕙(${client.helpers.percentOnline(properData.all_time_minutes, properData.all_time_on_mute)}%)`)
+            .setTitle(`${name} (${client.helpers.percentOnline(properData.all_time_minutes, properData.all_time_on_mute)}%)`)
             .setThumbnail(user.displayAvatarURL() || user.defaultAvatarURL)
             .setDescription(`${outputMedals}\n**Last time online:**\n${client.helpers.calculateTimeDiff(timeData)} ago`)
             .addFields(
