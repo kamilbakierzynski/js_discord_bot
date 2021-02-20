@@ -9,10 +9,6 @@ exports.updateOnlineDb = function updateOnlineDb(client) {
 exports.saveDataLocally = function saveDataLocally(client) {
     const usersList = client.helpers.getOnlineUsers(client);
 
-    if (Object.keys(usersList).length < 2) {
-        return;
-    }
-
     client.localCache = client.localCache.reduce((akum, user) => {
         if (usersList[user.discord_id] !== undefined
             && usersList[user.discord_id].channelID !== client.configData.afkChannelId) {
@@ -36,7 +32,7 @@ exports.clearWeekRanking = function clearWeekRanking(client) {
     dataCopy.map((user) => ({
         ...user,
         diff: parseFloat(user.minutes_connected) - parseFloat(user.minutes_on_mute),
-}));
+    }));
     dataCopy.sort((a, b) => b.diff - a.diff).slice(0, 3);
 
     client.localCache = client.localCache.reduce((akum, user) => {
