@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectRootManager">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+  <component name="SbtLocalSettings">
+    <option name="projectSyncType">
+      <map>
+        <entry key="$PROJECT_DIR$/../bakierzynski-kamil/kolokwium" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../bakierzynski-kamil/lab04" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../bakierzynski-kamil/lab05" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../bakierzynski-kamil/lab06" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../bakierzynski-kamil/lab07" value="PREVIEW" />
+      </map>
+    </option>
+  </component>
+  <component name="ScalaSbtSettings">
+    <option name="customVMPath" />
+  </component>
+</project>
