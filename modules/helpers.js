@@ -120,7 +120,7 @@ exports.displayRankingWithData = function displayRankingWithData(client, data) {
         const medalsDecode = { 0: '🥇', 1: '🥈', 2: '🥉' };
 
         const { place, names, times } = dataCopy.reduce((object, user, index) => {
-            if (Math.round(parseFloat(times)) === 0) {
+            if (Math.round(parseFloat(user.diff)) === 0) {
                 return object;
             }
             if (index === 3) {
